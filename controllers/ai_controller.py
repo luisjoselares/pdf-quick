@@ -30,10 +30,16 @@ client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 # ─────────────────────────────────────────────────────────────
 # INTERFAZ
 # ─────────────────────────────────────────────────────────────
+# Borra la variable de aquí arriba para que no se quede "pegada" con None
+# GROQ_API_KEY = st.secrets.get("GROQ_API_KEY") <-- ELIMINA ESTA LÍNEA
+
 def handle_ai_tools(t):
+    # Captura la clave AQUÍ adentro para que se verifique en cada ejecución
+    current_key = st.secrets.get("GROQ_API_KEY")
+    
     st.markdown(f"## {t.get('ai_asst', 'Asistente IA')}")
 
-    if not GROQ_API_KEY:
+    if not current_key:
         st.warning(
             "⚠️ Para usar el Asistente IA, configura el Secret **GROQ_API_KEY** "
             "en los ajustes de Streamlit Cloud."
