@@ -11,8 +11,7 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="collapsed",
     menu_items={
-        'Get Help': 'https://github.com/luisjoselares/pdf-quick',
-        'About': "# PDF QU⚡CK\nHerramienta potente con IA (Groq) para gestionar PDFs."
+    
      }   
 )
 load_css("style.css")
