@@ -263,9 +263,19 @@ footer, header, #MainMenu {
     visibility: hidden;
 }
 
+
 /* ─── MARCADORES INVISIBLES ─── */
 .nav-section-marker,
 .conv-marker-to,
 .conv-marker-from {
     display: none;
 }
+
+/* Ocultar el menú principal de Streamlit (las 3 rayas) */
+#MainMenu {visibility: hidden;}
+
+/* Ocultar el pie de página "Made with Streamlit" */
+footer {visibility: hidden;}
+
+/* Ocultar la línea de color superior (opcional, para un look más limpio) */
+header {visibility: hidden;}
