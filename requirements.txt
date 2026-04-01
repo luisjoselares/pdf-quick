@@ -1,0 +1,12 @@
+streamlit
+pypdf
+reportlab
+pymupdf
+pdf2docx
+pdfplumber
+pandas
+openpyxl
+Pillow
+requests
+python-pptx
+huggingface_hub
