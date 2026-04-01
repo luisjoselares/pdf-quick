@@ -10,3 +10,4 @@ Pillow
 requests
 python-pptx
 huggingface_hub
+groq
