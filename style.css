@@ -271,11 +271,16 @@ footer, header, #MainMenu {
     display: none;
 }
 
-/* Ocultar el menú principal de Streamlit (las 3 rayas) */
-#MainMenu {visibility: hidden;}
+/* 1. Ocultar el footer "Made with Streamlit" */
+footer {visibility: hidden !important;}
 
-/* Ocultar el pie de página "Made with Streamlit" */
-footer {visibility: hidden;}
+/* 2. Ocultar el menú de hamburguesa y el nombre del perfil */
+#MainMenu {visibility: hidden !important;}
 
-/* Ocultar la línea de color superior (opcional, para un look más limpio) */
-header {visibility: hidden;}
+/* 3. Ocultar la barra superior (donde sale el botón de 'Manage App') */
+header {display: none !important;}
+
+/* 4. Quitar el espacio en blanco que deja el header oculto */
+.main .block-container {
+    padding-top: 1rem !important;
+}
