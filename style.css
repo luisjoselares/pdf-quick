@@ -1,0 +1,271 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap');
+
+:root {
+    --bg-app: #ffffff;
+    --text-main: #1d1d1f;
+    --text-secondary: #86868b;
+    --card-bg: #f5f5f7;
+    --accent: #0071e3;
+    --accent-alt: #af52de;
+    --border: #eaeaea;
+    --shadow: rgba(0, 0, 0, 0.06);
+    --shimmer-bg: linear-gradient(90deg, #f5f5f7 25%, #e8e8ed 50%, #f5f5f7 75%);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-app: #0e1117;
+        --text-main: #f5f5f7;
+        --card-bg: #1c1c1e;
+        --border: #38383a;
+        --shadow: rgba(0, 0, 0, 0.2);
+        --shimmer-bg: linear-gradient(90deg, #1c1c1e 25%, #3a3a3c 50%, #1c1c1e 75%);
+    }
+}
+
+html, body, [data-testid="stAppViewContainer"] {
+    font-family: 'Inter', sans-serif !important;
+    background-color: var(--bg-app) !important;
+    color: var(--text-main) !important;
+}
+
+/* ─── TÍTULO ─── */
+.main-title {
+    text-align: center;
+    font-size: 3.8rem !important;
+    font-weight: 800 !important;
+    background: linear-gradient(100deg, var(--text-main) 40%, var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0 !important;
+    padding-top: 0.25rem;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+}
+
+.sub-title {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+    margin-bottom: 0.3rem !important;
+}
+
+/* ─── PILLS DEL SUBTÍTULO (categorías) ─── */
+.sub-pills {
+    text-align: center;
+    color: var(--accent);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    margin-bottom: 1.5rem !important;
+    opacity: 0.85;
+}
+
+/* ─── BOTONES BASE ─── */
+div.stButton > button {
+    border-radius: 14px !important;
+    background-color: var(--card-bg) !important;
+    border: 1px solid var(--border) !important;
+    color: var(--text-main) !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease !important;
+    padding: 0.55rem 1rem !important;
+    min-height: 46px;
+    height: auto !important;
+    white-space: normal !important;
+    line-height: 1.35 !important;
+}
+
+div.stButton > button:hover {
+    border-color: var(--accent) !important;
+    box-shadow: 0 2px 14px var(--shadow) !important;
+}
+
+/* ─── BOTONES PRIMARIOS DE ACCIÓN ─── */
+div.stButton > button[kind="primary"] {
+    border: 2px solid var(--accent) !important;
+    box-shadow: 0 0 14px rgba(0, 113, 227, 0.25) !important;
+    background-color: var(--bg-app) !important;
+    color: var(--accent) !important;
+}
+
+div.stButton > button[kind="primary"]:hover {
+    box-shadow: 0 0 22px rgba(0, 113, 227, 0.45) !important;
+}
+
+/* ─── BOTONES DE NAVEGACIÓN: dimensiones ─── */
+div:has(.nav-section-marker) + div div.stButton > button {
+    min-height: 64px !important;
+    height: 64px !important;
+    border-radius: 18px !important;
+    font-size: 1rem !important;
+    padding: 0 1.5rem !important;
+    text-align: center !important;
+}
+
+/* ─── BOTÓN DE NAVEGACIÓN ACTIVO: fondo azul sólido ─── */
+div:has(.nav-section-marker) + div div.stButton > button[kind="primary"] {
+    background-color: var(--accent) !important;
+    color: #ffffff !important;
+    border-color: var(--accent) !important;
+    box-shadow: 0 4px 20px rgba(0, 113, 227, 0.35) !important;
+}
+
+div:has(.nav-section-marker) + div div.stButton > button[kind="primary"]:hover {
+    background-color: #005ec2 !important;
+    box-shadow: 0 6px 24px rgba(0, 113, 227, 0.5) !important;
+}
+
+/* ─── CONTENEDOR PRINCIPAL DE HERRAMIENTA ─── */
+[data-testid="stVerticalBlockBorderWrapper"] {
+    border-radius: 22px !important;
+    border: 1px solid var(--border) !important;
+    padding: 8px !important;
+    box-shadow: 0 3px 18px var(--shadow) !important;
+}
+
+/* ─── CAJA CONVERSIÓN "A PDF" (borde superior azul) ─── */
+[data-testid="column"]:has(.conv-marker-to) [data-testid="stVerticalBlockBorderWrapper"] {
+    border-top: 5px solid var(--accent) !important;
+    border-top-left-radius: 18px !important;
+    border-top-right-radius: 18px !important;
+}
+
+/* ─── CAJA CONVERSIÓN "DESDE PDF" (borde superior violeta) ─── */
+[data-testid="column"]:has(.conv-marker-from) [data-testid="stVerticalBlockBorderWrapper"] {
+    border-top: 5px solid var(--accent-alt) !important;
+    border-top-left-radius: 18px !important;
+    border-top-right-radius: 18px !important;
+}
+
+/* ─── SEPARADOR ENTRE COLUMNAS DE CONVERSIÓN ─── */
+.conv-separator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 80px;
+    padding-top: 50px;
+    color: var(--text-secondary);
+    font-size: 1.4rem;
+    font-weight: 300;
+    opacity: 0.5;
+    user-select: none;
+}
+
+/* ─── FILE UPLOADER ─── */
+[data-testid="stFileUploader"] {
+    background-color: transparent !important;
+    border: 2px dashed var(--accent) !important;
+    border-radius: 16px !important;
+    padding: 20px !important;
+    transition: all 0.2s ease;
+}
+
+[data-testid="stFileUploader"]:hover {
+    background-color: rgba(0, 113, 227, 0.04) !important;
+}
+
+[data-testid="stFileUploader"] section {
+    background-color: transparent !important;
+}
+
+/* ─── LOADER SHIMMER ─── */
+.loader-container {
+    padding: 22px;
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    text-align: center;
+    margin: 14px 0;
+}
+
+.processing-text {
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--accent);
+    font-size: 0.95rem;
+}
+
+.loading-bar {
+    height: 4px;
+    width: 100%;
+    background: var(--shimmer-bg);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite linear;
+    border-radius: 10px;
+}
+
+@keyframes shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* ─── TABS ─── */
+[data-testid="stTabs"] button {
+    font-weight: 600;
+    font-size: 0.95rem !important;
+}
+
+/* ─── SECCIÓN SEO INDEXABLE ─── */
+.seo-section {
+    padding: 2rem 0 1rem;
+    color: var(--text-secondary);
+}
+
+.seo-section h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 1rem;
+}
+
+.seo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2rem;
+    margin-bottom: 1.5rem;
+}
+
+.seo-grid > div {
+    font-size: 0.85rem;
+    line-height: 1.55;
+    padding: 1rem;
+    background: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+}
+
+.seo-grid strong {
+    display: block;
+    margin-bottom: 0.3rem;
+    color: var(--text-main);
+}
+
+.seo-note {
+    font-size: 0.82rem;
+    text-align: center;
+    margin-top: 0.5rem;
+    opacity: 0.75;
+}
+
+/* ─── DESCRIPCIÓN DE HERRAMIENTA (subtítulo de acción) ─── */
+.tool-description {
+    color: var(--text-secondary);
+    font-size: 0.92rem;
+    margin-top: -0.4rem;
+    margin-bottom: 0.8rem;
+}
+
+/* ─── OCULTAR ELEMENTOS INNECESARIOS ─── */
+footer, header, #MainMenu {
+    visibility: hidden;
+}
+
+/* ─── MARCADORES INVISIBLES ─── */
+.nav-section-marker,
+.conv-marker-to,
+.conv-marker-from {
+    display: none;
+}
