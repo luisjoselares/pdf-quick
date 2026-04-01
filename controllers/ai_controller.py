@@ -4,7 +4,7 @@ import os
 import io
 import re
 from datetime import date
-from huggingface_hub import InferenceClient
+from groq import Groq # Cambiamos HuggingFace por Groq
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.platypus.flowables import HRFlowable
 from reportlab.lib.pagesizes import A4
@@ -13,13 +13,18 @@ from reportlab.lib.units import cm
 from reportlab.lib.colors import HexColor
 from utils.helpers import show_loader
 
-HF_TOKEN = os.getenv("HF_Token")
+# Capturamos la API Key desde los secretos de Streamlit Cloud de forma segura
+GROQ_API_KEY = st.secrets.get("GROQ_API_KEY")
 
+# Actualizamos los modelos a los que soporta Groq (son súper rápidos)
 MODELS = {
-    "summarize": "facebook/bart-large-cnn",
-    "analyze":   "Qwen/Qwen2.5-7B-Instruct",  # Cambiado por estabilidad en la API gratuita
-    "translate": "Helsinki-NLP/opus-mt-es-en",
+    "summarize": "llama-3.3-70b-versatile", # Excelente para resúmenes largos
+    "analyze":   "mixtral-8x7b-32768",      # Muy bueno extrayendo puntos clave
+    "translate": "llama-3.3-70b-versatile", # Llama 3 traduce espectacular
 }
+
+# Inicializamos el cliente de Groq (si hay llave)
+client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
 
 # ─────────────────────────────────────────────────────────────
@@ -28,13 +33,13 @@ MODELS = {
 def handle_ai_tools(t):
     st.markdown(f"## {t.get('ai_asst', 'Asistente IA')}")
 
-    if not HF_TOKEN:
+    if not GROQ_API_KEY:
         st.warning(
-            "Para usar el Asistente IA configura el Secret **HF_Token** "
-            "con tu token de HuggingFace."
+            "⚠️ Para usar el Asistente IA, configura el Secret **GROQ_API_KEY** "
+            "en los ajustes de Streamlit Cloud."
         )
         return
-
+        
     file = st.file_uploader(
         t.get("drop", "Sube un PDF"), type="pdf", key="up_ai_tool"
     )
@@ -192,122 +197,67 @@ def _run_ai(file, action, selected_pages, t):
 # ─────────────────────────────────────────────────────────────
 
 def _clean(text: str, max_chars: int = 15000) -> str:
-    """Limpia y trunca texto. Límite alto, el manejo real se hace en cada motor."""
+    """Limpia y trunca texto para enviarlo a la IA."""
     text = re.sub(r"[^\w\s.,;:!?()\'\"\-\náéíóúüñÁÉÍÓÚÜÑ]", " ", text)
     text = re.sub(r"\s+", " ", text).strip()
     return text[:max_chars]
 
 def _summarize(text: str) -> str:
-    """Resumen ejecutivo con BART — procesado en trozos seguros para evitar 'index out of range'."""
-    clean_text = _clean(text, max_chars=15000)
-    client = InferenceClient(MODELS["summarize"], token=HF_TOKEN)
+    """Genera un resumen ejecutivo usando Llama 3 en Groq."""
+    clean_text = _clean(text, max_chars=12000)
     
-    # BART soporta máximo 1024 tokens. Partimos en bloques de 1800 caracteres (~450 tokens) para estar súper seguros.
-    chunks, remaining = [], clean_text
-    while remaining:
-        if len(remaining) <= 1800:
-            chunks.append(remaining)
-            break
-        cut = remaining[:1800].rfind(" ")
-        cut = cut if cut > 0 else 1800
-        chunks.append(remaining[:cut].strip())
-        remaining = remaining[cut:].strip()
-
-    summarized_chunks = []
-    for chunk in chunks:
-        if len(chunk) < 100:
-            continue
-        try:
-            resp = client.summarization(chunk)
-            # Manejo ultra-seguro de la respuesta
-            if isinstance(resp, str):
-                summarized_chunks.append(resp)
-            elif hasattr(resp, "summary_text"):
-                summarized_chunks.append(resp.summary_text)
-            elif isinstance(resp, list) and len(resp) > 0 and isinstance(resp[0], dict):
-                summarized_chunks.append(resp[0].get("summary_text", str(resp)))
-            elif isinstance(resp, dict):
-                summarized_chunks.append(resp.get("summary_text", str(resp)))
-            else:
-                summarized_chunks.append(str(resp))
-        except Exception:
-            # Si un fragmento falla, ignoramos ese pedacito y continuamos con el resto del documento
-            continue
-
-    return "\n\n".join(summarized_chunks) if summarized_chunks else "No se pudo generar el resumen por saturación de la API."
+    try:
+        response = client.chat.completions.create(
+            model=MODELS["summarize"],
+            messages=[
+                {"role": "system", "content": "Eres un experto en síntesis de información. Crea resúmenes ejecutivos claros, profesionales y bien estructurados."},
+                {"role": "user", "content": f"Por favor, haz un resumen ejecutivo del siguiente texto. Mantén el idioma original:\n\n{clean_text}"}
+            ],
+            temperature=0.5,
+            max_tokens=1024
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        return f"Error en el resumen (Groq): {str(e)}"
 
 
 def _key_points(text: str) -> str:
-    """Extrae 5 puntos clave usando Qwen vía chat_completion (ultra estable)."""
-    clean = _clean(text, max_chars=8000)
-    client = InferenceClient(token=HF_TOKEN)
+    """Extrae 5 puntos clave usando Mixtral en Groq."""
+    clean_text = _clean(text, max_chars=10000)
     
     try:
-        response = client.chat_completion(
+        response = client.chat.completions.create(
             model=MODELS["analyze"],
             messages=[
-                {
-                    "role": "system",
-                    "content": "Eres un asistente experto en análisis de documentos."
-                },
-                {
-                    "role": "user",
-                    "content": (
-                        "Extrae exactamente 5 puntos clave del siguiente texto. "
-                        "Cada punto debe comenzar con '• ' en una nueva línea. "
-                        "Sé conciso y responde en el mismo idioma del texto original.\n\nTexto:\n" + clean
-                    ),
-                }
+                {"role": "system", "content": "Eres un analista de documentos. Tu objetivo es identificar los conceptos más importantes."},
+                {"role": "user", "content": f"Extrae los 5 puntos clave más relevantes del siguiente texto. Usa viñetas (•) y responde en el idioma original:\n\n{clean_text}"}
             ],
-            max_tokens=450,
+            temperature=0.3,
+            max_tokens=600
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        return f"Error en puntos clave (Groq): {str(e)}"
+
+
+def _translate_pages(pages_text: list) -> str:
+    """Traduce el contenido del PDF de Español a Inglés usando Llama 3."""
+    # Combinamos las páginas para una traducción más coherente
+    full_text = "\n\n".join(pages_text)
+    clean_text = _clean(full_text, max_chars=12000)
+    
+    try:
+        response = client.chat.completions.create(
+            model=MODELS["translate"],
+            messages=[
+                {"role": "system", "content": "Eres un traductor profesional experto en el par de idiomas Español-Inglés."},
+                {"role": "user", "content": f"Traduce el siguiente texto del Español al Inglés. Mantén un tono profesional y respeta el formato de párrafos:\n\n{clean_text}"}
+            ],
             temperature=0.3
         )
         return response.choices[0].message.content.strip()
     except Exception as e:
-        return f"Error al generar puntos clave: {str(e)}"
-
-
-def _translate_pages(pages_text: list) -> str:
-    """Traduce la lista de textos (páginas) en trozos de ≤800 chars."""
-    client = InferenceClient(MODELS["translate"], token=HF_TOKEN)
-    translated_pages = []
-
-    for raw_page in pages_text:
-        page_text = re.sub(r"\s+", " ", raw_page).strip()
-        if not page_text:
-            continue
-
-        # Partir en trozos seguros
-        chunks, remaining = [], page_text
-        while remaining:
-            if len(remaining) <= 800:
-                chunks.append(remaining)
-                break
-            cut = remaining[:800].rfind(" ")
-            cut = cut if cut > 0 else 800
-            chunks.append(remaining[:cut].strip())
-            remaining = remaining[cut:].strip()
-
-        translated_chunks = []
-        for chunk in chunks:
-            if chunk:
-                resp = client.translation(chunk)
-                # Manejo seguro igual que en el resumen
-                if isinstance(resp, str):
-                    translated_chunks.append(resp)
-                elif hasattr(resp, "translation_text"):
-                    translated_chunks.append(resp.translation_text)
-                elif isinstance(resp, list) and len(resp) > 0 and isinstance(resp[0], dict):
-                    translated_chunks.append(resp[0].get("translation_text", str(resp)))
-                elif isinstance(resp, dict):
-                    translated_chunks.append(resp.get("translation_text", str(resp)))
-                else:
-                    translated_chunks.append(str(resp))
-
-        if translated_chunks:
-            translated_pages.append(" ".join(translated_chunks))
-
-    return "\n\n".join(translated_pages) if translated_pages else "(No se encontró texto traducible)"
+        return f"Error en traducción (Groq): {str(e)}"
 
 
 # ─────────────────────────────────────────────────────────────
