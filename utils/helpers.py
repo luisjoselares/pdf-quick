@@ -95,6 +95,14 @@ def get_translations():
             "seo_ai_title": "AI Summary",
             "seo_ai_text": "Generate executive summaries and extract key points from any PDF using AI.",
             "seo_privacy": "🔒 All files are processed in memory. No document is stored on our servers.",
+            # ── Support / Donaciones
+            "support_title": "Support PDF QU⚡CK",
+            "support_desc": "This tool is 100% free and has no absurd limits. If it saved you hours of work, consider buying me a coffee to help keep the servers running. Every contribution counts!",
+            "kofi_btn": "Buy me a coffee on Ko-fi",
+            "kofi_caption": "Accepts cards and PayPal securely.",
+            "qr_expander": "Show QR code to scan",
+            "qr_caption": "Scan from your Binance app",
+            "qr_error": "Missing 'qr_binance.png' file on the server.",
         },
         "es": {
             # ── Marca / Header
@@ -164,10 +172,19 @@ def get_translations():
             "seo_convert_title": "Convertir PDFs",
             "seo_convert_text": "Transforma PDFs a Word, Excel, PowerPoint, HTML, texto e imágenes.",
             "seo_security_title": "Seguridad PDF",
+        
             "seo_security_text": "Añade marcas de agua, numera páginas y desbloquea documentos protegidos.",
             "seo_ai_title": "Resumen con IA",
             "seo_ai_text": "Genera resúmenes ejecutivos y extrae puntos clave de cualquier PDF con inteligencia artificial.",
             "seo_privacy": "🔒 Todos los archivos se procesan en memoria. Ningún documento se almacena en nuestros servidores.",
+            # ── Support / Donaciones
+            "support_title": "Apoya a PDF QU⚡CK",
+            "support_desc": "Esta herramienta es 100% gratuita y sin límites absurdos. Si te ahorró horas de trabajo, considera invitarme un café para ayudar a mantener los servidores encendidos. ¡Todo aporte suma!",
+            "kofi_btn": "Invítame un café en Ko-fi",
+            "kofi_caption": "Acepta tarjetas y PayPal de forma segura.",
+            "qr_expander": "Mostrar código QR para escanear",
+            "qr_caption": "Escanea desde tu app de Binance",
+            "qr_error": "Falta subir el archivo 'qr_binance.png' al servidor.",
         }
     }
     return LANGS[st.session_state.lang]
