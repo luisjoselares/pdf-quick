@@ -182,24 +182,25 @@ with tab_all:
 """, unsafe_allow_html=True)
 
 st.markdown("---")  # Línea separadora elegante
-st.markdown("### ⚡ Apoya a PDF QU⚡CK")
-st.write("Esta herramienta es 100% gratuita y sin límites absurdos. Si te ahorró horas de trabajo, considera invitarme un café para ayudar a mantener los servidores encendidos. ¡Todo aporte suma!")
+st.markdown(f"### ⚡ {t['support_title']}")
+st.write(t['support_desc'])
 
 # Creamos dos columnas para que se vea balanceado
 col_kofi, col_binance = st.columns(2, gap="large")
 
 with col_kofi:
+    # Nota: Agregamos f antes de las comillas triples para inyectar la variable
     st.markdown(
-        """
+        f"""
         <a href="https://ko-fi.com/ldownloader" target="_blank" style="text-decoration: none;">
             <div style="background-color: #FF5E5B; color: white; padding: 15px 20px; border-radius: 12px; text-align: center; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: all 0.3s ease;">
-                ☕ Invítame un café en Ko-fi
+                ☕ {t['kofi_btn']}
             </div>
         </a>
         """, 
         unsafe_allow_html=True
     )
-    st.caption("Acepta tarjetas y PayPal de forma segura.")
+    st.caption(t['kofi_caption'])
 
 with col_binance:
     st.markdown(
@@ -212,11 +213,11 @@ with col_binance:
     )
     
     # El expander mantiene la interfaz limpia
-    with st.expander("📷 Mostrar código QR para escanear"):
+    with st.expander(f"📷 {t['qr_expander']}"):
         try:
             # FIX: Usamos columnas para centrar y un ancho fijo (width=250) para matar el parpadeo
             col_izq, col_centro, col_der = st.columns([1, 2, 1])
             with col_centro:
-                st.image("qr_binance.png", caption="Escanea desde tu app de Binance", width=250)
+                st.image("qr_binance.png", caption=t['qr_caption'], width=250)
         except Exception:
-            st.caption("⚠️ Falta subir el archivo 'qr_binance.png' al servidor.")
+            st.caption(f"⚠️ {t['qr_error']}")
