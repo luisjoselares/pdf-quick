@@ -206,7 +206,7 @@ with col_binance:
     st.markdown(
         """
         <div style="background-color: #FCD535; color: #1E2329; padding: 15px 20px; border-radius: 12px; text-align: center; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-            🪙 Binance Pay ID: 422864557
+             Binance Pay ID: 422864557
         </div>
         """, 
         unsafe_allow_html=True
