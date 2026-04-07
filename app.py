@@ -5,6 +5,7 @@ from controllers.office_controller import handle_conversion
 from controllers.security_controller import handle_security
 from controllers.ai_controller import handle_ai_tools
 import streamlit as st
+import time
 
 if st.query_params.get("sitemap"):
     # Usamos st.code o st.text para que Google vea el contenido como texto
