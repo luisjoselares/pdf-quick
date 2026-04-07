@@ -108,19 +108,19 @@ class OfficeController:
         out.seek(0)
         return out
 
-    @staticmethod
+@staticmethod
     def office_to_pdf(file, original_filename):
-        # ADVERTENCIA: Solo funcionará si el servidor tiene LibreOffice instalado (Docker).
         with tempfile.TemporaryDirectory() as tmp_dir:
             in_p = os.path.join(tmp_dir, original_filename)
             with open(in_p, "wb") as f:
                 f.write(file.read())
                 
-            comando = ["libreoffice", "--headless", "--convert-to", "pdf", in_p, "--outdir", tmp_dir]
+            # Usamos 'soffice' que es el binario estándar en distribuciones Linux/Docker
+            comando = ["soffice", "--headless", "--convert-to", "pdf", in_p, "--outdir", tmp_dir]
             try:
                 subprocess.run(comando, check=True, capture_output=True, timeout=60)
             except FileNotFoundError:
-                raise Exception("LibreOffice no está instalado en este servidor.")
+                raise Exception("El motor de LibreOffice no se encontró en el contenedor.")
                 
             base_name = os.path.splitext(original_filename)[0]
             pdf_p = os.path.join(tmp_dir, f"{base_name}.pdf")
