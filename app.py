@@ -14,6 +14,8 @@ if st.query_params.get("robots"):
     st.text("User-agent: *\nAllow: /\nSitemap: https://pdfquick.online/?sitemap=1")
     st.stop()
 
+if "last_heartbeat" not in st.session_state:
+    st.session_state.last_heartbeat = time.time()
 # Aquí sigue tu código original: st.set_page_config, etc.
 st.set_page_config(
     page_title="PDF QUICK — Unir, Dividir, Convertir y Comprimir PDF Gratis",
