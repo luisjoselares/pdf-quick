@@ -3,6 +3,7 @@ import json
 from flask import Flask, render_template, request, send_file, jsonify
 from controllers.pdf_controller import PDFController
 from controllers.ai_controller import AIController
+from controllers.security_controller import SecurityController
 app = Flask(__name__)
 
 # ─────────────────────────────────────────────────────────────
@@ -136,6 +137,23 @@ def api_ai():
         )
     except Exception as e:
         # Si la API Key no está, o Groq falla, Flask devuelve un error 500 limpio
+        return jsonify({"error": str(e)}), 500
+@app.route('/api/watermark', methods=['POST'])
+def api_watermark():
+    file = request.files.get("pdf")
+    text = request.form.get("text", "CONFIDENCIAL")
+    opacity = request.form.get("opacity", 0.3)
+    color = request.form.get("color", "#FF0000")
+
+    try:
+        output_buffer = SecurityController.process_watermark(file, text, opacity, color)
+        return send_file(
+            output_buffer,
+            mimetype='application/pdf',
+            as_attachment=True,
+            download_name='watermarked.pdf'
+        )
+    except Exception as e:
         return jsonify({"error": str(e)}), 500
 # ─────────────────────────────────────────────────────────────
 # ARRANQUE DEL SERVIDOR PARA RENDER.COM
