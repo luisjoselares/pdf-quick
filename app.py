@@ -7,8 +7,9 @@ from controllers.ai_controller import handle_ai_tools
 import streamlit as st
 
 if st.query_params.get("sitemap"):
-    st.write("https://pdfquick.online/")
-    st.stop() 
+    # Usamos st.code o st.text para que Google vea el contenido como texto
+    st.text("https://pdfquick.online/")
+    st.stop()
 
 
 # Aquí sigue tu código original: st.set_page_config, etc.
