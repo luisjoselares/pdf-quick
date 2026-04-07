@@ -1,4 +1,5 @@
-streamlit
+flask
+gunicorn
 pypdf
 reportlab
 pymupdf
