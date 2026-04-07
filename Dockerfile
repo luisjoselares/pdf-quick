@@ -1,38 +1,28 @@
-# Usamos una imagen de Python oficial
-FROM python:3.11-slim
+# Usamos la imagen completa de Python para evitar problemas de dependencias faltantes
+FROM python:3.11-bullseye
 
-# Evitar diálogos interactivos durante la instalación
+# Evitar diálogos interactivos
 ENV DEBIAN_FRONTEND=noninteractive
 
-# 1. Habilitar componentes 'contrib' para las fuentes de Microsoft
-# 2. Aceptar automáticamente la licencia de EULA para mscorefonts
-# 3. Instalar LibreOffice y fuentes
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends software-properties-common && \
-    sed -i 's/main/main contrib/g' /etc/apt/sources.list.d/debian.sources || sed -i 's/main/main contrib/g' /etc/apt/sources.list && \
-    echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends \
-    libreoffice \
+# Instalación limpia de LibreOffice y fuentes Noto (compatibles con todo)
+RUN apt-get update && apt-get install -y --no-install-recommends \
     libreoffice-writer \
     libreoffice-calc \
-    fonts-liberation \
-    ttf-mscorefonts-installer \
+    fonts-noto-core \
+    fonts-noto-cjk \
+    fonts-noto-extra \
     && apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 # Establecer directorio de trabajo
 WORKDIR /app
 
-# Copiar requerimientos e instalar librerías de Python
+# Copiar e instalar requerimientos
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copiar el resto del código
 COPY . .
 
-# Exponer el puerto que usará Flask
-EXPOSE 5000
-
-# Comando para iniciar con Gunicorn usando el puerto de Render
-CMD ["sh", "-c", "gunicorn main:app --bind 0.0.0.0:$PORT --timeout 180"]
+# Comando de inicio optimizado
+CMD ["sh", "-c", "gunicorn main:app --bind 0.0.0.0:$PORT --timeout 180 --workers 2"]
