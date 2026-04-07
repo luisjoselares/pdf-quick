@@ -67,7 +67,6 @@ class OfficeController:
 
     @staticmethod
     def pdf_to_word(file):
-        # Requiere disco temporal para pdf2docx
         with tempfile.TemporaryDirectory() as tmp_dir:
             pdf_p = os.path.join(tmp_dir, "in.pdf")
             docx_p = os.path.join(tmp_dir, "out.docx")
@@ -108,14 +107,13 @@ class OfficeController:
         out.seek(0)
         return out
 
-@staticmethod
+    @staticmethod
     def office_to_pdf(file, original_filename):
         with tempfile.TemporaryDirectory() as tmp_dir:
             in_p = os.path.join(tmp_dir, original_filename)
             with open(in_p, "wb") as f:
                 f.write(file.read())
                 
-            # Usamos 'soffice' que es el binario estándar en distribuciones Linux/Docker
             comando = ["soffice", "--headless", "--convert-to", "pdf", in_p, "--outdir", tmp_dir]
             try:
                 subprocess.run(comando, check=True, capture_output=True, timeout=60)
