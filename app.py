@@ -10,7 +10,9 @@ if st.query_params.get("sitemap"):
     # Usamos st.code o st.text para que Google vea el contenido como texto
     st.text("https://pdfquick.online/")
     st.stop()
-
+if st.query_params.get("robots"):
+    st.text("User-agent: *\nAllow: /\nSitemap: https://pdfquick.online/?sitemap=1")
+    st.stop()
 
 # Aquí sigue tu código original: st.set_page_config, etc.
 st.set_page_config(
