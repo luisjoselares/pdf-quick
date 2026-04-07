@@ -2,7 +2,7 @@ import os
 import json
 from flask import Flask, render_template, request, send_file, jsonify
 from controllers.pdf_controller import PDFController
-
+from controllers.ai_controller import AIController
 app = Flask(__name__)
 
 # ─────────────────────────────────────────────────────────────
@@ -109,7 +109,34 @@ def api_edit():
         )
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+@app.route('/api/ai', methods=['POST'])
+def api_ai():
+    file = request.files.get("pdf")
+    if not file or file.filename == '':
+        return jsonify({"error": "No se subió ningún archivo"}), 400
 
+    action = request.form.get("action") # "resumen", "puntos_clave", o "traduccion"
+    pages_str = request.form.get("pages", "") # Ejemplo: "1,2,3"
+    
+    if not action or not pages_str:
+        return jsonify({"error": "Faltan parámetros (acción o páginas)"}), 400
+
+    try:
+        # Convertimos "1,2,3" en una lista de enteros: [1, 2, 3]
+        selected_pages = [int(p.strip()) for p in pages_str.split(",") if p.strip().isdigit()]
+        
+        # Procesamos
+        output_buffer, out_filename = AIController.process_document(file, action, selected_pages)
+        
+        return send_file(
+            output_buffer,
+            mimetype='application/pdf',
+            as_attachment=True,
+            download_name=out_filename
+        )
+    except Exception as e:
+        # Si la API Key no está, o Groq falla, Flask devuelve un error 500 limpio
+        return jsonify({"error": str(e)}), 500
 # ─────────────────────────────────────────────────────────────
 # ARRANQUE DEL SERVIDOR PARA RENDER.COM
 # ─────────────────────────────────────────────────────────────
