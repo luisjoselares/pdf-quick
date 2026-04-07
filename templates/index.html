@@ -1,1 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PDF QU⚡CK - Unir PDFs online rápido, gratis y sin límites.">
+    <title>PDF QU⚡CK - Herramientas PDF</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white font-sans min-h-screen">
 
+    <header class="text-center py-10 border-b border-gray-800">
+        <h1 class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600 mb-2">
+            PDF QU⚡CK
+        </h1>
+        <p class="text-gray-400 text-lg">Manipula tus documentos al instante, sin servidores que duerman.</p>
+    </header>
+
+    <main class="max-w-3xl mx-auto p-6 mt-8">
+        
+        <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl border border-gray-700">
+            <h2 class="text-2xl font-bold mb-2 flex items-center gap-2">
+                <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
+                Unir PDFs
+            </h2>
+            <p class="text-gray-400 mb-6 text-sm">Selecciona los archivos PDF en el orden que deseas unirlos.</p>
+
+            <input type="file" id="pdf-inputs" multiple accept=".pdf" 
+                class="block w-full text-sm text-gray-400 
+                file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 
+                file:text-sm file:font-bold file:bg-gray-700 file:text-yellow-400 
+                hover:file:bg-gray-600 cursor-pointer mb-6 transition-colors">
+
+            <div id="file-list-container" class="hidden mb-6">
+                <h3 class="text-sm font-semibold text-gray-300 mb-2">Archivos a unir:</h3>
+                <ul id="file-list" class="space-y-2 text-sm text-gray-400 bg-gray-900 p-4 rounded-lg"></ul>
+            </div>
+
+            <button id="merge-btn" disabled 
+                class="w-full bg-yellow-500 text-gray-900 font-extrabold py-3 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-yellow-400 transition-all shadow-lg">
+                Procesar y Descargar
+            </button>
+
+            <div id="status-message" class="hidden mt-4 text-center font-semibold text-sm"></div>
+        </div>
+
+    </main>
+
+    <script>
+        const input = document.getElementById('pdf-inputs');
+        const listContainer = document.getElementById('file-list-container');
+        const fileList = document.getElementById('file-list');
+        const btn = document.getElementById('merge-btn');
+        const status = document.getElementById('status-message');
+
+        let selectedFiles = [];
+
+        // 1. Cuando el usuario selecciona archivos
+        input.addEventListener('change', (e) => {
+            selectedFiles = Array.from(e.target.files);
+            fileList.innerHTML = '';
+            
+            if(selectedFiles.length > 0) {
+                listContainer.classList.remove('hidden');
+                btn.disabled = false;
+                
+                // Mostramos los nombres en la lista
+                selectedFiles.forEach((file, index) => {
+                    const li = document.createElement('li');
+                    li.className = "flex items-center gap-2";
+                    li.innerHTML = `<span class="bg-gray-700 text-xs px-2 py-1 rounded">${index + 1}</span> ${file.name}`;
+                    fileList.appendChild(li);
+                });
+            } else {
+                listContainer.classList.add('hidden');
+                btn.disabled = true;
+            }
+        });
+
+        // 2. Cuando el usuario hace clic en Procesar
+        btn.addEventListener('click', async () => {
+            if(selectedFiles.length === 0) return;
+
+            // Bloqueamos el botón y mostramos estado de carga
+            btn.disabled = true;
+            btn.textContent = '⏳ Uniendo archivos...';
+            status.className = 'mt-4 text-center font-semibold text-sm text-yellow-400 block';
+            status.textContent = 'Enviando al servidor... por favor espera.';
+
+            // Preparamos los datos tal como Flask los espera ("pdfs")
+            const formData = new FormData();
+            selectedFiles.forEach(file => formData.append('pdfs', file));
+
+            try {
+                // Hacemos la petición a la ruta que creamos en main.py
+                const response = await fetch('/api/merge', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if(!response.ok) throw new Error('Error al procesar los archivos en el servidor.');
+
+                // Recibimos el PDF resultante como Blob (Archivo binario)
+                const blob = await response.blob();
+                
+                // Creamos un link invisible para forzar la descarga en el navegador
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'PDF_QUICK_Unido.pdf';
+                document.body.appendChild(a);
+                a.click();
+                
+                // Limpieza
+                window.URL.revokeObjectURL(url);
+                a.remove();
+
+                // Mensaje de éxito
+                status.className = 'mt-4 text-center font-semibold text-sm text-green-400 block';
+                status.textContent = '✅ ¡Éxito! Tu archivo se ha descargado.';
+                
+            } catch (error) {
+                // Mensaje de error (Reemplaza el cuadro rojo de Streamlit)
+                status.className = 'mt-4 text-center font-semibold text-sm text-red-400 block';
+                status.textContent = '❌ ' + error.message;
+            } finally {
+                // Restauramos el botón
+                btn.disabled = false;
+                btn.textContent = 'Procesar y Descargar';
+            }
+        });
+    </script>
+</body>
+</html>
