@@ -5,7 +5,7 @@ from controllers.pdf_controller import PDFController
 from controllers.ai_controller import AIController
 from controllers.security_controller import SecurityController
 app = Flask(__name__)
-app.config['MAX_CONTENT_LENGTH'] = 200 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 80 * 1024 * 1024
 # ─────────────────────────────────────────────────────────────
 # RUTA DEL FRONTEND (LO QUE GOOGLE Y EL USUARIO VEN)
 # ─────────────────────────────────────────────────────────────
