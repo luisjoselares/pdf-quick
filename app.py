@@ -4,7 +4,14 @@ from controllers.pdf_controller import handle_merge, handle_split, handle_compre
 from controllers.office_controller import handle_conversion
 from controllers.security_controller import handle_security
 from controllers.ai_controller import handle_ai_tools
+import streamlit as st
 
+if st.query_params.get("sitemap"):
+    st.write("https://pdfquick.online/")
+    st.stop() 
+
+
+# Aquí sigue tu código original: st.set_page_config, etc.
 st.set_page_config(
     page_title="PDF QUICK — Unir, Dividir, Convertir y Comprimir PDF Gratis",
     page_icon="⚡",
