@@ -24,7 +24,22 @@
    ```bash
    git clone [https://github.com/luisjoselares/pdf-quick.git](https://github.com/luisjoselares/pdf-quick.git)
    cd pdf-quick
+Install the required dependencies (Make sure you have Python 3.11+ installed):
 
+Bash
+pip install -r requirements.txt
+Set up your Environment Variables:
+Create a .env file in the root directory and add your Groq API key:
+
+Fragmento de código
+GROQ_API_KEY=your_groq_api_key_here
+Run the application:
+
+Bash
+python main.py
+The app will be available at http://localhost:5000 or the port specified in your environment.
+
+(Note: The Office-to-PDF conversion feature requires LibreOffice to be installed on your local machine or container to work properly).
 ### 5. Contribuciones y Soporte
 
 ```markdown
