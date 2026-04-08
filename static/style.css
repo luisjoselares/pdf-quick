@@ -173,3 +173,53 @@ html, body {
 .status-error { color: #ff3b30; }
 
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* ─── BANNER DE DONACIÓN Y FOOTER SEO ─── */
+.donation-banner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    grid-column: 1 / -1; /* Hace que el banner ocupe todo el ancho disponible */
+    background: linear-gradient(135deg, var(--card-bg) 0%, rgba(243, 186, 47, 0.1) 100%);
+    border: 1px solid rgba(243, 186, 47, 0.3);
+    text-align: center;
+    gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .donation-banner {
+        flex-direction: row;
+        text-align: left;
+        padding: 2rem 3rem;
+    }
+}
+
+.donation-text {
+    flex: 1;
+}
+
+.donation-text h2 {
+    color: #F3BA2F; /* Color oficial de Binance */
+}
+
+.donation-img img {
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    background-color: white;
+    padding: 8px;
+    transition: transform 0.3s ease;
+}
+
+.donation-img img:hover {
+    transform: scale(1.05);
+}
+
+.seo-footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-top: 2rem;
+    border-top: 1px solid var(--border);
+}
