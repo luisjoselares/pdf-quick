@@ -1,30 +1,29 @@
 # PDF QU⚡CK - Fast & Free Online PDF Tools
 
-**PDF QU⚡CK** is a lightweight, web-based application designed to help you manage your PDF documents quickly and securely. No registrations, no watermarks, and no limits.
+**PDF QU⚡CK** is a lightweight, blazing-fast web application designed to help you manage your PDF documents securely. No registrations, no watermarks, and no limits.
 
 [Visit PDF QU⚡CK](https://pdfquick.online)
 
 ## ✨ Features
 - **Merge & Split:** Combine multiple PDFs or extract specific pages.
-- **Conversion:** Convert Office documents (Word, Excel, PPT) and images to PDF.
-- **Security:** Add passwords to your PDF files or remove restrictions.
-- **AI-Powered:** (Opcional si usas el ai_controller) Summarize or chat with your PDF documents.
-- **Privacy First:** Files are processed and deleted from the server after the task is completed.
+- **Universal Conversion:** Convert Office documents (Word, Excel, PPT) and Images to PDF, or extract text and tables from PDFs.
+- **Security:** Add passwords, watermarks, or unlock your PDF files.
+- **AI-Powered Analysis:** Generate executive summaries, extract key points, or translate documents seamlessly using Llama 3 (powered by Groq).
+- **Privacy First:** Files are processed entirely in memory or temporary directories and instantly deleted after the task is completed.
 
-- ## 🛠️ Tech Stack
-- **Frontend/Backend:** [Streamlit](https://streamlit.io/)
-- **PDF Processing:** PyPDF2 / pdf2image
-- **Styling:** Custom CSS for dark/light mode support.
-- **Deployment:** Streamlit Cloud + Cloudflare.
+## 🛠️ Tech Stack
+- **Frontend:** Vanilla HTML5, CSS3 (Custom Dark/Light mode), and JavaScript (with i18n support for ES/EN/FR/PT).
+- **Backend:** Flask (Python) & Gunicorn.
+- **PDF/Office Engine:** PyMuPDF, pdfplumber, pdf2docx, ReportLab, and LibreOffice Headless.
+- **AI Engine:** Groq API (Llama-3.3-70b).
+- **Deployment:** Render (Dockerized Environment) + Cloudflare (DNS, Caching & Security).
 
-- ## 🚀 Local Setup
+## 🚀 Local Setup
 
 1. Clone the repository:
    ```bash
    git clone [https://github.com/luisjoselares/pdf-quick.git](https://github.com/luisjoselares/pdf-quick.git)
    cd pdf-quick
-pip install -r requirements.txt
-streamlit run app.py
 
 ### 5. Contribuciones y Soporte
 
