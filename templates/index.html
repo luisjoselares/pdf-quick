@@ -129,8 +129,8 @@
         <p>&copy; 2026 PDF QU⚡CK - <span data-i18n="footer">Creado para simplificar tus documentos.</span></p>
     </footer>
 
-    <script>
-        // 🟢 1. LÓGICA DE TRADUCCIÓN AUTOMÁTICA (i18n)
+<script>
+        // 🟢 1. DICCIONARIO MULTILENGUAJE (i18n)
         const translations = {
             "en": {
                 "subtitle": "Free tools to manipulate your documents instantly.",
@@ -171,51 +171,152 @@
                 "placeholder_start": "Start Pg.",
                 "placeholder_end": "End Pg.",
                 "placeholder_pages": "Pages (e.g. 1,2)",
-                "placeholder_sec": "Password or Text..."
+                "placeholder_sec": "Password or Text...",
+                // Alertas y estados
+                "msg_processing": "Processing...",
+                "msg_sending": "⏳ Sending to server...",
+                "msg_success": "✅ Download complete!",
+                "alert_files": "Select files",
+                "alert_file": "Select a file"
+            },
+            "pt": {
+                "subtitle": "Ferramentas gratuitas para manipular seus documentos instantaneamente.",
+                "pills": "Rápido • Seguro • Sem Limites",
+                "tab_main": "Ferramentas Principais",
+                "tab_extras": "Conversões e Segurança",
+                "merge_title": "Juntar PDFs",
+                "merge_desc": "Combine vários arquivos em um só.",
+                "split_title": "Dividir PDF",
+                "split_desc": "Extraia um intervalo de páginas do seu documento.",
+                "comp_title": "Comprimir PDF",
+                "comp_desc": "Reduza o tamanho do seu arquivo sem perder a qualidade.",
+                "comp_low": "Compressão Baixa",
+                "comp_med": "Compressão Média (Ideal)",
+                "comp_high": "Compressão Alta",
+                "ai_title": "Analisar com IA",
+                "ai_desc": "Resuma ou traduza com Llama 3.",
+                "ai_sum": "Resumo",
+                "ai_key": "Pontos Principais",
+                "ai_trans": "Traduzir (ES para EN)",
+                "conv_title": "Conversor Universal",
+                "conv_desc": "Transforme entre PDF, Word, Excel e Imagens.",
+                "conv_img": "Imagens ➔ PDF",
+                "sec_title": "Segurança",
+                "sec_desc": "Desbloqueie ou adicione marcas d'água ao seu PDF.",
+                "sec_unlock": "Desbloquear PDF",
+                "sec_water": "Adicionar Marca d'água",
+                "sec_page": "Paginação Automática",
+                "donate_title": "☕ Apoie PDF QU⚡CK",
+                "donate_desc": "Manter os servidores e as IAs tem um custo. Se esta ferramenta economizou seu tempo, considere apoiar o projeto.",
+                "btn_kofi": "Pague-me um café no Ko-fi",
+                "donate_qr": "Ou escaneie o código QR para doar via <strong>Binance Pay</strong>.",
+                "btn_process": "Processar Documento",
+                "btn_ai": "Gerar com IA",
+                "btn_conv": "Converter Arquivo",
+                "btn_sec": "Aplicar Segurança",
+                "footer": "Criado para simplificar seus documentos.",
+                "placeholder_start": "Pág. Início",
+                "placeholder_end": "Pág. Fim",
+                "placeholder_pages": "Páginas (ex: 1,2)",
+                "placeholder_sec": "Senha ou Texto...",
+                "msg_processing": "Processando...",
+                "msg_sending": "⏳ Enviando para o servidor...",
+                "msg_success": "✅ Download concluído!",
+                "alert_files": "Selecione os arquivos",
+                "alert_file": "Selecione um arquivo"
+            },
+            "fr": {
+                "subtitle": "Outils gratuits pour manipuler vos documents instantanément.",
+                "pills": "Rapide • Sécurisé • Sans Limites",
+                "tab_main": "Outils Principaux",
+                "tab_extras": "Conversions & Sécurité",
+                "merge_title": "Fusionner des PDF",
+                "merge_desc": "Combinez plusieurs fichiers en un seul.",
+                "split_title": "Diviser un PDF",
+                "split_desc": "Extrayez une plage de pages de votre document.",
+                "comp_title": "Compresser un PDF",
+                "comp_desc": "Réduisez la taille de votre fichier sans perdre en qualité.",
+                "comp_low": "Compression Faible",
+                "comp_med": "Compression Moyenne (Idéale)",
+                "comp_high": "Compression Élevée",
+                "ai_title": "Analyser avec l'IA",
+                "ai_desc": "Résumez ou traduisez avec Llama 3.",
+                "ai_sum": "Résumé",
+                "ai_key": "Points Clés",
+                "ai_trans": "Traduire (ES vers EN)",
+                "conv_title": "Convertisseur Universel",
+                "conv_desc": "Transformez entre PDF, Word, Excel et Images.",
+                "conv_img": "Images ➔ PDF",
+                "sec_title": "Sécurité",
+                "sec_desc": "Déverrouillez ou ajoutez des filigranes à votre PDF.",
+                "sec_unlock": "Déverrouiller le PDF",
+                "sec_water": "Ajouter un Filigrane",
+                "sec_page": "Pagination Automatique",
+                "donate_title": "☕ Soutenir PDF QU⚡CK",
+                "donate_desc": "L'entretien des serveurs et de l'IA a un coût. Si cet outil vous a fait gagner du temps, pensez à soutenir le projet.",
+                "btn_kofi": "Offrez-moi un café sur Ko-fi",
+                "donate_qr": "Ou scannez le code QR pour faire un don via <strong>Binance Pay</strong>.",
+                "btn_process": "Traiter le Document",
+                "btn_ai": "Générer avec l'IA",
+                "btn_conv": "Convertir le Fichier",
+                "btn_sec": "Appliquer la Sécurité",
+                "footer": "Créé pour simplifier vos documents.",
+                "placeholder_start": "Page de début",
+                "placeholder_end": "Page de fin",
+                "placeholder_pages": "Pages (ex: 1,2)",
+                "placeholder_sec": "Mot de passe ou Texte...",
+                "msg_processing": "Traitement...",
+                "msg_sending": "⏳ Envoi au serveur...",
+                "msg_success": "✅ Téléchargement terminé !",
+                "alert_files": "Sélectionnez des fichiers",
+                "alert_file": "Sélectionnez un fichier"
             }
         };
 
-        function setLanguage() {
-            // Detectar el idioma del navegador
-            const userLang = navigator.language || navigator.userLanguage;
-            const isEnglish = userLang.toLowerCase().startsWith('en');
+// Variable global para saber el idioma actual (por defecto 'es')
+        let currentLang = 'es';
 
-            if (isEnglish) {
-                // Reemplazar textos
-                document.querySelectorAll('[data-i18n]').forEach(el => {
-                    const key = el.getAttribute('data-i18n');
-                    if (translations['en'][key]) {
-                        if (el.tagName === 'OPTION') {
-                            el.text = translations['en'][key];
-                        } else {
-                            el.innerHTML = translations['en'][key];
-                        }
-                    }
-                });
-                // Reemplazar placeholders
-                document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-                    const key = el.getAttribute('data-i18n-placeholder');
-                    if (translations['en'][key]) {
-                        el.placeholder = translations['en'][key];
-                    }
-                });
-            }
+        function setLanguage() {
+            // Obtener las primeras 2 letras del idioma del navegador
+            const browserLang = (navigator.language || navigator.userLanguage).toLowerCase().substring(0, 2);
+            
+            // Si es español nativo, no hacemos nada (el HTML ya está en español)
+            if (browserLang === 'es') return;
+
+            // EL CAMBIO ESTÁ AQUÍ:
+            // Si existe en el diccionario (pt, fr), lo usamos. Si NO existe (de, it, jp), forzamos Inglés ('en').
+            currentLang = translations[browserLang] ? browserLang : 'en';
+            
+            const t = translations[currentLang];
+
+            // 1. Reemplazar textos normales
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key]) {
+                    if (el.tagName === 'OPTION') el.text = t[key];
+                    else el.innerHTML = t[key];
+                }
+            });
+
+            // 2. Reemplazar placeholders de inputs
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (t[key]) el.placeholder = t[key];
+            });
         }
         
-        // Ejecutar traducción al cargar la página
         document.addEventListener('DOMContentLoaded', setLanguage);
 
+        // Funciones de ayuda para obtener textos de alertas según el idioma
+        const t_msg = (key, defaultEs) => (currentLang !== 'es' && translations[currentLang][key]) ? translations[currentLang][key] : defaultEs;
 
         // 🟢 2. LÓGICA DE LAS PESTAÑAS (SWAP)
         function switchTab(category, btnElement) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             btnElement.classList.add('active');
             document.querySelectorAll('.st-card[data-category]').forEach(card => {
-                if (card.getAttribute('data-category') === category) {
-                    card.classList.remove('hidden-card');
-                } else {
-                    card.classList.add('hidden-card');
-                }
+                if (card.getAttribute('data-category') === category) card.classList.remove('hidden-card');
+                else card.classList.add('hidden-card');
             });
         }
 
@@ -226,9 +327,9 @@
             const originalText = btn.textContent;
             
             btn.disabled = true;
-            btn.textContent = navigator.language.startsWith('en') ? "Processing..." : "Procesando...";
+            btn.textContent = t_msg("msg_processing", "Procesando...");
             msg.className = "status-msg status-processing";
-            msg.textContent = navigator.language.startsWith('en') ? "⏳ Sending to server..." : "⏳ Enviando al servidor...";
+            msg.textContent = t_msg("msg_sending", "⏳ Enviando al servidor...");
             
             try {
                 const response = await fetch(url, { method: 'POST', body: formData });
@@ -242,7 +343,7 @@
                 link.download = downloadName;
                 link.click();
                 msg.className = "status-msg status-success";
-                msg.textContent = navigator.language.startsWith('en') ? "✅ Download complete!" : "✅ ¡Descarga completada!";
+                msg.textContent = t_msg("msg_success", "✅ ¡Descarga completada!");
             } catch (error) {
                 msg.className = "status-msg status-error";
                 msg.textContent = "❌ " + error.message;
@@ -255,7 +356,7 @@
         // Eventos de botones
         document.getElementById('merge-btn').onclick = () => {
             const files = document.getElementById('merge-in').files;
-            if(!files.length) return alert(navigator.language.startsWith('en') ? "Select files" : "Selecciona archivos");
+            if(!files.length) return alert(t_msg("alert_files", "Selecciona archivos"));
             const fd = new FormData();
             for(let file of files) fd.append('pdfs', file);
             procesar('merge-btn', 'merge-msg', '/api/merge', fd, 'Unido.pdf');
@@ -263,7 +364,7 @@
 
         document.getElementById('split-btn').onclick = () => {
             const file = document.getElementById('split-in').files[0];
-            if(!file) return alert(navigator.language.startsWith('en') ? "Select a file" : "Selecciona un archivo");
+            if(!file) return alert(t_msg("alert_file", "Selecciona un archivo"));
             const fd = new FormData();
             fd.append('pdf', file);
             fd.append('start_page', document.getElementById('split-start').value || 1);
@@ -273,7 +374,7 @@
 
         document.getElementById('comp-btn').onclick = () => {
             const file = document.getElementById('comp-in').files[0];
-            if(!file) return alert(navigator.language.startsWith('en') ? "Select a file" : "Selecciona un archivo");
+            if(!file) return alert(t_msg("alert_file", "Selecciona un archivo"));
             const fd = new FormData();
             fd.append('pdf', file);
             fd.append('level', document.getElementById('comp-lvl').value);
@@ -282,7 +383,7 @@
 
         document.getElementById('ai-btn').onclick = () => {
             const file = document.getElementById('ai-in').files[0];
-            if(!file) return alert(navigator.language.startsWith('en') ? "Select a file" : "Selecciona un archivo");
+            if(!file) return alert(t_msg("alert_file", "Selecciona un archivo"));
             const fd = new FormData();
             fd.append('pdf', file);
             fd.append('action', document.getElementById('ai-action').value);
@@ -293,7 +394,7 @@
         document.getElementById('conv-btn').onclick = () => {
             const files = document.getElementById('conv-in').files;
             const action = document.getElementById('conv-action').value;
-            if(!files.length) return alert(navigator.language.startsWith('en') ? "Select files" : "Selecciona archivo(s)");
+            if(!files.length) return alert(t_msg("alert_files", "Selecciona archivo(s)"));
             const fd = new FormData();
             fd.append('action', action);
             if(action === 'img2pdf') {
@@ -306,7 +407,7 @@
 
         document.getElementById('sec-btn').onclick = () => {
             const file = document.getElementById('sec-in').files[0];
-            if(!file) return alert(navigator.language.startsWith('en') ? "Select a file" : "Selecciona un archivo");
+            if(!file) return alert(t_msg("alert_file", "Selecciona un archivo"));
             const action = document.getElementById('sec-action').value;
             const fd = new FormData();
             fd.append('file', file);
