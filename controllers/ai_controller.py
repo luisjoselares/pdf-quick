@@ -17,7 +17,7 @@ MODELS = {
     "analyze":   "llama-3.3-70b-versatile",
     "translate": "llama-3.3-70b-versatile",
 }
-}
+
 
 class AIController:
     """
