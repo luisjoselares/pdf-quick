@@ -1,0 +1,175 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap');
+
+:root {
+    --bg-app: #ffffff;
+    --text-main: #1d1d1f;
+    --text-secondary: #86868b;
+    --card-bg: #f5f5f7;
+    --accent: #0071e3;
+    --accent-alt: #af52de;
+    --border: #eaeaea;
+    --shadow: rgba(0, 0, 0, 0.06);
+    --shimmer-bg: linear-gradient(90deg, #f5f5f7 25%, #e8e8ed 50%, #f5f5f7 75%);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-app: #0e1117;
+        --text-main: #f5f5f7;
+        --card-bg: #1c1c1e;
+        --border: #38383a;
+        --shadow: rgba(0, 0, 0, 0.2);
+        --shimmer-bg: linear-gradient(90deg, #1c1c1e 25%, #3a3a3c 50%, #1c1c1e 75%);
+    }
+}
+
+html, body {
+    font-family: 'Inter', sans-serif !important;
+    background-color: var(--bg-app) !important;
+    color: var(--text-main) !important;
+    margin: 0;
+    padding: 0;
+}
+
+/* ─── TÍTULO Y HEADER ─── */
+.header-container {
+    text-align: center;
+    padding: 3rem 1rem 1rem 1rem;
+}
+.main-title {
+    font-size: 3.8rem;
+    font-weight: 800;
+    background: linear-gradient(100deg, var(--text-main) 40%, var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+}
+.sub-title {
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.3rem;
+}
+.sub-pills {
+    color: var(--accent);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    opacity: 0.85;
+}
+
+/* ─── GRID DE HERRAMIENTAS ─── */
+.tools-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+}
+@media (min-width: 768px) {
+    .tools-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* ─── CONTENEDOR PRINCIPAL DE HERRAMIENTA ─── */
+.st-card {
+    border-radius: 22px;
+    border: 1px solid var(--border);
+    padding: 24px;
+    background-color: var(--card-bg);
+    box-shadow: 0 3px 18px var(--shadow);
+    box-sizing: border-box;
+}
+
+.st-card h2 {
+    margin-top: 0;
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+}
+
+.tool-description {
+    color: var(--text-secondary);
+    font-size: 0.92rem;
+    margin-top: -0.4rem;
+    margin-bottom: 1.2rem;
+}
+
+/* ─── INPUTS Y SELECTS ─── */
+.st-input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background-color: var(--bg-app);
+    color: var(--text-main);
+    font-size: 0.95rem;
+    font-family: inherit;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+/* ─── FILE UPLOADER ─── */
+.st-uploader {
+    background-color: transparent;
+    border: 2px dashed var(--accent);
+    border-radius: 16px;
+    padding: 20px;
+    transition: all 0.2s ease;
+    width: 100%;
+    color: var(--text-secondary);
+    font-family: inherit;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+.st-uploader:hover {
+    background-color: rgba(0, 113, 227, 0.04);
+}
+.st-uploader::file-selector-button {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-main);
+    padding: 8px 12px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-right: 15px;
+}
+
+/* ─── BOTONES PRIMARIOS DE ACCIÓN ─── */
+.st-btn-primary {
+    width: 100%;
+    border-radius: 14px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    padding: 0.55rem 1rem;
+    min-height: 46px;
+    cursor: pointer;
+    border: 2px solid var(--accent);
+    box-shadow: 0 0 14px rgba(0, 113, 227, 0.25);
+    background-color: var(--bg-app);
+    color: var(--accent);
+}
+.st-btn-primary:hover:not(:disabled) {
+    box-shadow: 0 0 22px rgba(0, 113, 227, 0.45);
+}
+.st-btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ─── MENSAJES DE ESTADO ─── */
+.status-msg {
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-top: 15px;
+}
+.status-processing { color: var(--accent); }
+.status-success { color: #34c759; }
+.status-error { color: #ff3b30; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
