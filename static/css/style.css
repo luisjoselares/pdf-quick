@@ -262,3 +262,33 @@ html, body {
 .hidden-card {
     display: none !important;
 }
+/* ─── BOTÓN DE KO-FI ─── */
+.donation-buttons {
+    margin-top: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.kofi-btn {
+    display: inline-flex;
+    align-items: center;
+    background-color: #FF5E5B; /* Color rojo oficial de Ko-fi */
+    color: #ffffff !important;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    padding: 10px 22px;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(255, 94, 91, 0.3);
+}
+
+.kofi-btn:hover {
+    background-color: #f05350;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 94, 91, 0.45);
+}
+
+.kofi-icon {
+    width: 22px;
+    margin-right: 10px;
+}
