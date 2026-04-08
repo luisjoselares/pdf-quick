@@ -3,141 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF QU⚡CK - Unir, Dividir, Comprimir y Convertir PDFs Gratis</title>
+    <title>PDF QU⚡CK - Unir, Dividir, Comprimir y Convertir PDFs</title>
     <meta name="description" content="Herramienta online gratuita para manipular archivos PDF. Une, divide, comprime, convierte a Word/Excel y analiza tus documentos con Inteligencia Artificial al instante.">
     <link rel="canonical" href="https://pdfquick.online/">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
 </head>
 <body>
 
     <header class="header-container">
         <h1 class="main-title">PDF QU⚡CK</h1>
-        <p class="sub-title">Herramientas gratuitas para manipular tus documentos al instante.</p>
-        <p class="sub-pills">Rápido • Seguro • Sin Límites</p>
+        <p class="sub-title" data-i18n="subtitle">Herramientas gratuitas para manipular tus documentos al instante.</p>
+        <p class="sub-pills" data-i18n="pills">Rápido • Seguro • Sin Límites</p>
     </header>
 
     <div class="st-tabs-container">
-        <button class="tab-btn active" onclick="switchTab('principales', this)">Principales</button>
-        <button class="tab-btn" onclick="switchTab('extras', this)">Conversiones y Seguridad</button>
+        <button class="tab-btn active" onclick="switchTab('principales', this)" data-i18n="tab_main">Principales</button>
+        <button class="tab-btn" onclick="switchTab('extras', this)" data-i18n="tab_extras">Conversiones y Seguridad</button>
     </div>
 
     <main class="tools-grid">
         
         <section class="st-card" data-category="principales">
-            <h2>Unir PDFs</h2>
-            <p class="tool-description">Combina múltiples archivos en uno solo.</p>
+            <h2 data-i18n="merge_title">Unir PDFs</h2>
+            <p class="tool-description" data-i18n="merge_desc">Combina múltiples archivos en uno solo.</p>
             <input type="file" id="merge-in" multiple accept=".pdf" class="st-uploader">
-            <button id="merge-btn" class="st-btn-primary">Procesar Documento</button>
+            <button id="merge-btn" class="st-btn-primary" data-i18n="btn_process">Procesar Documento</button>
             <div id="merge-msg" class="status-msg"></div>
         </section>
 
         <section class="st-card" data-category="principales">
-            <h2>Dividir PDF</h2>
-            <p class="tool-description">Extrae un rango de páginas de tu documento.</p>
+            <h2 data-i18n="split_title">Dividir PDF</h2>
+            <p class="tool-description" data-i18n="split_desc">Extrae un rango de páginas de tu documento.</p>
             <input type="file" id="split-in" accept=".pdf" class="st-uploader">
             <div class="grid-2">
-                <input type="number" id="split-start" placeholder="Pág. Inicio" class="st-input">
-                <input type="number" id="split-end" placeholder="Pág. Fin" class="st-input">
+                <input type="number" id="split-start" placeholder="Pág. Inicio" class="st-input" data-i18n-placeholder="placeholder_start">
+                <input type="number" id="split-end" placeholder="Pág. Fin" class="st-input" data-i18n-placeholder="placeholder_end">
             </div>
-            <button id="split-btn" class="st-btn-primary">Procesar Documento</button>
+            <button id="split-btn" class="st-btn-primary" data-i18n="btn_process">Procesar Documento</button>
             <div id="split-msg" class="status-msg"></div>
         </section>
 
         <section class="st-card" data-category="principales">
-            <h2>Comprimir PDF</h2>
-            <p class="tool-description">Reduce el tamaño de tu archivo sin perder calidad.</p>
+            <h2 data-i18n="comp_title">Comprimir PDF</h2>
+            <p class="tool-description" data-i18n="comp_desc">Reduce el tamaño de tu archivo sin perder calidad.</p>
             <input type="file" id="comp-in" accept=".pdf" class="st-uploader">
             <select id="comp-lvl" class="st-input">
-                <option value="Baja">Compresión Baja</option>
-                <option value="Media" selected>Compresión Media (Ideal)</option>
-                <option value="Alta">Compresión Alta</option>
+                <option value="Baja" data-i18n="comp_low">Compresión Baja</option>
+                <option value="Media" selected data-i18n="comp_med">Compresión Media (Ideal)</option>
+                <option value="Alta" data-i18n="comp_high">Compresión Alta</option>
             </select>
-            <button id="comp-btn" class="st-btn-primary">Procesar Documento</button>
+            <button id="comp-btn" class="st-btn-primary" data-i18n="btn_process">Procesar Documento</button>
             <div id="comp-msg" class="status-msg"></div>
         </section>
 
         <section class="st-card" data-category="principales">
-            <h2>Analizar con IA</h2>
-            <p class="tool-description">Resumen o traducción con Llama 3.</p>
+            <h2 data-i18n="ai_title">Analizar con IA</h2>
+            <p class="tool-description" data-i18n="ai_desc">Resumen o traducción con Llama 3.</p>
             <input type="file" id="ai-in" accept=".pdf" class="st-uploader">
             <div class="grid-2">
                 <select id="ai-action" class="st-input">
-                    <option value="resumen">Resumen</option>
-                    <option value="puntos_clave">Puntos Clave</option>
-                    <option value="traduccion">Traducir (ES-EN)</option>
+                    <option value="resumen" data-i18n="ai_sum">Resumen</option>
+                    <option value="puntos_clave" data-i18n="ai_key">Puntos Clave</option>
+                    <option value="traduccion" data-i18n="ai_trans">Traducir (ES-EN)</option>
                 </select>
-                <input type="text" id="ai-pages" placeholder="Páginas (ej: 1,2)" value="1" class="st-input">
+                <input type="text" id="ai-pages" placeholder="Páginas (ej: 1,2)" value="1" class="st-input" data-i18n-placeholder="placeholder_pages">
             </div>
-            <button id="ai-btn" class="st-btn-primary">Generar con IA</button>
+            <button id="ai-btn" class="st-btn-primary" data-i18n="btn_ai">Generar con IA</button>
             <div id="ai-msg" class="status-msg"></div>
         </section>
 
         <section class="st-card hidden-card" data-category="extras">
-            <h2>Conversor Universal</h2>
-            <p class="tool-description">Transforma entre PDF, Word, Excel e Imágenes.</p>
+            <h2 data-i18n="conv_title">Conversor Universal</h2>
+            <p class="tool-description" data-i18n="conv_desc">Transforma entre PDF, Word, Excel e Imágenes.</p>
             <input type="file" id="conv-in" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.png,.jpg,.jpeg" class="st-uploader">
             <select id="conv-action" class="st-input">
-                <option value="pdf2word">PDF a Word</option>
-                <option value="pdf2excel">PDF a Excel</option>
-                <option value="pdf2img">PDF a Imágenes</option>
-                <option value="office2pdf">Word/Excel/PPT a PDF</option>
-                <option value="img2pdf">Imágenes a PDF</option>
+                <option value="pdf2word">PDF ➔ Word</option>
+                <option value="pdf2excel">PDF ➔ Excel</option>
+                <option value="pdf2img">PDF ➔ Imágenes</option>
+                <option value="office2pdf">Word/Excel/PPT ➔ PDF</option>
+                <option value="img2pdf" data-i18n="conv_img">Imágenes ➔ PDF</option>
             </select>
-            <button id="conv-btn" class="st-btn-primary">Convertir Archivo</button>
+            <button id="conv-btn" class="st-btn-primary" data-i18n="btn_conv">Convertir Archivo</button>
             <div id="conv-msg" class="status-msg"></div>
         </section>
 
         <section class="st-card hidden-card" data-category="extras">
-            <h2>Seguridad</h2>
-            <p class="tool-description">Desbloquea o pon marcas de agua a tu PDF.</p>
+            <h2 data-i18n="sec_title">Seguridad</h2>
+            <p class="tool-description" data-i18n="sec_desc">Desbloquea o pon marcas de agua a tu PDF.</p>
             <input type="file" id="sec-in" accept=".pdf" class="st-uploader">
             <select id="sec-action" class="st-input">
-                <option value="unlock">Desbloquear PDF</option>
-                <option value="watermark">Marca de Agua</option>
-                <option value="pagination">Paginación Automática</option>
+                <option value="unlock" data-i18n="sec_unlock">Desbloquear PDF</option>
+                <option value="watermark" data-i18n="sec_water">Marca de Agua</option>
+                <option value="pagination" data-i18n="sec_page">Paginación Automática</option>
             </select>
-            <input type="text" id="sec-text" placeholder="Contraseña o Texto..." class="st-input">
-            <button id="sec-btn" class="st-btn-primary">Aplicar Seguridad</button>
+            <input type="text" id="sec-text" placeholder="Contraseña o Texto..." class="st-input" data-i18n-placeholder="placeholder_sec">
+            <button id="sec-btn" class="st-btn-primary" data-i18n="btn_sec">Aplicar Seguridad</button>
             <div id="sec-msg" class="status-msg"></div>
         </section>
 
         <section class="st-card donation-banner">
             <div class="donation-text">
-                <h2>☕ Apoya a PDF QU⚡CK</h2>
-                <p class="tool-description">Mantener los servidores y los motores de Inteligencia Artificial tiene un costo. Si esta herramienta te ahorró tiempo de trabajo, considera apoyar el proyecto.</p>
+                <h2 data-i18n="donate_title">☕ Apoya a PDF QU⚡CK</h2>
+                <p class="tool-description" data-i18n="donate_desc">Mantener los servidores y los motores de Inteligencia Artificial tiene un costo. Si esta herramienta te ahorró tiempo de trabajo, considera apoyar el proyecto.</p>
                 
                 <div class="donation-buttons">
                     <a href="https://ko-fi.com/ldownloader" target="_blank" rel="noopener noreferrer" class="kofi-btn">
                         <img src="https://storage.ko-fi.com/cdn/cup-border.png" alt="Icono Ko-fi" class="kofi-icon">
-                        Invítame un café en Ko-fi
+                        <span data-i18n="btn_kofi">Invítame un café en Ko-fi</span>
                     </a>
                 </div>
 
-                <p class="tool-description" style="margin-top: 1rem; font-size: 0.85rem; opacity: 0.8;">
+                <p class="tool-description" style="margin-top: 1rem; font-size: 0.85rem; opacity: 0.8;" data-i18n="donate_qr">
                     O escanea el código QR para donar vía <strong>Binance Pay</strong>.
                 </p>
             </div>
             <div class="donation-img">
-                <img src="{{ url_for('static', filename='qr_binance.png') }}" alt="Código QR para donar vía Binance" width="140" loading="lazy">
+                <img src="{{ url_for('static', filename='qr_binance.png') }}" alt="Código QR Binance" width="140" loading="lazy">
             </div>
         </section>
 
     </main>
 
     <footer class="seo-footer">
-        <p>&copy; 2026 PDF QU⚡CK - Creado para simplificar tus documentos.</p>
+        <p>&copy; 2026 PDF QU⚡CK - <span data-i18n="footer">Creado para simplificar tus documentos.</span></p>
     </footer>
 
     <script>
-        // 🟢 LÓGICA DE LAS PESTAÑAS (SWAP)
-        function switchTab(category, btnElement) {
-            // Quitar clase activa de todos los botones
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            // Poner clase activa al botón clickeado
-            btnElement.classList.add('active');
+        // 🟢 1. LÓGICA DE TRADUCCIÓN AUTOMÁTICA (i18n)
+        const translations = {
+            "en": {
+                "subtitle": "Free tools to manipulate your documents instantly.",
+                "pills": "Fast • Secure • Limitless",
+                "tab_main": "Main Tools",
+                "tab_extras": "Conversions & Security",
+                "merge_title": "Merge PDFs",
+                "merge_desc": "Combine multiple files into a single one.",
+                "split_title": "Split PDF",
+                "split_desc": "Extract a range of pages from your document.",
+                "comp_title": "Compress PDF",
+                "comp_desc": "Reduce your file size without losing quality.",
+                "comp_low": "Low Compression",
+                "comp_med": "Medium Compression (Ideal)",
+                "comp_high": "High Compression",
+                "ai_title": "AI Analysis",
+                "ai_desc": "Summarize or translate with Llama 3.",
+                "ai_sum": "Summary",
+                "ai_key": "Key Points",
+                "ai_trans": "Translate (ES to EN)",
+                "conv_title": "Universal Converter",
+                "conv_desc": "Transform between PDF, Word, Excel, and Images.",
+                "conv_img": "Images ➔ PDF",
+                "sec_title": "Security",
+                "sec_desc": "Unlock or add watermarks to your PDF.",
+                "sec_unlock": "Unlock PDF",
+                "sec_water": "Add Watermark",
+                "sec_page": "Auto Pagination",
+                "donate_title": "☕ Support PDF QU⚡CK",
+                "donate_desc": "Maintaining servers and AI engines costs money. If this tool saved you time, consider supporting the project.",
+                "btn_kofi": "Buy me a coffee on Ko-fi",
+                "donate_qr": "Or scan the QR code to donate via <strong>Binance Pay</strong>.",
+                "btn_process": "Process Document",
+                "btn_ai": "Generate with AI",
+                "btn_conv": "Convert File",
+                "btn_sec": "Apply Security",
+                "footer": "Created to simplify your documents.",
+                "placeholder_start": "Start Pg.",
+                "placeholder_end": "End Pg.",
+                "placeholder_pages": "Pages (e.g. 1,2)",
+                "placeholder_sec": "Password or Text..."
+            }
+        };
 
-            // Mostrar solo las tarjetas de la categoría seleccionada
+        function setLanguage() {
+            // Detectar el idioma del navegador
+            const userLang = navigator.language || navigator.userLanguage;
+            const isEnglish = userLang.toLowerCase().startsWith('en');
+
+            if (isEnglish) {
+                // Reemplazar textos
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    if (translations['en'][key]) {
+                        if (el.tagName === 'OPTION') {
+                            el.text = translations['en'][key];
+                        } else {
+                            el.innerHTML = translations['en'][key];
+                        }
+                    }
+                });
+                // Reemplazar placeholders
+                document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                    const key = el.getAttribute('data-i18n-placeholder');
+                    if (translations['en'][key]) {
+                        el.placeholder = translations['en'][key];
+                    }
+                });
+            }
+        }
+        
+        // Ejecutar traducción al cargar la página
+        document.addEventListener('DOMContentLoaded', setLanguage);
+
+
+        // 🟢 2. LÓGICA DE LAS PESTAÑAS (SWAP)
+        function switchTab(category, btnElement) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
             document.querySelectorAll('.st-card[data-category]').forEach(card => {
                 if (card.getAttribute('data-category') === category) {
                     card.classList.remove('hidden-card');
@@ -147,19 +219,22 @@
             });
         }
 
-        // LÓGICA DE PROCESAMIENTO (Igual que antes)
+        // 🟢 3. LÓGICA DE PROCESAMIENTO A FLASK
         async function procesar(btnId, msgId, url, formData, downloadName) {
             const btn = document.getElementById(btnId);
             const msg = document.getElementById(msgId);
+            const originalText = btn.textContent;
+            
             btn.disabled = true;
-            btn.textContent = "Procesando...";
+            btn.textContent = navigator.language.startsWith('en') ? "Processing..." : "Procesando...";
             msg.className = "status-msg status-processing";
-            msg.textContent = "⏳ Enviando al servidor...";
+            msg.textContent = navigator.language.startsWith('en') ? "⏳ Sending to server..." : "⏳ Enviando al servidor...";
+            
             try {
                 const response = await fetch(url, { method: 'POST', body: formData });
                 if (!response.ok) {
                     const err = await response.json();
-                    throw new Error(err.error || "Error en el servidor");
+                    throw new Error(err.error || "Error");
                 }
                 const blob = await response.blob();
                 const link = document.createElement('a');
@@ -167,19 +242,20 @@
                 link.download = downloadName;
                 link.click();
                 msg.className = "status-msg status-success";
-                msg.textContent = "✅ ¡Descarga completada!";
+                msg.textContent = navigator.language.startsWith('en') ? "✅ Download complete!" : "✅ ¡Descarga completada!";
             } catch (error) {
                 msg.className = "status-msg status-error";
                 msg.textContent = "❌ " + error.message;
             } finally {
                 btn.disabled = false;
-                btn.textContent = "Procesar Documento";
+                btn.textContent = originalText;
             }
         }
 
+        // Eventos de botones
         document.getElementById('merge-btn').onclick = () => {
             const files = document.getElementById('merge-in').files;
-            if(!files.length) return alert("Selecciona archivos");
+            if(!files.length) return alert(navigator.language.startsWith('en') ? "Select files" : "Selecciona archivos");
             const fd = new FormData();
             for(let file of files) fd.append('pdfs', file);
             procesar('merge-btn', 'merge-msg', '/api/merge', fd, 'Unido.pdf');
@@ -187,7 +263,7 @@
 
         document.getElementById('split-btn').onclick = () => {
             const file = document.getElementById('split-in').files[0];
-            if(!file) return alert("Selecciona archivo");
+            if(!file) return alert(navigator.language.startsWith('en') ? "Select a file" : "Selecciona un archivo");
             const fd = new FormData();
             fd.append('pdf', file);
             fd.append('start_page', document.getElementById('split-start').value || 1);
@@ -197,7 +273,7 @@
 
         document.getElementById('comp-btn').onclick = () => {
             const file = document.getElementById('comp-in').files[0];
-            if(!file) return alert("Selecciona archivo");
+            if(!file) return alert(navigator.language.startsWith('en') ? "Select a file" : "Selecciona un archivo");
             const fd = new FormData();
             fd.append('pdf', file);
             fd.append('level', document.getElementById('comp-lvl').value);
@@ -206,7 +282,7 @@
 
         document.getElementById('ai-btn').onclick = () => {
             const file = document.getElementById('ai-in').files[0];
-            if(!file) return alert("Selecciona archivo");
+            if(!file) return alert(navigator.language.startsWith('en') ? "Select a file" : "Selecciona un archivo");
             const fd = new FormData();
             fd.append('pdf', file);
             fd.append('action', document.getElementById('ai-action').value);
@@ -217,7 +293,7 @@
         document.getElementById('conv-btn').onclick = () => {
             const files = document.getElementById('conv-in').files;
             const action = document.getElementById('conv-action').value;
-            if(!files.length) return alert("Selecciona archivo(s)");
+            if(!files.length) return alert(navigator.language.startsWith('en') ? "Select files" : "Selecciona archivo(s)");
             const fd = new FormData();
             fd.append('action', action);
             if(action === 'img2pdf') {
@@ -230,7 +306,7 @@
 
         document.getElementById('sec-btn').onclick = () => {
             const file = document.getElementById('sec-in').files[0];
-            if(!file) return alert("Selecciona archivo");
+            if(!file) return alert(navigator.language.startsWith('en') ? "Select a file" : "Selecciona un archivo");
             const action = document.getElementById('sec-action').value;
             const fd = new FormData();
             fd.append('file', file);
