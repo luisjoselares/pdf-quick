@@ -3,101 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="PDF QU⚡CK - Herramientas gratuitas para manipular PDFs.">
     <title>PDF QU⚡CK - Herramientas PDF</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style> .tool-card { @apply bg-gray-800 p-6 rounded-2xl shadow-xl border border-gray-700; } </style>
 </head>
-<body class="bg-gray-900 text-white font-sans min-h-screen">
-    <header class="text-center py-10 border-b border-gray-800">
-        <h1 class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600 mb-2">PDF QU⚡CK</h1>
-        <p class="text-gray-400 text-lg">Herramientas PDF rápidas, gratis y sin límites.</p>
-    </header>
+<body>
 
-    <main class="max-w-6xl mx-auto p-6 mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div class="header-container">
+        <h1 class="main-title">PDF QU⚡CK</h1>
+        <p class="sub-title">Herramientas gratuitas para manipular tus documentos al instante.</p>
+        <p class="sub-pills">Rápido • Seguro • Sin Límites</p>
+    </div>
+
+    <main class="tools-grid">
         
-        <div class="tool-card">
-            <h2 class="text-xl font-bold mb-4 text-yellow-400">Unir PDFs</h2>
-            <input type="file" id="merge-in" multiple accept=".pdf" class="w-full text-sm text-gray-400 mb-4 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-gray-700 file:text-yellow-400 cursor-pointer">
-            <button id="merge-btn" class="w-full bg-yellow-500 text-gray-900 font-bold py-2 rounded-lg hover:bg-yellow-400">Procesar</button>
-            <div id="merge-msg" class="mt-2 text-sm text-center"></div>
+        <div class="st-card">
+            <h2>Unir PDFs</h2>
+            <p class="tool-description">Combina múltiples archivos en uno solo.</p>
+            <input type="file" id="merge-in" multiple accept=".pdf" class="st-uploader">
+            <button id="merge-btn" class="st-btn-primary">Procesar Documento</button>
+            <div id="merge-msg" class="status-msg"></div>
         </div>
 
-        <div class="tool-card">
-            <h2 class="text-xl font-bold mb-4 text-blue-400">Dividir PDF</h2>
-            <input type="file" id="split-in" accept=".pdf" class="w-full text-sm text-gray-400 mb-2 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-gray-700 file:text-blue-400 cursor-pointer">
-            <div class="grid grid-cols-2 gap-2 mb-4">
-                <input type="number" id="split-start" placeholder="Pág. Inicio (ej: 1)" class="bg-gray-900 border border-gray-700 text-white rounded p-2 text-sm">
-                <input type="number" id="split-end" placeholder="Pág. Fin (Opcional)" class="bg-gray-900 border border-gray-700 text-white rounded p-2 text-sm">
+        <div class="st-card">
+            <h2>Dividir PDF</h2>
+            <p class="tool-description">Extrae un rango de páginas de tu documento.</p>
+            <input type="file" id="split-in" accept=".pdf" class="st-uploader">
+            <div class="grid-2">
+                <input type="number" id="split-start" placeholder="Pág. Inicio" class="st-input">
+                <input type="number" id="split-end" placeholder="Pág. Fin" class="st-input">
             </div>
-            <button id="split-btn" class="w-full bg-blue-600 text-white font-bold py-2 rounded-lg hover:bg-blue-500">Procesar</button>
-            <div id="split-msg" class="mt-2 text-sm text-center"></div>
+            <button id="split-btn" class="st-btn-primary">Procesar Documento</button>
+            <div id="split-msg" class="status-msg"></div>
         </div>
 
-        <div class="tool-card">
-            <h2 class="text-xl font-bold mb-4 text-green-400">Comprimir PDF</h2>
-            <input type="file" id="comp-in" accept=".pdf" class="w-full text-sm text-gray-400 mb-2 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-gray-700 file:text-green-400 cursor-pointer">
-            <select id="comp-lvl" class="w-full bg-gray-900 border border-gray-700 text-white rounded p-2 text-sm mb-4">
-                <option value="Media" selected>Nivel Medio (Recomendado)</option>
-                <option value="Alta">Nivel Alto (Máxima reducción)</option>
+        <div class="st-card">
+            <h2>Comprimir PDF</h2>
+            <p class="tool-description">Reduce el tamaño de tu archivo sin perder calidad.</p>
+            <input type="file" id="comp-in" accept=".pdf" class="st-uploader">
+            <select id="comp-lvl" class="st-input">
+                <option value="Baja">Compresión Baja</option>
+                <option value="Media" selected>Compresión Media (Ideal)</option>
+                <option value="Alta">Compresión Alta</option>
             </select>
-            <button id="comp-btn" class="w-full bg-green-600 text-white font-bold py-2 rounded-lg hover:bg-green-500">Procesar</button>
-            <div id="comp-msg" class="mt-2 text-sm text-center"></div>
+            <button id="comp-btn" class="st-btn-primary">Procesar Documento</button>
+            <div id="comp-msg" class="status-msg"></div>
         </div>
 
-        <div class="tool-card">
-            <h2 class="text-xl font-bold mb-4 text-purple-400">Inteligencia Artificial</h2>
-            <input type="file" id="ai-in" accept=".pdf" class="w-full text-sm text-gray-400 mb-2 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-gray-700 file:text-purple-400 cursor-pointer">
-            <div class="grid grid-cols-2 gap-2 mb-4">
-                <select id="ai-action" class="bg-gray-900 border border-gray-700 text-white rounded p-2 text-sm">
+        <div class="st-card">
+            <h2>Analizar con IA</h2>
+            <p class="tool-description">Resumen o traducción con Llama 3.</p>
+            <input type="file" id="ai-in" accept=".pdf" class="st-uploader">
+            <div class="grid-2">
+                <select id="ai-action" class="st-input">
                     <option value="resumen">Resumen</option>
                     <option value="puntos_clave">Puntos Clave</option>
                     <option value="traduccion">Traducir (ES-EN)</option>
                 </select>
-                <input type="text" id="ai-pages" placeholder="Páginas (ej: 1,2)" value="1" class="bg-gray-900 border border-gray-700 text-white rounded p-2 text-sm">
+                <input type="text" id="ai-pages" placeholder="Páginas (ej: 1,2)" value="1" class="st-input">
             </div>
-            <button id="ai-btn" class="w-full bg-purple-600 text-white font-bold py-2 rounded-lg hover:bg-purple-500">Analizar</button>
-            <div id="ai-msg" class="mt-2 text-sm text-center"></div>
+            <button id="ai-btn" class="st-btn-primary">Generar con IA</button>
+            <div id="ai-msg" class="status-msg"></div>
         </div>
 
-        <div class="tool-card">
-            <h2 class="text-xl font-bold mb-4 text-orange-400">Conversor / Office</h2>
-            <input type="file" id="conv-in" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.png,.jpg,.jpeg" class="w-full text-sm text-gray-400 mb-2 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-gray-700 file:text-orange-400 cursor-pointer">
-            <select id="conv-action" class="w-full bg-gray-900 border border-gray-700 text-white rounded p-2 text-sm mb-4">
+        <div class="st-card">
+            <h2>Conversor Universal</h2>
+            <p class="tool-description">Transforma entre PDF, Word, Excel e Imágenes.</p>
+            <input type="file" id="conv-in" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.png,.jpg,.jpeg" class="st-uploader">
+            <select id="conv-action" class="st-input">
                 <option value="pdf2word">PDF a Word</option>
                 <option value="pdf2excel">PDF a Excel</option>
-                <option value="pdf2pptx">PDF a PowerPoint</option>
                 <option value="pdf2img">PDF a Imágenes</option>
                 <option value="office2pdf">Word/Excel/PPT a PDF</option>
                 <option value="img2pdf">Imágenes a PDF</option>
             </select>
-            <button id="conv-btn" class="w-full bg-orange-600 text-white font-bold py-2 rounded-lg hover:bg-orange-500">Convertir</button>
-            <div id="conv-msg" class="mt-2 text-sm text-center"></div>
+            <button id="conv-btn" class="st-btn-primary">Convertir Archivo</button>
+            <div id="conv-msg" class="status-msg"></div>
         </div>
 
-        <div class="tool-card">
-            <h2 class="text-xl font-bold mb-4 text-red-400">Seguridad</h2>
-            <input type="file" id="sec-in" accept=".pdf" class="w-full text-sm text-gray-400 mb-2 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-gray-700 file:text-red-400 cursor-pointer">
-            <select id="sec-action" class="w-full bg-gray-900 border border-gray-700 text-white rounded p-2 text-sm mb-2">
+        <div class="st-card">
+            <h2>Seguridad</h2>
+            <p class="tool-description">Desbloquea o pon marcas de agua a tu PDF.</p>
+            <input type="file" id="sec-in" accept=".pdf" class="st-uploader">
+            <select id="sec-action" class="st-input">
                 <option value="unlock">Desbloquear PDF</option>
                 <option value="watermark">Marca de Agua</option>
                 <option value="pagination">Paginación Automática</option>
             </select>
-            <input type="text" id="sec-text" placeholder="Contraseña o Texto de Marca" class="w-full bg-gray-900 border border-gray-700 text-white rounded p-2 text-sm mb-4">
-            <button id="sec-btn" class="w-full bg-red-600 text-white font-bold py-2 rounded-lg hover:bg-red-500">Aplicar</button>
-            <div id="sec-msg" class="mt-2 text-sm text-center"></div>
+            <input type="text" id="sec-text" placeholder="Contraseña o Texto..." class="st-input">
+            <button id="sec-btn" class="st-btn-primary">Aplicar Seguridad</button>
+            <div id="sec-msg" class="status-msg"></div>
         </div>
+
     </main>
 
     <script>
-        // FUNCIÓN UNIVERSAL DE PROCESAMIENTO
+        // LÓGICA DE PROCESAMIENTO
         async function procesar(btnId, msgId, url, formData, downloadName) {
             const btn = document.getElementById(btnId);
             const msg = document.getElementById(msgId);
             btn.disabled = true;
-            msg.className = "mt-2 text-sm text-center text-yellow-400";
-            msg.textContent = "Procesando...";
+            btn.textContent = "Procesando...";
+            msg.className = "status-msg status-processing";
+            msg.textContent = "⏳ Enviando al servidor...";
             try {
                 const response = await fetch(url, { method: 'POST', body: formData });
                 if (!response.ok) {
@@ -109,17 +117,17 @@
                 link.href = window.URL.createObjectURL(blob);
                 link.download = downloadName;
                 link.click();
-                msg.className = "mt-2 text-sm text-center text-green-400";
+                msg.className = "status-msg status-success";
                 msg.textContent = "✅ ¡Descarga completada!";
             } catch (error) {
-                msg.className = "mt-2 text-sm text-center text-red-400";
+                msg.className = "status-msg status-error";
                 msg.textContent = "❌ " + error.message;
             } finally {
                 btn.disabled = false;
+                btn.textContent = "Procesar Documento";
             }
         }
 
-        // UNIR
         document.getElementById('merge-btn').onclick = () => {
             const files = document.getElementById('merge-in').files;
             if(!files.length) return alert("Selecciona archivos");
@@ -128,7 +136,6 @@
             procesar('merge-btn', 'merge-msg', '/api/merge', fd, 'Unido.pdf');
         };
 
-        // DIVIDIR
         document.getElementById('split-btn').onclick = () => {
             const file = document.getElementById('split-in').files[0];
             if(!file) return alert("Selecciona archivo");
@@ -139,7 +146,6 @@
             procesar('split-btn', 'split-msg', '/api/split', fd, 'Dividido.pdf');
         };
 
-        // COMPRIMIR
         document.getElementById('comp-btn').onclick = () => {
             const file = document.getElementById('comp-in').files[0];
             if(!file) return alert("Selecciona archivo");
@@ -149,7 +155,6 @@
             procesar('comp-btn', 'comp-msg', '/api/compress', fd, 'Comprimido.pdf');
         };
 
-        // IA
         document.getElementById('ai-btn').onclick = () => {
             const file = document.getElementById('ai-in').files[0];
             if(!file) return alert("Selecciona archivo");
@@ -160,7 +165,6 @@
             procesar('ai-btn', 'ai-msg', '/api/ai', fd, 'IA_Documento.pdf');
         };
 
-        // CONVERSIONES
         document.getElementById('conv-btn').onclick = () => {
             const files = document.getElementById('conv-in').files;
             const action = document.getElementById('conv-action').value;
@@ -172,10 +176,9 @@
             } else {
                 fd.append('file', files[0]);
             }
-            procesar('conv-btn', 'conv-msg', '/api/convert', fd, 'Convertido_PDFQUICK'); // El server dicta la extensión real
+            procesar('conv-btn', 'conv-msg', '/api/convert', fd, 'Convertido_PDFQUICK');
         };
 
-        // SEGURIDAD
         document.getElementById('sec-btn').onclick = () => {
             const file = document.getElementById('sec-in').files[0];
             if(!file) return alert("Selecciona archivo");
