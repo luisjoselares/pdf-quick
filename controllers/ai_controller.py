@@ -14,8 +14,9 @@ from reportlab.lib.colors import HexColor
 # Modelos soportados por Groq
 MODELS = {
     "summarize": "llama-3.3-70b-versatile",
-    "analyze":   "mixtral-8x7b-32768",
+    "analyze":   "llama-3.3-70b-versatile",
     "translate": "llama-3.3-70b-versatile",
+}
 }
 
 class AIController:
