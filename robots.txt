@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
-Sitemap: https://pdfquick.online/?sitemap=1
+
+Sitemap: https://pdfquick.online/sitemap.xml
