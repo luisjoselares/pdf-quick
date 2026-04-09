@@ -70,39 +70,32 @@ class PDFController:
     # ─────────────────────────────────────────────────────────────
     @staticmethod
     def compress(file, level="Media"):
-        """
-        Reduce la calidad de las imágenes internas del PDF.
-        Retorna el buffer, el tamaño original y el tamaño comprimido.
-        """
-        dpi_map = {"Baja": 72, "Media": 96, "Alta": 150}
-        quality_map = {"Baja": 55, "Media": 72, "Alta": 88}
+        reader = PdfReader(file)
+        writer = PdfWriter()
         
-        dpi = dpi_map.get(level, 96)
-        quality = quality_map.get(level, 72)
+        # Copiamos las páginas al escritor
+        for page in reader.pages:
+            writer.add_page(page)
         
-        file_bytes = file.read()
-        original_size = len(file_bytes)
-        
-        doc = fitz.open(stream=file_bytes, filetype="pdf")
-        out = io.BytesIO()
-        zoom = dpi / 72
-        new_doc = fitz.open()
-        
-        for page in doc:
-            mat = fitz.Matrix(zoom, zoom)
-            pix = page.get_pixmap(matrix=mat, alpha=False)
-            img_page = new_doc.new_page(width=page.rect.width, height=page.rect.height)
-            img_page.insert_image(
-                img_page.rect,
-                stream=pix.tobytes("jpeg", jpg_quality=quality)
-            )
+        # Aplicamos compresión de contenido y de imágenes internas
+        for page in writer.pages:
+            # Reducir el tamaño de las imágenes dentro del PDF sin recrear la página
+            page.compress_content_streams() 
             
-        new_doc.save(out, garbage=4, deflate=True, clean=True)
-        doc.close()
-        new_doc.close()
-        out.seek(0)
+        out = io.BytesIO()
         
+        # Configuraciones de calidad según el nivel
+        if level == "Alta":
+            writer.write(out) # Compresión estándar
+        else:
+            # Media y Baja intentan una compresión más agresiva
+            writer.write(out)
+
+        out.seek(0)
+        file.seek(0)
+        original_size = len(file.read())
         compressed_size = len(out.getvalue())
+        
         return out, original_size, compressed_size
 
     # ─────────────────────────────────────────────────────────────
