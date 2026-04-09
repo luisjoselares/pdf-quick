@@ -11,48 +11,33 @@ class ImageController:
     # El Token se obtiene de las variables de entorno de Render
     HF_TOKEN = os.environ.get("HF_TOKEN")
 
-    @staticmethod
+   @staticmethod
     def remove_background(file_bytes):
-        """
-        Elimina el fondo enviando la imagen a la API de Hugging Face.
-        Incluye lógica de espera para el modelo y limpieza de RAM.
-        """
+        # Cabeceras reforzadas
         headers = {
             "Authorization": f"Bearer {ImageController.HF_TOKEN}",
-            "X-Wait-For-Model": "true" 
+            "X-Wait-For-Model": "true",
+            "Content-Type": "image/png" # Forzamos el tipo de contenido
         }
         
         try:
-            # Petición a la API externa
-            response = requests.post(
+            # Usamos una sesión para mantener la conexión más estable
+            session = requests.Session()
+            response = session.post(
                 ImageController.API_URL, 
                 headers=headers, 
                 data=file_bytes,
-                timeout=60 
+                timeout=60,
+                stream=False # Cambiamos a False para asegurar lectura completa
             )
             
-            # Si hay error (4xx o 5xx), lanza una excepción
             response.raise_for_status() 
-            
-            # Guardamos el resultado en un buffer
             result = io.BytesIO(response.content)
             
-            # Limpieza inmediata de la respuesta para liberar RAM
             del response
             gc.collect()
-            
             return result
-
-        except requests.exceptions.Timeout:
-            gc.collect()
-            raise Exception("La IA tardó demasiado en responder. Inténtalo con una imagen más pequeña.")
-        except requests.exceptions.RequestException as e:
-            gc.collect()
-            raise Exception(f"Error de conexión con la IA: {str(e)}")
-        except Exception as e:
-            gc.collect()
-            raise e
-
+            
     @staticmethod
     def upscale_image(file_bytes, factor=2):
         """
