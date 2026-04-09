@@ -375,12 +375,26 @@
         document.getElementById('split-btn').onclick = () => {
             const file = document.getElementById('split-in').files[0];
             if(!file) return alert(t_msg("alert_file", "Selecciona un archivo"));
+            
+            const mode = document.getElementById('split-mode').value;
             const fd = new FormData();
             fd.append('pdf', file);
-            fd.append('start_page', document.getElementById('split-start').value || 1);
-            if(document.getElementById('split-end').value) fd.append('end_page', document.getElementById('split-end').value);
-            procesar('split-btn', 'split-msg', '/api/split', fd, 'Dividido.pdf');
+            fd.append('mode', mode);
+            
+            if(mode === 'range') {
+                fd.append('start_page', document.getElementById('split-start').value || 1);
+                if(document.getElementById('split-end').value) fd.append('end_page', document.getElementById('split-end').value);
+            }
+            
+            const downloadName = mode === 'zip' ? 'PDF_Dividido.zip' : 'Paginas_Extraidas.pdf';
+            procesar('split-btn', 'split-msg', '/api/split', fd, downloadName);
         };
+
+        // Función extra para ocultar inputs si es modo ZIP
+        function toggleSplitInputs() {
+            const mode = document.getElementById('split-mode').value;
+            document.getElementById('split-range-inputs').style.display = mode === 'range' ? 'flex' : 'none';
+        }
 
         document.getElementById('comp-btn').onclick = () => {
             const file = document.getElementById('comp-in').files[0];
