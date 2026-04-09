@@ -164,9 +164,12 @@ def api_security():
     except Exception as e: 
         return jsonify({"error": str(e)}), 500
 
-    @app.route('/privacy')
-    def privacy():
-        return render_template('privacy.html')
+# ─────────────────────────────────────────────────────────────
+# RUTA DE PRIVACIDAD
+# ─────────────────────────────────────────────────────────────
+@app.route('/privacy')
+def privacy():
+    return render_template('privacy.html')
 # ─────────────────────────────────────────────────────────────
 # ARRANQUE DEL SERVIDOR
 # ─────────────────────────────────────────────────────────────
