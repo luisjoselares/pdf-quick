@@ -70,27 +70,18 @@ class PDFController:
     # ─────────────────────────────────────────────────────────────
     @staticmethod
     def compress(file, level="Media"):
-        reader = PdfReader(file)
-        writer = PdfWriter()
-        
-        # Copiamos las páginas al escritor
-        for page in reader.pages:
-            writer.add_page(page)
-        
-        # Aplicamos compresión de contenido y de imágenes internas
-        for page in writer.pages:
-            # Reducir el tamaño de las imágenes dentro del PDF sin recrear la página
-            page.compress_content_streams() 
-            
+        # Leemos el archivo desde el inicio
+        file.seek(0)
+        # Abrimos el PDF con PyMuPDF (fitz)
+        doc = fitz.open(stream=file.read(), filetype="pdf")
         out = io.BytesIO()
         
-        # Configuraciones de calidad según el nivel
-        if level == "Alta":
-            writer.write(out) # Compresión estándar
-        else:
-            # Media y Baja intentan una compresión más agresiva
-            writer.write(out)
-
+        # Guardamos con opciones de compresión real
+        # garbage=4: Elimina objetos no usados y compacta
+        # deflate=True: Comprime los flujos de datos
+        doc.save(out, garbage=4, deflate=True, clean=True)
+        doc.close()
+        
         out.seek(0)
         file.seek(0)
         original_size = len(file.read())
