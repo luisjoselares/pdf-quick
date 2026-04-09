@@ -13,16 +13,9 @@ app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 80 * 1024 * 1024 
 
 # ─────────────────────────────────────────────────────────────
-# RUTA DEL FRONTEND
-# ─────────────────────────────────────────────────────────────
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-
-# ─────────────────────────────────────────────────────────────
 # RUTAS DE LA API (HERRAMIENTAS BÁSICAS)
 # ─────────────────────────────────────────────────────────────
+
 @app.route('/api/merge', methods=['POST'])
 def api_merge():
     files = request.files.getlist("pdfs")
@@ -39,7 +32,6 @@ def api_split():
     file = request.files.get("pdf")
     if not file: return jsonify({"error": "No file"}), 400
     
-    # Aseguramos que el modo sea 'range' por defecto
     mode = request.form.get("mode", "range")
     try:
         start = int(request.form.get("start_page", 1))
@@ -83,9 +75,7 @@ def api_extract_images():
         )
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-# ─────────────────────────────────────────────────────────────
-# RUTA DE INTELIGENCIA ARTIFICIAL
-# ─────────────────────────────────────────────────────────────
+
 @app.route('/api/ai', methods=['POST'])
 def api_ai():
     file = request.files.get("pdf")
@@ -102,16 +92,10 @@ def api_ai():
     except Exception as e: 
         return jsonify({"error": str(e)}), 500
 
-
-# ─────────────────────────────────────────────────────────────
-# RUTA DE CONVERSIONES (OFFICE)
-# ─────────────────────────────────────────────────────────────
 @app.route('/api/convert', methods=['POST'])
 def api_convert():
     action = request.form.get("action")
-    
     try:
-        # Caso especial para la unión de múltiples imágenes
         if action == "img2pdf":
             files = request.files.getlist("files")
             if not files or files[0].filename == '': 
@@ -119,46 +103,31 @@ def api_convert():
             out = OfficeController.multiple_img_to_pdf(files)
             return send_file(out, mimetype='application/pdf', as_attachment=True, download_name='imagenes.pdf')
         
-        # Flujo estándar para 1 solo archivo
         file = request.files.get("file")
         if not file or file.filename == '': 
             return jsonify({"error": "No se subió archivo"}), 400
         
-        if action == "pdf2word":
-            out, mime, name = OfficeController.pdf_to_word(file)
-        elif action == "pdf2excel":
-            out, mime, name = OfficeController.pdf_to_excel(file)
-        elif action == "pdf2pptx":
-            out, mime, name = OfficeController.pdf_to_pptx(file)
-        elif action == "pdf2html":
-            out, mime, name = OfficeController.pdf_to_html(file)
-        elif action == "pdf2txt":
-            out, mime, name = OfficeController.pdf_to_txt(file)
-        elif action == "pdf2img":
-            out, mime, name = OfficeController.pdf_to_image(file, "PNG")
+        # ... (Mantengo tu lógica de OfficeController aquí) ...
+        if action == "pdf2word": out, mime, name = OfficeController.pdf_to_word(file)
+        elif action == "pdf2excel": out, mime, name = OfficeController.pdf_to_excel(file)
+        elif action == "pdf2pptx": out, mime, name = OfficeController.pdf_to_pptx(file)
+        elif action == "pdf2html": out, mime, name = OfficeController.pdf_to_html(file)
+        elif action == "pdf2txt": out, mime, name = OfficeController.pdf_to_txt(file)
+        elif action == "pdf2img": out, mime, name = OfficeController.pdf_to_image(file, "PNG")
         elif action == "office2pdf":
             out = OfficeController.office_to_pdf(file, file.filename)
-            mime = "application/pdf"
-            name = f"{os.path.splitext(file.filename)[0]}.pdf"
-        else:
-            return jsonify({"error": "Acción de conversión inválida"}), 400
+            mime, name = "application/pdf", f"{os.path.splitext(file.filename)[0]}.pdf"
+        else: return jsonify({"error": "Acción inválida"}), 400
         
         return send_file(out, mimetype=mime, as_attachment=True, download_name=name)
     except Exception as e: 
         return jsonify({"error": str(e)}), 500
 
-
-# ─────────────────────────────────────────────────────────────
-# RUTA DE SEGURIDAD
-# ─────────────────────────────────────────────────────────────
 @app.route('/api/security', methods=['POST'])
 def api_security():
     file = request.files.get("file")
-    if not file or file.filename == '': 
-        return jsonify({"error": "No se subió archivo"}), 400
-        
+    if not file or file.filename == '': return jsonify({"error": "No file"}), 400
     action = request.form.get("action")
-    
     try:
         if action == "watermark":
             text = request.form.get("text", "CONFIDENCIAL")
@@ -171,12 +140,9 @@ def api_security():
         elif action == "unlock":
             pwd = request.form.get("password", "")
             out = SecurityController.process_unlock(file, pwd)
-        else:
-            return jsonify({"error": "Acción de seguridad inválida"}), 400
-        
+        else: return jsonify({"error": "Acción inválida"}), 400
         return send_file(out, mimetype='application/pdf', as_attachment=True, download_name=f'sec_{file.filename}')
-    except Exception as e: 
-        return jsonify({"error": str(e)}), 500
+    except Exception as e: return jsonify({"error": str(e)}), 500
 
 # ─────────────────────────────────────────────────────────────
 # CONFIGURACIÓN PARA GOOGLE (SITEMAP Y ROBOTS)
@@ -184,15 +150,15 @@ def api_security():
 
 @app.route('/sitemap.xml')
 def serve_sitemap():
-    # Esto busca el archivo en la carpeta 'static' y lo sirve en la raíz
     return send_from_directory('static', 'sitemap.xml')
 
 @app.route('/robots.txt')
 def serve_robots():
-    # Esto busca el archivo robots.txt en la raíz del proyecto
     return send_from_directory('', 'robots.txt')
 
-# --- RUTAS DE NAVEGACIÓN Y SEO OPTIMIZADAS ---
+# ─────────────────────────────────────────────────────────────
+# RUTAS DE NAVEGACIÓN Y SEO OPTIMIZADAS
+# ─────────────────────────────────────────────────────────────
 
 @app.route('/')
 def index():
@@ -236,15 +202,14 @@ def route_extract_images():
         title="Extraer Imágenes de PDF Online Gratis - PDF QU⚡CK",
         description="Extrae todas las imágenes (PNG, JPG) de tu archivo PDF en alta calidad y descárgalas en un ZIP.")
 
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template('index.html', tool='home'), 404
-# ─────────────────────────────────────────────────────────────
-# RUTA DE PRIVACIDAD
-# ─────────────────────────────────────────────────────────────
 @app.route('/privacy')
 def privacy():
     return render_template('privacy.html')
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('index.html', tool='home'), 404
+
 # ─────────────────────────────────────────────────────────────
 # ARRANQUE DEL SERVIDOR
 # ─────────────────────────────────────────────────────────────
