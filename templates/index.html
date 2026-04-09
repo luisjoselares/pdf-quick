@@ -3,16 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF QU⚡CK - Unir, Dividir, Comprimir y Convertir PDFs</title>
-    <meta name="description" content="Herramienta online gratuita para manipular archivos PDF. Une, divide, comprime, convierte a Word/Excel y analiza tus documentos con Inteligencia Artificial al instante.">
+    
+    <title>{{ title if title else "PDF QU⚡CK - Unir, Dividir, Comprimir y Convertir PDFs" }}</title>
+    <meta name="description" content="{{ description if description else 'Herramienta online gratuita para manipular archivos PDF. Une, divide, comprime y analiza documentos con IA.' }}">
     <link rel="canonical" href="https://pdfquick.online/">
+
+    <meta property="og:title" content="{{ title }}">
+    <meta property="og:description" content="{{ description }}">
+    <meta property="og:image" content="{{ url_for('static', filename='favicon.svg') }}">
+    <meta property="og:url" content="https://pdfquick.online/">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <meta name="theme-color" content="#ffcc00">
+
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    
+    <style>
+        /* Estilo para resaltar la herramienta seleccionada vía URL */
+        .highlight-tool {
+            animation: glow 2s ease-in-out;
+            border: 2px solid var(--accent) !important;
+        }
+        @keyframes glow {
+            0% { box-shadow: 0 0 0px var(--accent); }
+            50% { box-shadow: 0 0 20px var(--accent); }
+            100% { box-shadow: 0 0 0px var(--accent); }
+        }
+        .hidden-card { display: none; }
+    </style>
 </head>
 <body>
 
     <header class="header-container">
-        <h1 class="main-title">PDF QU⚡CK</h1>
+        <a href="/" style="text-decoration: none; color: inherit;"><h1 class="main-title">PDF QU⚡CK</h1></a>
         <p class="sub-title" data-i18n="subtitle">Herramientas gratuitas para manipular tus documentos al instante.</p>
         <p class="sub-pills" data-i18n="pills">Rápido • Seguro • Sin Límites</p>
     </header>
@@ -38,8 +63,8 @@
             <input type="file" id="split-in" accept=".pdf" class="st-uploader">
             <div class="grid-2">
                 <select id="split-mode" class="st-input" onchange="toggleSplitInputs()">
-                    <option value="range">Extraer Rango</option>
-                    <option value="zip">Dividir todas las páginas (ZIP)</option>
+                    <option value="range" data-i18n="split_mode_range">Extraer Rango</option>
+                    <option value="zip" data-i18n="split_mode_zip">Dividir todas las páginas (ZIP)</option>
                 </select>
                 <div id="split-range-inputs" class="grid-2" style="display: flex; gap: 5px;">
                     <input type="number" id="split-start" placeholder="Inicio" class="st-input" value="1">
@@ -132,11 +157,11 @@
     </main>
 
     <footer class="seo-footer">
-    <p>&copy; 2026 PDF QU⚡CK - <span data-i18n="footer">Creado para simplificar tus documentos.</span></p>
-    <p><a href="/privacy" style="color: var(--accent); text-decoration: none;" data-i18n="priv_link">Privacidad</a></p>
+        <p>&copy; 2026 PDF QU⚡CK - <span data-i18n="footer">Creado para simplificar tus documentos.</span></p>
+        <p><a href="/privacy" style="color: var(--accent); text-decoration: none;" data-i18n="priv_link">Privacidad</a></p>
     </footer>
 
-<script>
+    <script>
         // 🟢 1. DICCIONARIO MULTILENGUAJE (i18n)
         const translations = {
             "en": {
@@ -147,7 +172,9 @@
                 "merge_title": "Merge PDFs",
                 "merge_desc": "Combine multiple files into a single one.",
                 "split_title": "Split PDF",
-                "split_desc": "Extract a range of pages from your document.",
+                "split_desc": "Extract a range of pages or separate everything into a ZIP file.",
+                "split_mode_range": "Extract Range",
+                "split_mode_zip": "Split all pages (ZIP)",
                 "comp_title": "Compress PDF",
                 "comp_desc": "Reduce your file size without losing quality.",
                 "comp_low": "Low Compression",
@@ -175,17 +202,14 @@
                 "btn_conv": "Convert File",
                 "btn_sec": "Apply Security",
                 "footer": "Created to simplify your documents.",
-                "placeholder_start": "Start Pg.",
-                "placeholder_end": "End Pg.",
                 "placeholder_pages": "Pages (e.g. 1,2)",
                 "placeholder_sec": "Password or Text...",
-                // Alertas y estados
                 "msg_processing": "Processing...",
                 "msg_sending": "⏳ Sending to server...",
                 "msg_success": "✅ Download complete!",
                 "alert_files": "Select files",
                 "alert_file": "Select a file",
-                "priv_link": "Privacy"
+                "priv_link": "Privacy Policy"
             },
             "pt": {
                 "subtitle": "Ferramentas gratuitas para manipular seus documentos instantaneamente.",
@@ -195,7 +219,9 @@
                 "merge_title": "Juntar PDFs",
                 "merge_desc": "Combine vários arquivos em um só.",
                 "split_title": "Dividir PDF",
-                "split_desc": "Extraia um intervalo de páginas do seu documento.",
+                "split_desc": "Extraia um intervalo de páginas ou separe tudo em um arquivo ZIP.",
+                "split_mode_range": "Extrair Intervalo",
+                "split_mode_zip": "Dividir todas as páginas (ZIP)",
                 "comp_title": "Comprimir PDF",
                 "comp_desc": "Reduza o tamanho do seu arquivo sem perder a qualidade.",
                 "comp_low": "Compressão Baixa",
@@ -223,8 +249,6 @@
                 "btn_conv": "Converter Arquivo",
                 "btn_sec": "Aplicar Segurança",
                 "footer": "Criado para simplificar seus documentos.",
-                "placeholder_start": "Pág. Início",
-                "placeholder_end": "Pág. Fim",
                 "placeholder_pages": "Páginas (ex: 1,2)",
                 "placeholder_sec": "Senha ou Texto...",
                 "msg_processing": "Processando...",
@@ -242,7 +266,9 @@
                 "merge_title": "Fusionner des PDF",
                 "merge_desc": "Combinez plusieurs fichiers en un seul.",
                 "split_title": "Diviser un PDF",
-                "split_desc": "Extrayez une plage de pages de votre document.",
+                "split_desc": "Extrayez une plage de pages ou séparez tout dans un fichier ZIP.",
+                "split_mode_range": "Extraire une plage",
+                "split_mode_zip": "Diviser toutes les pages (ZIP)",
                 "comp_title": "Compresser un PDF",
                 "comp_desc": "Réduisez la taille de votre fichier sans perdre en qualité.",
                 "comp_low": "Compression Faible",
@@ -264,14 +290,12 @@
                 "donate_title": "☕ Soutenir PDF QU⚡CK",
                 "donate_desc": "L'entretien des serveurs et de l'IA a un coût. Si cet outil vous a fait gagner du temps, pensez à soutenir le projet.",
                 "btn_kofi": "Offrez-moi un café sur Ko-fi",
-                "donate_qr": "Ou scannez le code QR pour faire un don via <strong>Binance Pay</strong>.",
+                "donate_qr": "Ou scannez le code QR pour faire un don via Binance Pay.",
                 "btn_process": "Traiter le Document",
                 "btn_ai": "Générer avec l'IA",
                 "btn_conv": "Convertir le Fichier",
                 "btn_sec": "Appliquer la Sécurité",
                 "footer": "Créé pour simplifier vos documents.",
-                "placeholder_start": "Page de début",
-                "placeholder_end": "Page de fin",
                 "placeholder_pages": "Pages (ex: 1,2)",
                 "placeholder_sec": "Mot de passe ou Texte...",
                 "msg_processing": "Traitement...",
@@ -283,23 +307,14 @@
             }
         };
 
-// Variable global para saber el idioma actual (por defecto 'es')
         let currentLang = 'es';
 
         function setLanguage() {
-            // Obtener las primeras 2 letras del idioma del navegador
             const browserLang = (navigator.language || navigator.userLanguage).toLowerCase().substring(0, 2);
-            
-            // Si es español nativo, no hacemos nada (el HTML ya está en español)
             if (browserLang === 'es') return;
-
-            // EL CAMBIO ESTÁ AQUÍ:
-            // Si existe en el diccionario (pt, fr), lo usamos. Si NO existe (de, it, jp), forzamos Inglés ('en').
             currentLang = translations[browserLang] ? browserLang : 'en';
-            
             const t = translations[currentLang];
 
-            // 1. Reemplazar textos normales
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (t[key]) {
@@ -308,19 +323,51 @@
                 }
             });
 
-            // 2. Reemplazar placeholders de inputs
             document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
                 const key = el.getAttribute('data-i18n-placeholder');
                 if (t[key]) el.placeholder = t[key];
             });
         }
-        
-        document.addEventListener('DOMContentLoaded', setLanguage);
 
-        // Funciones de ayuda para obtener textos de alertas según el idioma
-        const t_msg = (key, defaultEs) => (currentLang !== 'es' && translations[currentLang][key]) ? translations[currentLang][key] : defaultEs;
+        // 🟢 2. LÓGICA DE CARGA INTELIGENTE (SEO & UI)
+        document.addEventListener('DOMContentLoaded', () => {
+            setLanguage();
 
-        // 🟢 2. LÓGICA DE LAS PESTAÑAS (SWAP)
+            // Detectamos la herramienta solicitada desde Flask variable Jinja2
+            const activeTool = "{{ tool }}"; 
+
+            if (activeTool && activeTool !== 'home') {
+                const tabBtns = document.querySelectorAll('.tab-btn');
+                
+                // Mapeo de rutas a botones específicos y su categoría
+                const routeMap = {
+                    'merge': { tab: 'principales', btnIdx: 0, targetId: 'merge-btn' },
+                    'split': { tab: 'principales', btnIdx: 0, targetId: 'split-btn' },
+                    'compress': { tab: 'principales', btnIdx: 0, targetId: 'comp-btn' },
+                    'ai': { tab: 'principales', btnIdx: 0, targetId: 'ai-btn' },
+                    'conv': { tab: 'extras', btnIdx: 1, targetId: 'conv-btn' },
+                    'sec': { tab: 'extras', btnIdx: 1, targetId: 'sec-btn' }
+                };
+
+                const config = routeMap[activeTool];
+                if (config) {
+                    // Cambiar pestaña si es necesario
+                    switchTab(config.tab, tabBtns[config.btnIdx]);
+                    
+                    // Hacer scroll y resaltar
+                    const targetBtn = document.getElementById(config.targetId);
+                    if (targetBtn) {
+                        const card = targetBtn.closest('.st-card');
+                        setTimeout(() => {
+                            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            card.classList.add('highlight-tool');
+                        }, 600);
+                    }
+                }
+            }
+        });
+
+        // 🟢 3. FUNCIONES DE UI Y API
         function switchTab(category, btnElement) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             btnElement.classList.add('active');
@@ -330,7 +377,13 @@
             });
         }
 
-        // 🟢 3. LÓGICA DE PROCESAMIENTO A FLASK
+        function toggleSplitInputs() {
+            const mode = document.getElementById('split-mode').value;
+            document.getElementById('split-range-inputs').style.display = mode === 'range' ? 'flex' : 'none';
+        }
+
+        const t_msg = (key, defaultEs) => (currentLang !== 'es' && translations[currentLang][key]) ? translations[currentLang][key] : defaultEs;
+
         async function procesar(btnId, msgId, url, formData, downloadName) {
             const btn = document.getElementById(btnId);
             const msg = document.getElementById(msgId);
@@ -363,7 +416,7 @@
             }
         }
 
-        // Eventos de botones
+        // EVENTOS DE BOTONES
         document.getElementById('merge-btn').onclick = () => {
             const files = document.getElementById('merge-in').files;
             if(!files.length) return alert(t_msg("alert_files", "Selecciona archivos"));
@@ -375,26 +428,17 @@
         document.getElementById('split-btn').onclick = () => {
             const file = document.getElementById('split-in').files[0];
             if(!file) return alert(t_msg("alert_file", "Selecciona un archivo"));
-            
             const mode = document.getElementById('split-mode').value;
             const fd = new FormData();
             fd.append('pdf', file);
             fd.append('mode', mode);
-            
             if(mode === 'range') {
                 fd.append('start_page', document.getElementById('split-start').value || 1);
                 if(document.getElementById('split-end').value) fd.append('end_page', document.getElementById('split-end').value);
             }
-            
             const downloadName = mode === 'zip' ? 'PDF_Dividido.zip' : 'Paginas_Extraidas.pdf';
             procesar('split-btn', 'split-msg', '/api/split', fd, downloadName);
         };
-
-        // Función extra para ocultar inputs si es modo ZIP
-        function toggleSplitInputs() {
-            const mode = document.getElementById('split-mode').value;
-            document.getElementById('split-range-inputs').style.display = mode === 'range' ? 'flex' : 'none';
-        }
 
         document.getElementById('comp-btn').onclick = () => {
             const file = document.getElementById('comp-in').files[0];
