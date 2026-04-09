@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, send_file, jsonify
+from flask import Flask, request, send_file, render_template, jsonify, send_from_directory
 
 # Importación de tus controladores
 from controllers.pdf_controller import PDFController
@@ -164,14 +164,17 @@ def api_security():
         return jsonify({"error": str(e)}), 500
 
 # ─────────────────────────────────────────────────────────────
-# RUTAS PARA GOOGLE (SITEMAP Y ROBOTS)
+# CONFIGURACIÓN PARA GOOGLE (SITEMAP Y ROBOTS)
 # ─────────────────────────────────────────────────────────────
+
 @app.route('/sitemap.xml')
-def sitemap():
+def serve_sitemap():
+    # Esto busca el archivo en la carpeta 'static' y lo sirve en la raíz
     return send_from_directory('static', 'sitemap.xml')
 
 @app.route('/robots.txt')
-def robots():
+def serve_robots():
+    # Esto busca el archivo robots.txt en la raíz del proyecto
     return send_from_directory('', 'robots.txt')
 # ─────────────────────────────────────────────────────────────
 # RUTA DE PRIVACIDAD
