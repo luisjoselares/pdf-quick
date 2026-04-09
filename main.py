@@ -67,7 +67,22 @@ def api_compress():
     except Exception as e: 
         return jsonify({"error": str(e)}), 500
 
-
+@app.route('/api/extract-images', methods=['POST'])
+def api_extract_images():
+    file = request.files.get("pdf")
+    if not file: 
+        return jsonify({"error": "No se recibió ningún archivo"}), 400
+    
+    try:
+        out, count = PDFController.extract_images(file)
+        return send_file(
+            out, 
+            mimetype='application/zip', 
+            as_attachment=True, 
+            download_name=f'Imagenes_Extraidas_{count}.zip'
+        )
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 # ─────────────────────────────────────────────────────────────
 # RUTA DE INTELIGENCIA ARTIFICIAL
 # ─────────────────────────────────────────────────────────────
@@ -177,29 +192,49 @@ def serve_robots():
     # Esto busca el archivo robots.txt en la raíz del proyecto
     return send_from_directory('', 'robots.txt')
 
-# --- RUTAS DE HERRAMIENTAS PARA SEO ---
+# --- RUTAS DE NAVEGACIÓN Y SEO OPTIMIZADAS ---
+
 @app.route('/')
 def index():
     return render_template('index.html', 
         tool='home',
         title="PDF QU⚡CK - Unir, Dividir y Comprimir PDFs Gratis",
         description="Herramienta online gratuita y sin límites para manipular archivos PDF. Procesamiento rápido y seguro con Inteligencia Artificial.")
-    
+
 @app.route('/unir-pdf')
 def route_merge():
-    return render_template('index.html', tool='merge')
+    return render_template('index.html', 
+        tool='merge',
+        title="Unir PDF Online Gratis - PDF QU⚡CK",
+        description="Combina múltiples archivos PDF en uno solo de forma rápida y segura.")
 
 @app.route('/dividir-pdf')
 def route_split():
-    return render_template('index.html', tool='split')
+    return render_template('index.html', 
+        tool='split',
+        title="Dividir PDF y Extraer Páginas - PDF QU⚡CK",
+        description="Separa las páginas de tu PDF en un ZIP o extrae rangos específicos al instante.")
 
 @app.route('/comprimir-pdf')
 def route_compress():
-    return render_template('index.html', tool='compress')
+    return render_template('index.html', 
+        tool='compress',
+        title="Comprimir PDF sin perder calidad - PDF QU⚡CK",
+        description="Reduce el tamaño de tus archivos PDF optimizando imágenes y recursos internos.")
 
 @app.route('/ia-pdf')
 def route_ai():
-    return render_template('index.html', tool='ai')
+    return render_template('index.html', 
+        tool='ai',
+        title="Analizar PDF con Inteligencia Artificial - PDF QU⚡CK",
+        description="Resume o traduce tus documentos PDF usando Llama 3 en segundos.")
+
+@app.route('/extraer-imagenes-pdf')
+def route_extract_images():
+    return render_template('index.html', 
+        tool='extract_images',
+        title="Extraer Imágenes de PDF Online Gratis - PDF QU⚡CK",
+        description="Extrae todas las imágenes (PNG, JPG) de tu archivo PDF en alta calidad y descárgalas en un ZIP.")
 
 @app.errorhandler(404)
 def page_not_found(e):
