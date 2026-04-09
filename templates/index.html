@@ -157,8 +157,24 @@
 
         <section class="st-card hidden-card" data-category="imagenes">
             <h2 data-i18n="upscale_title">Escalar HD (IA)</h2>
-            <p class="tool-description" data-i18n="upscale_desc">Aumenta el tamaño y calidad de una imagen con IA.</p>
-            <input type="file" id="upscale-in" accept="image/*" class="st-uploader">
+            <p class="tool-description" data-i18n="upscale_desc">Aumenta el tamaño y nitidez de tus fotos localmente.</p>
+            
+            <input type="file" id="upscale-in" accept="image/*" class="st-uploader" onchange="previewUpscaleDimensions()">
+            
+            <div id="upscale-info" class="grid-img-tools hidden-card" style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="text-align: center;">
+                    <span style="opacity: 0.7; display: block; margin-bottom: 2px;">Escala Actual</span>
+                    <strong id="upscale-current" style="color: var(--accent);">-- x -- px</strong>
+                </div>
+                <div style="text-align: center; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; opacity: 0.5;">
+                    ➔
+                </div>
+                <div style="text-align: center;">
+                    <span style="opacity: 0.7; display: block; margin-bottom: 2px;">Escala Final (x2)</span>
+                    <strong id="upscale-final" style="color: #00ff88; font-weight: bold; text-shadow: 0 0 10px rgba(0,255,136,0.3);">-- x -- px</strong>
+                </div>
+            </div>
+
             <button id="upscale-btn" class="st-btn-primary" data-i18n="btn_process">Mejorar Calidad</button>
             <div id="upscale-msg" class="status-msg"></div>
         </section>
