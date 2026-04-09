@@ -88,7 +88,36 @@ class PDFController:
         compressed_size = len(out.getvalue())
         
         return out, original_size, compressed_size
-
+ 
+    @staticmethod
+    def extract_images(file):
+        import zipfile
+        
+        file.seek(0)
+        doc = fitz.open(stream=file.read(), filetype="pdf")
+        zip_buffer = io.BytesIO()
+        
+        with zipfile.ZipFile(zip_buffer, "w") as zip_file:
+            image_count = 0
+            
+            for page_index in range(len(doc)):
+                for img_index, img in enumerate(doc.get_page_images(page_index)):
+                    xref = img[0]
+                    base_image = doc.extract_image(xref)
+                    image_bytes = base_image["image"]
+                    ext = base_image["ext"] # png, jpeg, etc.
+                    
+                    image_count += 1
+                    filename = f"imagen_{image_count}.{ext}"
+                    zip_file.writestr(filename, image_bytes)
+        
+        doc.close()
+        zip_buffer.seek(0)
+        
+        if image_count == 0:
+            raise Exception("No se encontraron imágenes en el PDF")
+            
+        return zip_buffer, image_count
     # ─────────────────────────────────────────────────────────────
     # EDITOR VISUAL (Constructor)
     # ─────────────────────────────────────────────────────────────
