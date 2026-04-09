@@ -3,6 +3,7 @@ import os
 import requests
 import gc
 from PIL import Image
+import base64
 
 class ImageController:
     # URL del modelo en Hugging Face
@@ -13,41 +14,49 @@ class ImageController:
 
     @staticmethod
     def remove_background(file_bytes):
-        # 1. Cabeceras reforzadas para evitar desconexiones
+        import base64  # Necesario para el transporte estable
+        
+        # 1. Convertimos los bytes de la imagen a una cadena Base64
+        # Esto evita que la conexión se rompa por enviar datos binarios crudos
+        img_64 = base64.b64encode(file_bytes).decode('utf-8')
+        
+        # 2. Preparamos el payload estilo JSON (más robusto para la API)
+        payload = {
+            "inputs": img_64,
+            "parameters": {"wait_for_model": True}
+        }
+        
         headers = {
             "Authorization": f"Bearer {ImageController.HF_TOKEN}",
-            "X-Wait-For-Model": "true",
-            "Connection": "close"  # Crucial: evita que el socket quede abierto y se corrompa
+            "Content-Type": "application/json",
+            "Connection": "close" 
         }
         
         try:
-            # 2. Aseguramos que file_bytes sea un objeto de bytes puro
-            if isinstance(file_bytes, io.BytesIO):
-                data = file_bytes.getvalue()
-            else:
-                data = file_bytes
-
-            # 3. Petición directa sin Session para resetear el socket en cada llamada
+            # 3. Petición POST enviando JSON
             response = requests.post(
                 ImageController.API_URL, 
                 headers=headers, 
-                data=data,
+                json=payload, # Enviamos como JSON
                 timeout=60
             )
             
-            # 4. Si el error es 503, es que el modelo aún carga
+            # Si el modelo está cargando (503), avisamos
             if response.status_code == 503:
-                raise Exception("La IA se está despertando. Reintenta en 10 segundos.")
-                
-            response.raise_for_status() 
+                raise Exception("La IA se está despertando. Reintenta en 15 segundos.")
             
-            # 5. Verificación de integridad del contenido
-            if len(response.content) < 100: # Un PNG real no pesa menos que esto
-                raise Exception("Respuesta de IA incompleta o inválida.")
+            response.raise_for_status()
+            
+            # 4. Hugging Face suele devolver la imagen procesada en binario
+            # Verificamos que tengamos contenido real
+            if not response.content or len(response.content) < 100:
+                raise Exception("La respuesta de la IA está vacía o es inválida.")
 
             result = io.BytesIO(response.content)
             
-            # Limpieza
+            # 5. Limpieza agresiva de RAM
+            del img_64
+            del payload
             del response
             gc.collect()
             
@@ -55,10 +64,16 @@ class ImageController:
 
         except requests.exceptions.ConnectionError:
             gc.collect()
-            raise Exception("Fallo de red. Hugging Face rechazó la conexión. Reintenta.")
+            raise Exception("Error de red: La conexión se cerró inesperadamente. Reintenta.")
+        except requests.exceptions.HTTPError as e:
+            gc.collect()
+            if e.response.status_code == 413:
+                raise Exception("La imagen es demasiado grande para la versión gratuita.")
+            raise Exception(f"Error de la IA: {str(e)}")
         except Exception as e:
             gc.collect()
             raise e
+            
     @staticmethod
     def upscale_image(file_bytes, factor=2):
         """
