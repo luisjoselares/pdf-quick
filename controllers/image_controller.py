@@ -10,20 +10,34 @@ class ImageController:
     # El Token lo configuraremos en Render como variable de entorno
     HF_TOKEN = os.environ.get("HF_TOKEN")
 
-    @staticmethod
+@staticmethod
     def remove_background(file_bytes):
-        headers = {"Authorization": f"Bearer {ImageController.HF_TOKEN}"}
+        # Cabeceras con el parámetro 'wait_for_model'
+        # Esto obliga a la API a esperar que el modelo cargue antes de responder
+        headers = {
+            "Authorization": f"Bearer {ImageController.HF_TOKEN}",
+            "X-Wait-For-Model": "true" 
+        }
         
-        # Enviamos la imagen al servidor de Hugging Face
-        response = requests.post(ImageController.API_URL, headers=headers, data=file_bytes)
-        
-        # Si el modelo se está cargando, Hugging Face devuelve un 503
-        if response.status_code == 200:
+        try:
+            # Añadimos un timeout de 60 segundos para darle tiempo a procesar
+            response = requests.post(
+                ImageController.API_URL, 
+                headers=headers, 
+                data=file_bytes,
+                timeout=60 
+            )
+            
+            # Verificamos si la respuesta fue exitosa
+            response.raise_for_status() 
+            
             return io.BytesIO(response.content)
-        elif response.status_code == 503:
-            raise Exception("La IA se está despertando. Inténtalo de nuevo en 20 segundos.")
-        else:
-            raise Exception(f"Error en la IA: {response.text}")
+
+        except requests.exceptions.Timeout:
+            raise Exception("La IA tardó demasiado en responder. Inténtalo con una imagen más pequeña.")
+        except requests.exceptions.RequestException as e:
+            # Si el error es el IncompleteRead, suele ser capturado aquí
+            raise Exception(f"Error de conexión con la IA: {str(e)}")
 
     @staticmethod
     def upscale_image(file_bytes, factor=2):
