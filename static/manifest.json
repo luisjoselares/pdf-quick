@@ -1,0 +1,15 @@
+{
+  "name": "PDF QUICK",
+  "short_name": "PDFQuick",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1d1d1f",
+  "theme_color": "#ffcc00",
+  "icons": [
+    {
+      "src": "/static/favicon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}
