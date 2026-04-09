@@ -575,6 +575,48 @@ let currentLang = 'es';
             fd.append('image', file);
             procesar('upscale-btn', 'upscale-msg', '/api/image/upscale', fd, 'Escalado_HD_PDFQUICK.png');
         };
+
+        // --- 5. LÓGICA ESPECÍFICA DE IMÁGENES ---
+
+        function previewUpscaleDimensions() {
+            const fileInput = document.getElementById('upscale-in');
+            const infoPanel = document.getElementById('upscale-info');
+            const currentLabel = document.getElementById('upscale-current');
+            const finalLabel = document.getElementById('upscale-final');
+            
+            const file = fileInput.files[0];
+
+            // Si no hay archivo o no es una imagen, ocultamos el panel
+            if (!file || !file.type.startsWith('image/')) {
+                infoPanel.classList.add('hidden-card');
+                return;
+            }
+
+            // Usamos FileReader para leer los metadatos de la imagen sin subirla
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    // Obtenemos dimensiones originales
+                    const width = this.width;
+                    const height = this.height;
+                    
+                    // Mostramos panel e información
+                    infoPanel.classList.remove('hidden-card');
+                    currentLabel.textContent = `${width} x ${height} px`;
+                    
+                    // Calculamos escala final (x2 por defecto en el backend)
+                    // Añadimos la unidad 'px' y formato en negrita para impacto visual
+                    finalLabel.textContent = `${width * 2} x ${height * 2} px`;
+                    
+                    // Limpieza de memoria del objeto de imagen de JS
+                    URL.revokeObjectURL(img.src);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
     </script>
+    
 </body>
 </html>
