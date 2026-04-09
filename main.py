@@ -163,13 +163,16 @@ def api_security():
     except Exception as e: 
         return jsonify({"error": str(e)}), 500
 
+# ─────────────────────────────────────────────────────────────
+# RUTAS PARA GOOGLE (SITEMAP Y ROBOTS)
+# ─────────────────────────────────────────────────────────────
 @app.route('/sitemap.xml')
 def sitemap():
-    return send_file('static/sitemap.xml')
+    return send_from_directory('static', 'sitemap.xml')
 
 @app.route('/robots.txt')
 def robots():
-    return send_file('robots.txt') # O static/robots.txt según donde lo tengas
+    return send_from_directory('', 'robots.txt')
 # ─────────────────────────────────────────────────────────────
 # RUTA DE PRIVACIDAD
 # ─────────────────────────────────────────────────────────────
