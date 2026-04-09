@@ -6,6 +6,7 @@ from controllers.pdf_controller import PDFController
 from controllers.ai_controller import AIController
 from controllers.office_controller import OfficeController
 from controllers.security_controller import SecurityController
+from controllers.image_controller import ImageController # Importante
 
 app = Flask(__name__)
 
@@ -177,6 +178,30 @@ def api_security():
     except Exception as e: 
         return jsonify({"error": str(e)}), 500
 
+# --- APIS PARA LA PESTAÑA DE IMÁGENES ---
+
+@app.route('/api/image/rmbg', methods=['POST'])
+def api_rmbg():
+    file = request.files.get("image")
+    if not file: return jsonify({"error": "No se recibió la imagen"}), 400
+    try:
+        out = ImageController.remove_background(file.read())
+        # Mantener nombre original + sufijo
+        name = f"{os.path.splitext(file.filename)[0]}_sin_fondo.png"
+        return send_file(out, mimetype='image/png', as_attachment=True, download_name=name)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/image/upscale', methods=['POST'])
+def api_upscale():
+    file = request.files.get("image")
+    if not file: return jsonify({"error": "No se recibió la imagen"}), 400
+    try:
+        out = ImageController.upscale_image(file.read())
+        name = f"{os.path.splitext(file.filename)[0]}_HD.png"
+        return send_file(out, mimetype='image/png', as_attachment=True, download_name=name)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 # ─────────────────────────────────────────────────────────────
 # CONFIGURACIÓN PARA GOOGLE (SITEMAP Y ROBOTS)
 # ─────────────────────────────────────────────────────────────
