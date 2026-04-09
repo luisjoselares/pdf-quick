@@ -194,6 +194,10 @@ def route_compress():
 @app.route('/ia-pdf')
 def route_ai():
     return render_template('index.html', tool='ai')
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('index.html', tool='home'), 404
 # ─────────────────────────────────────────────────────────────
 # RUTA DE PRIVACIDAD
 # ─────────────────────────────────────────────────────────────
