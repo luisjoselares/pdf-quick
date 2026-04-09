@@ -12,3 +12,5 @@ requests
 python-pptx
 groq
 PyPDF2
+rembg
+onnxruntime
