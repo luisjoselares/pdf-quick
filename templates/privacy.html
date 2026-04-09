@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacidad - PDF QU⚡CK</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+</head>
+<body>
+
+    <header class="header-container">
+        <a href="/" style="text-decoration: none;"><h1 class="main-title">PDF QU⚡CK</h1></a>
+        <h2 data-i18n="priv_title">Política de Privacidad</h2>
+    </header>
+
+    <main class="tools-grid" style="display: block; max-width: 800px; margin: 0 auto; padding: 20px;">
+        <section class="st-card">
+            <p data-i18n="priv_intro">En PDF QU⚡CK, la privacidad de tus documentos es nuestra prioridad número uno.</p>
+            
+            <h3 data-i18n="priv_h1" style="margin-top: 20px; color: var(--accent);">1. Procesamiento en Memoria</h3>
+            <p data-i18n="priv_p1">Tus archivos no se almacenan de forma permanente. El procesamiento se realiza en la memoria volátil del servidor o en directorios temporales que se eliminan automáticamente una vez finalizada la tarea o al cerrar la sesión de descarga.</p>
+
+            <h3 data-i18n="priv_h2" style="margin-top: 20px; color: var(--accent);">2. Sin Recopilación de Datos</h3>
+            <p data-i18n="priv_p2">No requerimos registro, correos electrónicos ni datos personales para utilizar nuestras herramientas. No rastreamos el contenido de los documentos que procesas.</p>
+
+            <h3 data-i18n="priv_h3" style="margin-top: 20px; color: var(--accent);">3. Seguridad de IA</h3>
+            <p data-i18n="priv_p3">Cuando utilizas funciones de IA, el texto se envía de forma cifrada a través de la API de Groq para su análisis y no es utilizado para entrenar modelos externos.</p>
+
+            <div style="margin-top: 40px; text-align: center;">
+                <a href="/" class="st-btn-primary" style="text-decoration: none; display: inline-block;" data-i18n="btn_back">Volver al Inicio</a>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const translations = {
+            "en": {
+                "priv_title": "Privacy Policy",
+                "priv_intro": "At PDF QU⚡CK, the privacy of your documents is our number one priority.",
+                "priv_h1": "1. In-Memory Processing",
+                "priv_p1": "Your files are not permanently stored. Processing is done in the server's volatile memory or temporary directories that are automatically deleted once the task is finished or the download session expires.",
+                "priv_h2": "2. No Data Collection",
+                "priv_p2": "We do not require registration, emails, or personal data to use our tools. We do not track the content of the documents you process.",
+                "priv_h3": "3. AI Security",
+                "priv_p3": "When you use AI features, the text is sent encrypted via the Groq API for analysis and is not used to train external models.",
+                "btn_back": "Back to Home"
+            },
+            "pt": {
+                "priv_title": "Política de Privacidade",
+                "priv_intro": "No PDF QU⚡CK, a privacidade dos seus documentos é a nossa prioridade número um.",
+                "priv_h1": "1. Processamento em Memória",
+                "priv_p1": "Seus arquivos não são armazenados permanentemente. O processamento é feito na memória volátil do servidor ou em diretórios temporários que são excluídos automaticamente após a conclusão da tarefa.",
+                "priv_h2": "2. Sem Coleta de Dados",
+                "priv_p2": "Não exigimos registro, e-mails ou dados pessoais. Não rastreamos o conteúdo dos documentos que você processa.",
+                "priv_h3": "3. Segurança de IA",
+                "priv_p3": "Ao usar as funções de IA, o texto é enviado criptografado pela API Groq para análise e não é usado para treinar modelos externos.",
+                "btn_back": "Voltar ao Início"
+            }
+        };
+
+        function setLanguage() {
+            const browserLang = (navigator.language || navigator.userLanguage).toLowerCase().substring(0, 2);
+            if (browserLang === 'es') return;
+            const lang = translations[browserLang] ? browserLang : 'en';
+            const t = translations[lang];
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key]) el.innerHTML = t[key];
+            });
+        }
+        document.addEventListener('DOMContentLoaded', setLanguage);
+    </script>
+</body>
+</html>
