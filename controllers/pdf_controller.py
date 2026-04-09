@@ -92,45 +92,45 @@ class PDFController:
     # ─────────────────────────────────────────────────────────────
     @staticmethod
     def extract_images(file):
-        """
-        Renderiza las imágenes detectadas en el PDF para evitar 
-        que salgan fragmentadas o cortadas.
-        """
         file.seek(0)
         doc = fitz.open(stream=file.read(), filetype="pdf")
         zip_buffer = io.BytesIO()
         
         with zipfile.ZipFile(zip_buffer, "w") as zip_file:
             image_count = 0
-            
             for page in doc:
-                # Detectar ubicación visual de las imágenes en la página
-                image_info = page.get_image_info(hashes=True)
-                
-                for img in image_info:
-                    bbox = img["bbox"]  # Coordenadas visuales
+                # 1. Obtener todas las imágenes con sus coordenadas
+                items = page.get_image_info(hashes=True)
+                if not items: continue
+
+                # 2. Lógica de agrupación: Unimos bboxes que se tocan o están muy cerca
+                # Esto evita que las imágenes salgan en "tiras"
+                clusters = []
+                for item in items:
+                    bbox = fitz.Rect(item["bbox"])
+                    if bbox.width < 5 or bbox.height < 5: continue # Ignorar ruido
                     
-                    # Filtro para ignorar iconos o ruido
-                    if bbox[2] - bbox[0] < 10 or bbox[3] - bbox[1] < 10:
-                        continue
-                    
-                    # Renderizado en alta calidad (Matrix 2x2 = 200% zoom)
-                    pix = page.get_pixmap(clip=bbox, matrix=fitz.Matrix(2, 2))
-                    
+                    added = False
+                    for i, cluster in enumerate(clusters):
+                        # Si el nuevo bbox toca un cluster existente, lo expandimos
+                        if bbox.intersects(cluster) or cluster.distance_to(bbox) < 2:
+                            clusters[i] = cluster | bbox
+                            added = True
+                            break
+                    if not added:
+                        clusters.append(bbox)
+
+                # 3. Renderizar cada cluster (Imagen completa)
+                for i, rect in enumerate(clusters):
                     image_count += 1
-                    image_bytes = pix.tobytes("png")
-                    
-                    filename = f"img_p{page.number + 1}_{image_count}.png"
-                    zip_file.writestr(filename, image_bytes)
+                    # Renderizado de alta calidad
+                    pix = page.get_pixmap(clip=rect, matrix=fitz.Matrix(3, 3))
+                    img_data = pix.tobytes("png")
+                    zip_file.writestr(f"img_p{page.number+1}_{i+1}.png", img_data)
         
         doc.close()
         zip_buffer.seek(0)
-        
-        if image_count == 0:
-            raise Exception("No se encontraron imágenes en el PDF")
-            
         return zip_buffer, image_count
-
     # ─────────────────────────────────────────────────────────────
     # EDITOR VISUAL
     # ─────────────────────────────────────────────────────────────
