@@ -1,12 +1,12 @@
 import io
 import zipfile
-import fitz
+import fitz  # PyMuPDF
 from pypdf import PdfWriter, PdfReader
 
 class PDFController:
     """
     Controlador puro para manejar PDFs.
-    Sin dependencias de interfaz visual (Streamlit).
+    Sin dependencias de interfaz visual.
     """
 
     # ─────────────────────────────────────────────────────────────
@@ -15,7 +15,7 @@ class PDFController:
     @staticmethod
     def merge(files_list):
         """
-        Recibe una lista ordenada de archivos (FileStorage de Flask) y los une.
+        Recibe una lista ordenada de archivos y los une en uno solo.
         """
         merger = PdfWriter()
         for file in files_list:
@@ -44,7 +44,6 @@ class PDFController:
             if end_page is None or end_page > total_pages:
                 end_page = total_pages
                 
-            # Ajuste de índices: el usuario ve páginas del 1 al N, Python del 0 al N-1
             for i in range(start_page - 1, end_page):
                 writer.add_page(reader.pages[i])
                 
@@ -70,15 +69,14 @@ class PDFController:
     # ─────────────────────────────────────────────────────────────
     @staticmethod
     def compress(file, level="Media"):
-        # Leemos el archivo desde el inicio
+        """
+        Reduce el tamaño del PDF optimizando recursos internos.
+        """
         file.seek(0)
-        # Abrimos el PDF con PyMuPDF (fitz)
         doc = fitz.open(stream=file.read(), filetype="pdf")
         out = io.BytesIO()
         
         # Guardamos con opciones de compresión real
-        # garbage=4: Elimina objetos no usados y compacta
-        # deflate=True: Comprime los flujos de datos
         doc.save(out, garbage=4, deflate=True, clean=True)
         doc.close()
         
@@ -88,13 +86,16 @@ class PDFController:
         compressed_size = len(out.getvalue())
         
         return out, original_size, compressed_size
- 
-   @staticmethod
-    def extract_images(file):
-        import zipfile
-        import fitz  # PyMuPDF
-        import io
 
+    # ─────────────────────────────────────────────────────────────
+    # EXTRAER IMÁGENES (ALTA CALIDAD / NO CORTADAS)
+    # ─────────────────────────────────────────────────────────────
+    @staticmethod
+    def extract_images(file):
+        """
+        Renderiza las imágenes detectadas en el PDF para evitar 
+        que salgan fragmentadas o cortadas.
+        """
         file.seek(0)
         doc = fitz.open(stream=file.read(), filetype="pdf")
         zip_buffer = io.BytesIO()
@@ -103,28 +104,23 @@ class PDFController:
             image_count = 0
             
             for page in doc:
-                # Obtenemos información de todas las imágenes en la página (incluida su posición)
+                # Detectar ubicación visual de las imágenes en la página
                 image_info = page.get_image_info(hashes=True)
                 
-                # Para evitar duplicados en PDFs que repiten la misma imagen (como logos)
-                seen_images = set()
-
                 for img in image_info:
-                    # El 'bbox' es el rectángulo (x0, y0, x1, y1) donde está la imagen visualmente
-                    bbox = img["bbox"]
+                    bbox = img["bbox"]  # Coordenadas visuales
                     
-                    # Ignorar imágenes demasiado pequeñas (ruido o iconos minúsculos)
+                    # Filtro para ignorar iconos o ruido
                     if bbox[2] - bbox[0] < 10 or bbox[3] - bbox[1] < 10:
                         continue
                     
-                    # Crear una imagen (pixmap) solo de esa zona (clip)
-                    # Usamos matrix para aumentar la resolución (zoom 2 = mejor calidad)
+                    # Renderizado en alta calidad (Matrix 2x2 = 200% zoom)
                     pix = page.get_pixmap(clip=bbox, matrix=fitz.Matrix(2, 2))
                     
                     image_count += 1
                     image_bytes = pix.tobytes("png")
                     
-                    filename = f"imagen_pagina_{page.number + 1}_{image_count}.png"
+                    filename = f"img_p{page.number + 1}_{image_count}.png"
                     zip_file.writestr(filename, image_bytes)
         
         doc.close()
@@ -134,14 +130,14 @@ class PDFController:
             raise Exception("No se encontraron imágenes en el PDF")
             
         return zip_buffer, image_count
+
     # ─────────────────────────────────────────────────────────────
-    # EDITOR VISUAL (Constructor)
+    # EDITOR VISUAL
     # ─────────────────────────────────────────────────────────────
     @staticmethod
     def edit(file, pages_config):
         """
-        Recibe un JSON/lista con las páginas a conservar, su orden y su rotación.
-        Ejemplo: [{"orig": 2, "rot": 90}, {"orig": 0, "rot": 0}]
+        Reordena y rota páginas basándose en una configuración externa.
         """
         reader = PdfReader(file)
         writer = PdfWriter()
@@ -166,7 +162,7 @@ class PDFController:
     # ─────────────────────────────────────────────────────────────
     @staticmethod
     def human_size(size_bytes):
-        """Transforma bytes a KB/MB (Conservado tal cual tu código)"""
+        """Convierte bytes a formato legible (KB, MB)."""
         if size_bytes < 1024:
             return f"{size_bytes} B"
         elif size_bytes < 1024 ** 2:
