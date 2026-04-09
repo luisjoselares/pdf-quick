@@ -13,43 +13,49 @@ class ImageController:
 
     @staticmethod
     def remove_background(file_bytes):
+        # 1. Cabeceras reforzadas para evitar desconexiones
         headers = {
             "Authorization": f"Bearer {ImageController.HF_TOKEN}",
             "X-Wait-For-Model": "true",
-            "X-Use-Cache": "false" # Forzamos a que no use caché para evitar datos corruptos
+            "Connection": "close"  # Crucial: evita que el socket quede abierto y se corrompa
         }
         
         try:
-            # Forzamos que los bytes se lean desde el principio
-            if hasattr(file_bytes, 'seek'):
-                file_bytes.seek(0)
-            
-            # Usamos un bloque with para asegurar que la conexión se cierre al terminar
-            with requests.Session() as session:
-                # Quitamos el 'Content-Type' manual para que requests lo maneje 
-                # o enviamos los bytes directamente sin streaming
-                response = session.post(
-                    ImageController.API_URL, 
-                    headers=headers, 
-                    data=file_bytes,
-                    timeout=(10, 60), # (Connection timeout, Read timeout)
-                    stream=False
-                )
-                
-                response.raise_for_status()
-                
-                # Leemos todo el contenido de una vez
-                content = response.content
-                if not content:
-                    raise Exception("La API devolvió un archivo vacío.")
-                
-                result = io.BytesIO(content)
-                del content
-                gc.collect()
-                return result
+            # 2. Aseguramos que file_bytes sea un objeto de bytes puro
+            if isinstance(file_bytes, io.BytesIO):
+                data = file_bytes.getvalue()
+            else:
+                data = file_bytes
 
-        except requests.exceptions.ChunkedEncodingError:
-            raise Exception("La conexión se interrumpió. Intenta con una imagen más pequeña.")
+            # 3. Petición directa sin Session para resetear el socket en cada llamada
+            response = requests.post(
+                ImageController.API_URL, 
+                headers=headers, 
+                data=data,
+                timeout=60
+            )
+            
+            # 4. Si el error es 503, es que el modelo aún carga
+            if response.status_code == 503:
+                raise Exception("La IA se está despertando. Reintenta en 10 segundos.")
+                
+            response.raise_for_status() 
+            
+            # 5. Verificación de integridad del contenido
+            if len(response.content) < 100: # Un PNG real no pesa menos que esto
+                raise Exception("Respuesta de IA incompleta o inválida.")
+
+            result = io.BytesIO(response.content)
+            
+            # Limpieza
+            del response
+            gc.collect()
+            
+            return result
+
+        except requests.exceptions.ConnectionError:
+            gc.collect()
+            raise Exception("Fallo de red. Hugging Face rechazó la conexión. Reintenta.")
         except Exception as e:
             gc.collect()
             raise e
