@@ -13,38 +13,46 @@ class ImageController:
 
     @staticmethod
     def remove_background(file_bytes):
-        """
-        Elimina el fondo enviando la imagen a la API de Hugging Face.
-        """
         headers = {
             "Authorization": f"Bearer {ImageController.HF_TOKEN}",
             "X-Wait-For-Model": "true",
-            "Content-Type": "image/png"
+            "X-Use-Cache": "false" # Forzamos a que no use caché para evitar datos corruptos
         }
         
         try:
-            # Usamos una sesión para mayor estabilidad
-            session = requests.Session()
-            response = session.post(
-                ImageController.API_URL, 
-                headers=headers, 
-                data=file_bytes,
-                timeout=60 
-            )
+            # Forzamos que los bytes se lean desde el principio
+            if hasattr(file_bytes, 'seek'):
+                file_bytes.seek(0)
             
-            response.raise_for_status() 
-            result = io.BytesIO(response.content)
-            
-            # Limpieza de RAM inmediata
-            del response
-            gc.collect()
-            
-            return result
+            # Usamos un bloque with para asegurar que la conexión se cierre al terminar
+            with requests.Session() as session:
+                # Quitamos el 'Content-Type' manual para que requests lo maneje 
+                # o enviamos los bytes directamente sin streaming
+                response = session.post(
+                    ImageController.API_URL, 
+                    headers=headers, 
+                    data=file_bytes,
+                    timeout=(10, 60), # (Connection timeout, Read timeout)
+                    stream=False
+                )
+                
+                response.raise_for_status()
+                
+                # Leemos todo el contenido de una vez
+                content = response.content
+                if not content:
+                    raise Exception("La API devolvió un archivo vacío.")
+                
+                result = io.BytesIO(content)
+                del content
+                gc.collect()
+                return result
 
+        except requests.exceptions.ChunkedEncodingError:
+            raise Exception("La conexión se interrumpió. Intenta con una imagen más pequeña.")
         except Exception as e:
             gc.collect()
             raise e
-
     @staticmethod
     def upscale_image(file_bytes, factor=2):
         """
