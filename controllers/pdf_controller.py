@@ -89,10 +89,12 @@ class PDFController:
         
         return out, original_size, compressed_size
  
-    @staticmethod
+   @staticmethod
     def extract_images(file):
         import zipfile
-        
+        import fitz  # PyMuPDF
+        import io
+
         file.seek(0)
         doc = fitz.open(stream=file.read(), filetype="pdf")
         zip_buffer = io.BytesIO()
@@ -100,15 +102,29 @@ class PDFController:
         with zipfile.ZipFile(zip_buffer, "w") as zip_file:
             image_count = 0
             
-            for page_index in range(len(doc)):
-                for img_index, img in enumerate(doc.get_page_images(page_index)):
-                    xref = img[0]
-                    base_image = doc.extract_image(xref)
-                    image_bytes = base_image["image"]
-                    ext = base_image["ext"] # png, jpeg, etc.
+            for page in doc:
+                # Obtenemos información de todas las imágenes en la página (incluida su posición)
+                image_info = page.get_image_info(hashes=True)
+                
+                # Para evitar duplicados en PDFs que repiten la misma imagen (como logos)
+                seen_images = set()
+
+                for img in image_info:
+                    # El 'bbox' es el rectángulo (x0, y0, x1, y1) donde está la imagen visualmente
+                    bbox = img["bbox"]
+                    
+                    # Ignorar imágenes demasiado pequeñas (ruido o iconos minúsculos)
+                    if bbox[2] - bbox[0] < 10 or bbox[3] - bbox[1] < 10:
+                        continue
+                    
+                    # Crear una imagen (pixmap) solo de esa zona (clip)
+                    # Usamos matrix para aumentar la resolución (zoom 2 = mejor calidad)
+                    pix = page.get_pixmap(clip=bbox, matrix=fitz.Matrix(2, 2))
                     
                     image_count += 1
-                    filename = f"imagen_{image_count}.{ext}"
+                    image_bytes = pix.tobytes("png")
+                    
+                    filename = f"imagen_pagina_{page.number + 1}_{image_count}.png"
                     zip_file.writestr(filename, image_bytes)
         
         doc.close()
