@@ -27,7 +27,6 @@
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
     
     <style>
-        /* Estilo para resaltar la herramienta seleccionada vía URL */
         .highlight-tool {
             animation: glow 2s ease-in-out;
             border: 2px solid var(--accent) !important;
@@ -51,6 +50,7 @@
     <div class="st-tabs-container">
         <button class="tab-btn active" onclick="switchTab('principales', this)" data-i18n="tab_main">Principales</button>
         <button class="tab-btn" onclick="switchTab('extras', this)" data-i18n="tab_extras">Conversiones y Seguridad</button>
+        <button class="tab-btn" onclick="switchTab('imagenes', this)" data-i18n="tab_img">⚡ Imágenes e IA</button>
     </div>
 
     <main class="tools-grid">
@@ -63,7 +63,7 @@
             <div id="merge-msg" class="status-msg"></div>
         </section>
 
-       <section class="st-card" data-category="principales">
+        <section class="st-card" data-category="principales">
             <h2 data-i18n="split_title">Dividir PDF</h2>
             <p class="tool-description" data-i18n="split_desc">Extrae un rango de páginas o separa todo en un ZIP.</p>
             <input type="file" id="split-in" accept=".pdf" class="st-uploader">
@@ -109,7 +109,7 @@
             <button id="ai-btn" class="st-btn-primary" data-i18n="btn_ai">Generar con IA</button>
             <div id="ai-msg" class="status-msg"></div>
         </section>
-        
+
         <section class="st-card hidden-card" data-category="extras">
             <h2 data-i18n="conv_title">Conversor Universal</h2>
             <p class="tool-description" data-i18n="conv_desc">Transforma entre PDF, Word, Excel e Imágenes.</p>
@@ -139,26 +139,40 @@
             <div id="sec-msg" class="status-msg"></div>
         </section>
 
-        <section class="st-card hidden-card" data-category="extras">
-            <h2 data-i18n="extimg_title">Extraer Imágenes</h2>
-            <p class="tool-description" data-i18n="extimg_desc">Obtén todas las fotos dentro del PDF en un archivo ZIP.</p>
+        <section class="st-card hidden-card" data-category="imagenes">
+            <h2 data-i18n="extimg_title">Extraer de PDF</h2>
+            <p class="tool-description" data-i18n="extimg_desc">Obtén las fotos de un PDF sin que salgan cortadas.</p>
             <input type="file" id="extimg-in" accept=".pdf" class="st-uploader">
             <button id="extimg-btn" class="st-btn-primary" data-i18n="btn_process">Procesar Documento</button>
             <div id="extimg-msg" class="status-msg"></div>
+        </section>
+
+        <section class="st-card hidden-card" data-category="imagenes">
+            <h2 data-i18n="rmbg_title">Quitar Fondo (IA)</h2>
+            <p class="tool-description" data-i18n="rmbg_desc">Elimina el fondo de cualquier imagen automáticamente.</p>
+            <input type="file" id="rmbg-in" accept="image/*" class="st-uploader">
+            <button id="rmbg-btn" class="st-btn-primary" data-i18n="btn_process">Procesar Imagen</button>
+            <div id="rmbg-msg" class="status-msg"></div>
+        </section>
+
+        <section class="st-card hidden-card" data-category="imagenes">
+            <h2 data-i18n="upscale_title">Escalar HD (IA)</h2>
+            <p class="tool-description" data-i18n="upscale_desc">Aumenta el tamaño y calidad de una imagen con IA.</p>
+            <input type="file" id="upscale-in" accept="image/*" class="st-uploader">
+            <button id="upscale-btn" class="st-btn-primary" data-i18n="btn_process">Mejorar Calidad</button>
+            <div id="upscale-msg" class="status-msg"></div>
         </section>
         
         <section class="st-card donation-banner">
             <div class="donation-text">
                 <h2 data-i18n="donate_title">☕ Apoya a PDF QU⚡CK</h2>
-                <p class="tool-description" data-i18n="donate_desc">Mantener los servidores y los motores de Inteligencia Artificial tiene un costo. Si esta herramienta te ahorró tiempo de trabajo, considera apoyar el proyecto.</p>
-                
+                <p class="tool-description" data-i18n="donate_desc">Mantener los servidores y los motores de IA tiene un costo. Si te ahorramos tiempo, considera apoyar el proyecto.</p>
                 <div class="donation-buttons">
                     <a href="https://ko-fi.com/ldownloader" target="_blank" rel="noopener noreferrer" class="kofi-btn">
                         <img src="https://storage.ko-fi.com/cdn/cup-border.png" alt="Icono Ko-fi" class="kofi-icon">
                         <span data-i18n="btn_kofi">Invítame un café en Ko-fi</span>
                     </a>
                 </div>
-
                 <p class="tool-description" style="margin-top: 1rem; font-size: 0.85rem; opacity: 0.8;" data-i18n="donate_qr">
                     O escanea el código QR para donar vía <strong>Binance Pay</strong>.
                 </p>
@@ -171,18 +185,19 @@
     </main>
 
     <footer class="seo-footer">
-        <p>&copy; 2026 PDF QU⚡CK - <span data-i18n="footer">Creado para simplificar tus documentos.</span></p>
+        <p>&copy; 2026 PDF QU⚡CK - <span data-i18n="footer">Creado para simplificar tus documentos e imágenes.</span></p>
         <p><a href="/privacy" style="color: var(--accent); text-decoration: none;" data-i18n="priv_link">Privacidad</a></p>
     </footer>
 
     <script>
-        // 🟢 1. DICCIONARIO MULTILENGUAJE (i18n)
+      // 🟢 1. DICCIONARIO MULTILENGUAJE (i18n)
         const translations = {
             "en": {
                 "subtitle": "Free tools to manipulate your documents instantly.",
                 "pills": "Fast • Secure • Limitless",
                 "tab_main": "Main Tools",
                 "tab_extras": "Conversions & Security",
+                "tab_img": "⚡ Images & AI",
                 "merge_title": "Merge PDFs",
                 "merge_desc": "Combine multiple files into a single one.",
                 "split_title": "Split PDF",
@@ -207,6 +222,12 @@
                 "sec_unlock": "Unlock PDF",
                 "sec_water": "Add Watermark",
                 "sec_page": "Auto Pagination",
+                "extimg_title": "Extract Images",
+                "extimg_desc": "Get all photos inside the PDF in a ZIP file.",
+                "rmbg_title": "Remove Background (AI)",
+                "rmbg_desc": "Remove the background of any image automatically.",
+                "upscale_title": "HD Upscale (AI)",
+                "upscale_desc": "Increase image size and quality with AI.",
                 "donate_title": "☕ Support PDF QU⚡CK",
                 "donate_desc": "Maintaining servers and AI engines costs money. If this tool saved you time, consider supporting the project.",
                 "btn_kofi": "Buy me a coffee on Ko-fi",
@@ -223,15 +244,14 @@
                 "msg_success": "✅ Download complete!",
                 "alert_files": "Select files",
                 "alert_file": "Select a file",
-                "priv_link": "Privacy Policy",
-                "extimg_title": "Extract Images",
-                "extimg_desc": "Get all photos inside the PDF in a ZIP file."
+                "priv_link": "Privacy Policy"
             },
             "pt": {
                 "subtitle": "Ferramentas gratuitas para manipular seus documentos instantaneamente.",
                 "pills": "Rápido • Seguro • Sem Limites",
                 "tab_main": "Ferramentas Principais",
                 "tab_extras": "Conversões e Segurança",
+                "tab_img": "⚡ Imagens e IA",
                 "merge_title": "Juntar PDFs",
                 "merge_desc": "Combine vários arquivos em um só.",
                 "split_title": "Dividir PDF",
@@ -256,6 +276,12 @@
                 "sec_unlock": "Desbloquear PDF",
                 "sec_water": "Adicionar Marca d'água",
                 "sec_page": "Paginação Automática",
+                "extimg_title": "Extrair Imagens",
+                "extimg_desc": "Obtenha todas as fotos dentro do PDF em um arquivo ZIP.",
+                "rmbg_title": "Remover Fundo (IA)",
+                "rmbg_desc": "Remova o fundo de qualquer imagem automaticamente.",
+                "upscale_title": "Escalar HD (IA)",
+                "upscale_desc": "Aumente o tamanho e a qualidade da imagem com IA.",
                 "donate_title": "☕ Apoie PDF QU⚡CK",
                 "donate_desc": "Manter os servidores e as IAs tem um custo. Se esta ferramenta economizou seu tempo, considere apoiar o projeto.",
                 "btn_kofi": "Pague-me um café no Ko-fi",
@@ -272,15 +298,14 @@
                 "msg_success": "✅ Download concluído!",
                 "alert_files": "Selecione os arquivos",
                 "alert_file": "Selecione um arquivo",
-                "priv_link": "Política de Privacidade",
-                "extimg_title": "Extrair Imagens",
-                "extimg_desc": "Obtenha todas as fotos dentro do PDF em um arquivo ZIP."
+                "priv_link": "Política de Privacidade"
             },
             "fr": {
                 "subtitle": "Outils gratuits pour manipuler vos documents instantanément.",
                 "pills": "Rapide • Sécurisé • Sans Limites",
                 "tab_main": "Outils Principaux",
                 "tab_extras": "Conversions & Sécurité",
+                "tab_img": "⚡ Images et IA",
                 "merge_title": "Fusionner des PDF",
                 "merge_desc": "Combinez plusieurs fichiers en un seul.",
                 "split_title": "Diviser un PDF",
@@ -300,11 +325,17 @@
                 "conv_title": "Convertisseur Universel",
                 "conv_desc": "Transformez entre PDF, Word, Excel et Images.",
                 "conv_img": "Images ➔ PDF",
-                "sec_title": "Sécurité",
+                "sec_title": "Segurança",
                 "sec_desc": "Déverrouillez ou ajoutez des filigranes à votre PDF.",
                 "sec_unlock": "Déverrouiller le PDF",
                 "sec_water": "Ajouter un Filigrane",
                 "sec_page": "Pagination Automatique",
+                "extimg_title": "Extraire les Images",
+                "extimg_desc": "Obtenez toutes les photos à l'intérieur du PDF dans un fichier ZIP.",
+                "rmbg_title": "Supprimer le fond (IA)",
+                "rmbg_desc": "Supprimez automatiquement le fond de n'importe quelle image.",
+                "upscale_title": "Agrandir HD (IA)",
+                "upscale_desc": "Augmentez la taille et la qualité de l'image avec l'IA.",
                 "donate_title": "☕ Soutenir PDF QU⚡CK",
                 "donate_desc": "L'entretien des serveurs et de l'IA a un coût. Si cet outil vous a fait gagner du temps, pensez à soutenir le projet.",
                 "btn_kofi": "Offrez-moi un café sur Ko-fi",
@@ -313,7 +344,7 @@
                 "btn_ai": "Générer avec l'IA",
                 "btn_conv": "Convertir le Fichier",
                 "btn_sec": "Appliquer la Sécurité",
-                "footer": "Créé pour simplifier vos documents.",
+                "footer": "Créé pour simplificar vos documents.",
                 "placeholder_pages": "Pages (ex: 1,2)",
                 "placeholder_sec": "Mot de passe ou Texte...",
                 "msg_processing": "Traitement...",
@@ -321,13 +352,10 @@
                 "msg_success": "✅ Téléchargement terminé !",
                 "alert_files": "Sélectionnez des fichiers",
                 "alert_file": "Sélectionnez un fichier",
-                "priv_link": "Confidentialité",
-                "extimg_title": "Extraire les Images",
-                "extimg_desc": "Obtenez toutes les photos à l'intérieur du PDF dans un fichier ZIP."
+                "priv_link": "Confidentialité"
             }
         };
-
-        let currentLang = 'es';
+let currentLang = 'es';
 
         function setLanguage() {
             const browserLang = (navigator.language || navigator.userLanguage).toLowerCase().substring(0, 2);
@@ -353,7 +381,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             setLanguage();
 
-            // Detectamos la herramienta solicitada desde Flask variable Jinja2
             const activeTool = "{{ tool }}"; 
 
             if (activeTool && activeTool !== 'home') {
@@ -366,15 +393,17 @@
                     'compress': { tab: 'principales', btnIdx: 0, targetId: 'comp-btn' },
                     'ai': { tab: 'principales', btnIdx: 0, targetId: 'ai-btn' },
                     'conv': { tab: 'extras', btnIdx: 1, targetId: 'conv-btn' },
-                    'sec': { tab: 'extras', btnIdx: 1, targetId: 'sec-btn' }
+                    'sec': { tab: 'extras', btnIdx: 1, targetId: 'sec-btn' },
+                    // Nuevas rutas para la pestaña de Imágenes
+                    'extract_images': { tab: 'imagenes', btnIdx: 2, targetId: 'extimg-btn' },
+                    'rmbg': { tab: 'imagenes', btnIdx: 2, targetId: 'rmbg-btn' },
+                    'upscale': { tab: 'imagenes', btnIdx: 2, targetId: 'upscale-btn' }
                 };
 
                 const config = routeMap[activeTool];
                 if (config) {
-                    // Cambiar pestaña si es necesario
                     switchTab(config.tab, tabBtns[config.btnIdx]);
                     
-                    // Hacer scroll y resaltar
                     const targetBtn = document.getElementById(config.targetId);
                     if (targetBtn) {
                         const card = targetBtn.closest('.st-card');
@@ -436,13 +465,14 @@
             }
         }
 
-        // EVENTOS DE BOTONES
+        // --- EVENTOS DE BOTONES ---
+
         document.getElementById('merge-btn').onclick = () => {
             const files = document.getElementById('merge-in').files;
             if(!files.length) return alert(t_msg("alert_files", "Selecciona archivos"));
             const fd = new FormData();
             for(let file of files) fd.append('pdfs', file);
-            procesar('merge-btn', 'merge-msg', '/api/merge', fd, 'Unido.pdf');
+            procesar('merge-btn', 'merge-msg', '/api/merge', fd, 'Unido_PDFQUICK.pdf');
         };
 
         document.getElementById('split-btn').onclick = () => {
@@ -466,7 +496,7 @@
             const fd = new FormData();
             fd.append('pdf', file);
             fd.append('level', document.getElementById('comp-lvl').value);
-            procesar('comp-btn', 'comp-msg', '/api/compress', fd, 'Comprimido.pdf');
+            procesar('comp-btn', 'comp-msg', '/api/compress', fd, 'Comprimido_PDFQUICK.pdf');
         };
 
         document.getElementById('ai-btn').onclick = () => {
@@ -502,17 +532,32 @@
             fd.append('action', action);
             if(action === 'unlock') fd.append('password', document.getElementById('sec-text').value);
             if(action === 'watermark') fd.append('text', document.getElementById('sec-text').value || 'CONFIDENCIAL');
-            procesar('sec-btn', 'sec-msg', '/api/security', fd, 'Seguridad.pdf');
+            if(action === 'pagination') fd.append('pos', 'Abajo Centro');
+            procesar('sec-btn', 'sec-msg', '/api/security', fd, 'Seguridad_PDFQUICK.pdf');
         };
-        
+
         document.getElementById('extimg-btn').onclick = () => {
             const file = document.getElementById('extimg-in').files[0];
             if(!file) return alert(t_msg("alert_file", "Selecciona un archivo"));
-            
             const fd = new FormData();
             fd.append('pdf', file);
-            
-            procesar('extimg-btn', 'extimg-msg', '/api/extract-images', fd, 'Imagenes_Extraidas.zip');
+            procesar('extimg-btn', 'extimg-msg', '/api/extract-images', fd, 'Imagenes_PDFQUICK.zip');
+        };
+
+        document.getElementById('rmbg-btn').onclick = () => {
+            const file = document.getElementById('rmbg-in').files[0];
+            if(!file) return alert(t_msg("alert_file", "Selecciona una imagen"));
+            const fd = new FormData();
+            fd.append('image', file);
+            procesar('rmbg-btn', 'rmbg-msg', '/api/image/rmbg', fd, 'Sin_Fondo_PDFQUICK.png');
+        };
+
+        document.getElementById('upscale-btn').onclick = () => {
+            const file = document.getElementById('upscale-in').files[0];
+            if(!file) return alert(t_msg("alert_file", "Selecciona una imagen"));
+            const fd = new FormData();
+            fd.append('image', file);
+            procesar('upscale-btn', 'upscale-msg', '/api/image/upscale', fd, 'Escalado_HD_PDFQUICK.png');
         };
     </script>
 </body>
