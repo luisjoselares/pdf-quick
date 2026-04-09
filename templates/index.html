@@ -504,6 +504,16 @@
             if(action === 'watermark') fd.append('text', document.getElementById('sec-text').value || 'CONFIDENCIAL');
             procesar('sec-btn', 'sec-msg', '/api/security', fd, 'Seguridad.pdf');
         };
+        
+        document.getElementById('extimg-btn').onclick = () => {
+            const file = document.getElementById('extimg-in').files[0];
+            if(!file) return alert(t_msg("alert_file", "Selecciona un archivo"));
+            
+            const fd = new FormData();
+            fd.append('pdf', file);
+            
+            procesar('extimg-btn', 'extimg-msg', '/api/extract-images', fd, 'Imagenes_Extraidas.zip');
+        };
     </script>
 </body>
 </html>
