@@ -6,13 +6,19 @@
     
     <title>{{ title if title else "PDF QU⚡CK - Unir, Dividir, Comprimir y Convertir PDFs" }}</title>
     <meta name="description" content="{{ description if description else 'Herramienta online gratuita para manipular archivos PDF. Une, divide, comprime y analiza documentos con IA.' }}">
-    <link rel="canonical" href="https://pdfquick.online/">
+    
+    <link rel="canonical" href="https://pdfquick.online{{ request.path }}">
 
-    <meta property="og:title" content="{{ title }}">
-    <meta property="og:description" content="{{ description }}">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ title if title else 'PDF QU⚡CK' }}">
+    <meta property="og:description" content="{{ description if description else 'Herramientas PDF gratuitas' }}">
     <meta property="og:image" content="{{ url_for('static', filename='favicon.svg') }}">
-    <meta property="og:url" content="https://pdfquick.online/">
+    <meta property="og:url" content="https://pdfquick.online{{ request.path }}">
+
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ title if title else 'PDF QU⚡CK' }}">
+    <meta name="twitter:description" content="{{ description if description else 'Herramientas PDF gratuitas' }}">
+    <meta name="twitter:image" content="{{ url_for('static', filename='favicon.svg') }}">
 
     <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
     <meta name="theme-color" content="#ffcc00">
