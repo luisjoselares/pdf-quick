@@ -178,7 +178,13 @@ def serve_robots():
     return send_from_directory('', 'robots.txt')
 
 # --- RUTAS DE HERRAMIENTAS PARA SEO ---
-
+@app.route('/')
+def index():
+    return render_template('index.html', 
+        tool='home',
+        title="PDF QU⚡CK - Unir, Dividir y Comprimir PDFs Gratis",
+        description="Herramienta online gratuita y sin límites para manipular archivos PDF. Procesamiento rápido y seguro con Inteligencia Artificial.")
+    
 @app.route('/unir-pdf')
 def route_merge():
     return render_template('index.html', tool='merge')
