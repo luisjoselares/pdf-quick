@@ -32,13 +32,19 @@
             <div id="merge-msg" class="status-msg"></div>
         </section>
 
-        <section class="st-card" data-category="principales">
+       <section class="st-card" data-category="principales">
             <h2 data-i18n="split_title">Dividir PDF</h2>
-            <p class="tool-description" data-i18n="split_desc">Extrae un rango de páginas de tu documento.</p>
+            <p class="tool-description" data-i18n="split_desc">Extrae un rango de páginas o separa todo en un ZIP.</p>
             <input type="file" id="split-in" accept=".pdf" class="st-uploader">
             <div class="grid-2">
-                <input type="number" id="split-start" placeholder="Pág. Inicio" class="st-input" data-i18n-placeholder="placeholder_start">
-                <input type="number" id="split-end" placeholder="Pág. Fin" class="st-input" data-i18n-placeholder="placeholder_end">
+                <select id="split-mode" class="st-input" onchange="toggleSplitInputs()">
+                    <option value="range">Extraer Rango</option>
+                    <option value="zip">Dividir todas las páginas (ZIP)</option>
+                </select>
+                <div id="split-range-inputs" class="grid-2" style="display: flex; gap: 5px;">
+                    <input type="number" id="split-start" placeholder="Inicio" class="st-input" value="1">
+                    <input type="number" id="split-end" placeholder="Fin" class="st-input">
+                </div>
             </div>
             <button id="split-btn" class="st-btn-primary" data-i18n="btn_process">Procesar Documento</button>
             <div id="split-msg" class="status-msg"></div>
