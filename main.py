@@ -176,6 +176,24 @@ def serve_sitemap():
 def serve_robots():
     # Esto busca el archivo robots.txt en la raíz del proyecto
     return send_from_directory('', 'robots.txt')
+
+# --- RUTAS DE HERRAMIENTAS PARA SEO ---
+
+@app.route('/unir-pdf')
+def route_merge():
+    return render_template('index.html', tool='merge')
+
+@app.route('/dividir-pdf')
+def route_split():
+    return render_template('index.html', tool='split')
+
+@app.route('/comprimir-pdf')
+def route_compress():
+    return render_template('index.html', tool='compress')
+
+@app.route('/ia-pdf')
+def route_ai():
+    return render_template('index.html', tool='ai')
 # ─────────────────────────────────────────────────────────────
 # RUTA DE PRIVACIDAD
 # ─────────────────────────────────────────────────────────────
