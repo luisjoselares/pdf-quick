@@ -37,21 +37,20 @@ def api_merge():
 @app.route('/api/split', methods=['POST'])
 def api_split():
     file = request.files.get("pdf")
-    if not file or file.filename == '': 
-        return jsonify({"error": "No se subió archivo"}), 400
-        
+    if not file: return jsonify({"error": "No file"}), 400
+    
+    # Aseguramos que el modo sea 'range' por defecto
     mode = request.form.get("mode", "range")
-    start = int(request.form.get("start_page", 1))
-    
-    end_page_str = request.form.get("end_page")
-    end = int(end_page_str) if end_page_str else None
-    
     try:
+        start = int(request.form.get("start_page", 1))
+        end_str = request.form.get("end_page")
+        end = int(end_str) if (end_str and end_str.strip()) else None
+        
         out, mime, name = PDFController.split(file, mode, start, end)
         return send_file(out, mimetype=mime, as_attachment=True, download_name=name)
-    except Exception as e: 
-        return jsonify({"error": str(e)}), 500
-
+    except Exception as e:
+        return jsonify({"error": f"Error al dividir: {str(e)}"}), 500
+        
 @app.route('/api/compress', methods=['POST'])
 def api_compress():
     file = request.files.get("pdf")
