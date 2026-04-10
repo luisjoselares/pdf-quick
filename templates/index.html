@@ -529,7 +529,46 @@ document.getElementById('extimg-btn').onclick = () => {
     fd.append('pdf', file);
     procesar('extimg-btn', 'extimg-msg', '/api/extract-images', fd, 'PDFQUICK_Imagenes.zip');
 };
-    </script>
-    
+
+function toggleFaq() {
+    document.getElementById('faq-wrapper').classList.toggle('active');
+}
+
+// Cerrar si se hace clic fuera del FAQ
+document.addEventListener('click', (e) => {
+    const wrapper = document.getElementById('faq-wrapper');
+    if (!wrapper.contains(e.target)) {
+        wrapper.classList.remove('active');
+    }
+});
+</script>
+
+<div id="faq-wrapper">
+    <div id="faq-box">
+        <h3 data-i18n="faq_title">Preguntas Frecuentes</h3>
+        
+        <div class="faq-item">
+            <h4 data-i18n="faq_q1">¿Es seguro usar PDF QU⚡CK?</h4>
+            <p data-i18n="faq_a1">Totalmente. El procesamiento es efímero: tus archivos se procesan en RAM y se eliminan automáticamente tras la descarga.</p>
+        </div>
+
+        <div class="faq-item">
+            <h4 data-i18n="faq_q2">¿Mis archivos se guardan?</h4>
+            <p data-i18n="faq_a2">No. No almacenamos documentos ni datos personales. No hay bases de datos de archivos.</p>
+        </div>
+
+        <div class="faq-item">
+            <h4 data-i18n="faq_q3">¿Es realmente gratis?</h4>
+            <p data-i18n="faq_a3">Sí. Es una herramienta gratuita financiada por nuestra pasión por el software limpio y rápido.</p>
+        </div>
+
+        <div class="faq-item">
+            <h4 data-i18n="faq_q4">¿Por qué usar esta herramienta?</h4>
+            <p data-i18n="faq_a4">Porque eliminamos la publicidad y los registros. Es la forma más rápida de gestionar tus documentos.</p>
+        </div>
+    </div>
+    <div id="faq-btn" onclick="toggleFaq()">?</div>
+</div>
+
 </body>
 </html>
