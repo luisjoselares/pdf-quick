@@ -114,23 +114,6 @@ html, body {
     box-sizing: border-box;
 }
 
-.lang-select {
-    background: var(--bg-app);
-    color: var(--text-main);
-    border: 1px solid var(--border);
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    outline: none;
-    cursor: pointer;
-    flex: 1;
-    transition: border-color 0.3s;
-}
-
-.lang-select:focus {
-    border-color: var(--accent);
-}
-
 /* ─── FILE UPLOADER ─── */
 .st-uploader {
     background-color: transparent;
