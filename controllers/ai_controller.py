@@ -85,9 +85,9 @@ class AIController:
         return pdf_bytes, filename
 
     @staticmethod
-    def process_pdf(file, source_lang='auto', target_lang='Spanish'):
+    def process_pdf(file, ai_action='summary', source_lang='auto', target_lang='Spanish'):
         """
-        Procesa un PDF completo para traducción con idioma origen/destino.
+        Procesa un PDF completo para IA con acción y opciones de idioma.
         """
         file_bytes = file.read()
         doc = fitz.open(stream=file_bytes, filetype="pdf")
@@ -102,21 +102,49 @@ class AIController:
         if not pages_text:
             raise ValueError("No se detectó texto legible en el archivo.")
 
-        full_text = "\n\n".join(pages_text)
-        source_text = f"el idioma {source_lang}" if source_lang != 'auto' else "el idioma detectado"
+        extracted_text = "\n\n".join(pages_text)
+        if len(extracted_text) > 25000:
+            extracted_text = extracted_text[:25000] + "\n\n[NOTA: TEXTO TRUNCADO POR LÍMITES DE PROCESAMIENTO]"
 
         client = AIController.get_client()
-        prompt = f"""
-        Actúa como un traductor experto.
-        Traduce el siguiente contenido de PDF desde {source_text} al idioma {target_lang}.
-        Es CRÍTICO que mantengas la estructura técnica, términos profesionales y el formato.
-        Si hay tablas o listas, mantenlas intactas en la traducción.
+        source_text = f"el idioma {source_lang}" if source_lang != 'auto' else "el idioma detectado"
+        prompt = ""
 
-        Contenido a traducir:
-        {full_text}
-        """
+        if ai_action == 'summary':
+            prompt = f"""
+            Escribe un resumen conciso y profesional del siguiente texto. Responde en el mismo idioma en el que está escrito el texto original.
 
-        clean_text = AIController._clean(full_text, max_chars=12000)
+            Texto:
+            {extracted_text}
+            """
+            title = "Resumen Ejecutivo"
+            filename = f"resumen_{file.filename}"
+
+        elif ai_action == 'keypoints':
+            prompt = f"""
+            Extrae los puntos clave más importantes del siguiente texto en formato de lista (bullet points). Responde en el mismo idioma en el que está escrito el texto original.
+
+            Texto:
+            {extracted_text}
+            """
+            title = "Puntos Clave del Documento"
+            filename = f"puntos_clave_{file.filename}"
+
+        elif ai_action == 'translate':
+            prompt = f"""
+            Actúa como un traductor experto. Traduce el siguiente texto de {source_text} a {target_lang}. Mantén la estructura técnica y el formato intactos.
+
+            Texto:
+            {extracted_text}
+            """
+            title = f"Traducción {source_text} → {target_lang}"
+            filename = f"traduccion_{file.filename}"
+
+        else:
+            raise ValueError("Acción de IA no válida.")
+
+        prompt = prompt.strip()
+        clean_text = AIController._clean(extracted_text, max_chars=12000)
         response = client.chat.completions.create(
             model=MODELS["translate"],
             messages=[
@@ -126,12 +154,9 @@ class AIController:
             temperature=0.3
         )
 
-        translated_text = response.choices[0].message.content.strip()
-        title = f"Traducción {source_label} → {target_label}"
-        subtitle = f"PDF traducido: {file.filename}"
-        filename = f"traduccion_{file.filename}"
-
-        pdf_bytes = AIController._build_pdf(title, subtitle, translated_text, file.filename)
+        result_text = response.choices[0].message.content.strip()
+        subtitle = f"PDF procesado: {file.filename}"
+        pdf_bytes = AIController._build_pdf(title, subtitle, result_text, file.filename)
         return pdf_bytes, filename
 
     # ─────────────────────────────────────────────────────────────

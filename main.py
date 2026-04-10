@@ -119,11 +119,12 @@ def ai_process():
     if not file or file.filename == '':
         return jsonify({"error": "No se subió archivo"}), 400
 
+    ai_action = request.form.get('ai_action') or request.form.get('action', 'summary')
     source_lang = request.form.get('source_lang', 'auto')
     target_lang = request.form.get('target_lang', 'Spanish')
 
     try:
-        out, filename = AIController.process_pdf(file, source_lang, target_lang)
+        out, filename = AIController.process_pdf(file, ai_action, source_lang, target_lang)
         return send_file(out,
                          mimetype='application/pdf',
                          as_attachment=True,
