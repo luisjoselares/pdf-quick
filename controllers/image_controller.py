@@ -1,70 +1,49 @@
+# controllers/image_controller.py
 import io
-import os
 import gc
-from huggingface_hub import InferenceClient
 from PIL import Image
 
 class ImageController:
-    # Inicializamos el cliente. 
-    # El api_key se toma de tu variable HF_TOKEN en Render.
-    client = InferenceClient(api_key=os.environ.get("HF_TOKEN"))
-
-    @staticmethod
-    def remove_background(file_bytes):
-        """
-        Elimina el fondo usando el InferenceClient con el proveedor fal-ai.
-        """
-        # Limpieza preventiva
-        gc.collect()
-        
-        try:
-            # 1. Convertimos los bytes a un objeto que el cliente pueda leer
-            input_image = io.BytesIO(file_bytes)
-            
-            # 2. Llamada a la API usando el motor de fal-ai (Súper rápido)
-            # Nota: Si fal-ai da problemas de región, quitamos 'provider' y usará el default
-            output_image = ImageController.client.image_segmentation(
-                input_image,
-                model="briaai/RMBG-2.0",
-                provider="fal-ai"
-            )
-            
-            # 3. El output de 'image_segmentation' es una imagen PIL directamente
-            img_io = io.BytesIO()
-            output_image.save(img_io, format="PNG")
-            img_io.seek(0)
-            
-            # --- BORRADO DE BASURA CRÍTICO ---
-            input_image.close()
-            output_image.close()
-            del input_image
-            del output_image
-            gc.collect() 
-            
-            return img_io
-
-        except Exception as e:
-            gc.collect()
-            # Si fal-ai falla por créditos o región, lanzamos un mensaje claro
-            error_msg = str(e)
-            if "provider" in error_msg.lower():
-                raise Exception("El motor fal-ai no está disponible. Reintentando sin proveedor...")
-            raise Exception(f"Error de IA: {error_msg}")
+    # --- Borramos TODO lo de MODELS, HF_TOKEN, requests y remove_background ---
+    # Tu servidor de Render ya no consumirá RAM procesando fondos.
 
     @staticmethod
     def upscale_image(file_bytes, factor=2):
-        # (Tu código de escalado local se queda igual, ya que funciona de toque)
+        """
+        Escalado HD local (Pillow / Lanczos). No consume API externa.
+        Muy útil para agrandar imágenes sin pixelarlas.
+        """
+        # Limpieza inicial
+        gc.collect()
+        
         try:
-            img = Image.open(io.BytesIO(file_bytes))
+            # Abrimos la imagen
+            img_io = io.BytesIO(file_bytes)
+            img = Image.open(img_io)
+            
+            # Aseguramos que el factor sea razonable (máx 4 para proteger RAM)
+            factor = max(1, min(4, factor))
+            
             w, h = img.size
+            # Escalado de alta fidelidad matemática (LANCZOS)
+            # Esto suaviza los bordes pero no genera nuevos detalles.
             new_img = img.resize((w * factor, h * factor), Image.Resampling.LANCZOS)
+            
+            # Guardamos en buffer (convertimos a PNG para mantener transparencia)
             out = io.BytesIO()
             new_img.save(out, format="PNG")
             out.seek(0)
+
+            # --- LIMPIEZA DE OBJETOS PILLOW ---
             img.close()
-            del img, new_img
-            gc.collect()
+            new_img.close()
+            del img, new_img, img_io
+            
+            # Escoba final
+            gc.collect() 
+            
             return out
+
         except Exception as e:
             gc.collect()
-            raise Exception(f"Error al escalar: {str(e)}")
+            raise Exception(f"Error al escalar localmente: {str(e)}")
