@@ -12,21 +12,22 @@ class ImageController:
         file.seek(0)
         doc = fitz.open(stream=file.read(), filetype="pdf")
         zip_buffer = io.BytesIO()
+        zip_file = zipfile.ZipFile(zip_buffer, "w")
+        image_count = 0
 
-        with zipfile.ZipFile(zip_buffer, "w") as zip_file:
-            image_count = 0
-            for page in doc:
-                for idx, img in enumerate(page.get_images(full=True), start=1):
-                    xref = img[0]
-                    pix = fitz.Pixmap(doc, xref)
-                    if pix.n > 3:
-                        pix = fitz.Pixmap(fitz.csRGB, pix)
+        for page in doc:
+            for idx, img in enumerate(page.get_images(full=True), start=1):
+                xref = img[0]
+                pix = fitz.Pixmap(doc, xref)
+                if pix.n > 3:
+                    pix = fitz.Pixmap(fitz.csRGB, pix)
 
-                    img_data = pix.tobytes("png")
-                    zip_file.writestr(f"pagina_{page.number + 1}_img_{idx}.png", img_data)
-                    pix = None
-                    image_count += 1
+                img_data = pix.tobytes("png")
+                zip_file.writestr(f"pagina_{page.number + 1}_img_{idx}.png", img_data)
+                pix = None
+                image_count += 1
 
+        zip_file.close()
         doc.close()
         zip_buffer.seek(0)
         gc.collect()

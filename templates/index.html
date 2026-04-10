@@ -569,12 +569,12 @@ document.getElementById('extimg-btn').onclick = () => {
     if(!file) return alert(t_msg("alert_file", "Selecciona un archivo"));
     const fd = new FormData();
     fd.append('pdf', file);
-    procesar('extimg-btn', 'extimg-msg', '/api/extract-images', fd, 'Imagenes_Extraidas.zip');
+    procesar('extimg-btn', 'extimg-msg', '/api/extract-images', fd, 'PDFQUICK_Imagenes.zip');
 };
 
 function toggleFaq() {
     const overlay = document.getElementById('faq-overlay');
-    overlay.style.display = overlay.style.display === 'flex' ? 'none' : 'flex';
+    overlay.classList.toggle('open');
 }
 
 document.getElementById('faq-fab').onclick = toggleFaq;
