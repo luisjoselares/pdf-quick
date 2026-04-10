@@ -297,7 +297,9 @@ html, body {
     position: absolute;
     bottom: 60px;
     right: 0;
-    width: 300px;
+    width: 280px; /* Un poco más estrecho para mayor seguridad */
+    max-height: 70vh; /* Límite de altura */
+    overflow-y: auto; /* Activa el desplazamiento vertical */
     background: var(--bg-card);
     border: 1px solid var(--border);
     padding: 20px;
@@ -307,6 +309,23 @@ html, body {
     visibility: hidden;
     transform: translateY(10px);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Personalización de la barra de desplazamiento (estilo Quick) */
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent) transparent;
+}
+
+#faq-box::-webkit-scrollbar {
+    width: 6px;
+}
+
+#faq-box::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#faq-box::-webkit-scrollbar-thumb {
+    background-color: var(--accent);
+    border-radius: 10px;
 }
 
 #faq-wrapper.active #faq-box {
