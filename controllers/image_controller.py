@@ -20,13 +20,11 @@ class ImageController:
                     xref = img[0]
                     pix = fitz.Pixmap(doc, xref)
                     if pix.n > 3:
-                        rgb = fitz.Pixmap(fitz.csRGB, pix)
-                        pix.close()
-                        pix = rgb
+                        pix = fitz.Pixmap(fitz.csRGB, pix)
 
                     img_data = pix.tobytes("png")
                     zip_file.writestr(f"pagina_{page.number + 1}_img_{idx}.png", img_data)
-                    pix.close()
+                    pix = None
                     image_count += 1
 
         doc.close()

@@ -5,6 +5,7 @@
     --text-main: #1d1d1f;
     --text-secondary: #86868b;
     --card-bg: #f5f5f7;
+    --bg-card: var(--card-bg);
     --accent: #0071e3;
     --accent-alt: #af52de;
     --border: #eaeaea;
@@ -256,6 +257,90 @@ html, body {
 .tab-btn.active {
     color: var(--accent);
     border-bottom: 2px solid var(--accent);
+}
+
+/* ─── FAQ FLOTANTE ─── */
+#faq-fab {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: none;
+    background-color: var(--accent);
+    color: var(--bg-app);
+    font-size: 1.5rem;
+    font-weight: 800;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 12px 32px rgba(0, 113, 227, 0.25);
+    z-index: 9999;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+#faq-fab:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 36px rgba(0, 113, 227, 0.32);
+}
+
+#faq-overlay {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(11, 14, 22, 0.58);
+    backdrop-filter: blur(5px);
+    z-index: 9998;
+    padding: 1rem;
+}
+
+.faq-card {
+    width: min(580px, 100%);
+    background: var(--bg-card);
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    box-shadow: 0 20px 70px rgba(0, 0, 0, 0.16);
+    padding: 28px;
+    max-height: min(90vh, 680px);
+    overflow-y: auto;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.faq-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.faq-card h3 {
+    margin: 0;
+    font-size: 1.4rem;
+}
+
+.faq-item + .faq-item {
+    margin-top: 1.25rem;
+}
+
+.faq-item h4 {
+    margin: 0 0 0.45rem 0;
+    font-size: 1rem;
+    color: var(--text-main);
+}
+
+.faq-item p {
+    margin: 0;
+    color: var(--text-secondary);
+    line-height: 1.75;
+    font-size: 0.95rem;
+}
+
+.faq-card .st-btn-primary {
+    width: auto;
+    padding: 0.65rem 1rem;
 }
 
 /* Ocultar tarjetas no activas */

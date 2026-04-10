@@ -172,6 +172,28 @@
         <p><a href="/privacy" style="color: var(--accent); text-decoration: none;" data-i18n="priv_link">Privacidad</a></p>
     </footer>
 
+    <button id="faq-fab" type="button" aria-label="Preguntas Frecuentes">?</button>
+    <div id="faq-overlay" class="faq-overlay" style="display:none;">
+        <section class="faq-card" role="dialog" aria-modal="true" aria-labelledby="faq-title">
+            <div class="faq-header">
+                <h3 id="faq-title" data-i18n="faq_title">Preguntas Frecuentes</h3>
+                <button id="faq-close" class="st-btn-primary" type="button">Cerrar</button>
+            </div>
+            <article class="faq-item">
+                <h4 data-i18n="faq_q1">¿Es seguro procesar documentos aquí?</h4>
+                <p data-i18n="faq_a1">Sí, todos los archivos se procesan en memoria y no se guardan en el servidor.</p>
+            </article>
+            <article class="faq-item">
+                <h4 data-i18n="faq_q2">¿Mis archivos se quedan almacenados?</h4>
+                <p data-i18n="faq_a2">No, no retenemos tus archivos después de completar la operación.</p>
+            </article>
+            <article class="faq-item">
+                <h4 data-i18n="faq_q3">¿El servicio tiene costo?</h4>
+                <p data-i18n="faq_a3">No, la herramienta es gratuita y está pensada para uso inmediato.</p>
+            </article>
+        </section>
+    </div>
+
     <script>
       // 🟢 1. DICCIONARIO MULTILENGUAJE (i18n) ACTUALIZADO
         const translations = {
@@ -206,6 +228,13 @@
                 "sec_page": "Auto Pagination",
                 "extimg_title": "Extract Images",
                 "extimg_desc": "Get all photos inside the PDF in a ZIP file.",
+                "faq_title": "Frequently Asked Questions",
+                "faq_q1": "Is it safe to process documents here?",
+                "faq_a1": "Yes, files are processed in RAM and not stored permanently.",
+                "faq_q2": "Are my files kept on the server?",
+                "faq_a2": "No, your documents are discarded after processing.",
+                "faq_q3": "Is this service free to use?",
+                "faq_a3": "Yes, the tool is free and ready for immediate use.",
                 "donate_title": "☕ Support PDF QU⚡CK",
                 "donate_desc": "Maintaining servers and AI engines costs money. If this tool saved you time, consider supporting the project.",
                 "btn_kofi": "Buy me a coffee on Ko-fi",
@@ -255,6 +284,13 @@
                 "sec_page": "Paginação Automática",
                 "extimg_title": "Extrair Imagens",
                 "extimg_desc": "Obtenha todas as fotos dentro do PDF em um arquivo ZIP.",
+                "faq_title": "Perguntas Frequentes",
+                "faq_q1": "É seguro processar documentos aqui?",
+                "faq_a1": "Sim, os arquivos são processados apenas na memória e não são armazenados.",
+                "faq_q2": "Meus arquivos ficam no servidor?",
+                "faq_a2": "Não, seus documentos são descartados após o processamento.",
+                "faq_q3": "O serviço é gratuito?",
+                "faq_a3": "Sim, a ferramenta é gratuita e pronta para uso imediato.",
                 "donate_title": "☕ Apoie PDF QU⚡CK",
                 "donate_desc": "Manter os servidores e as IAs tem um custo. Se esta ferramenta economizou seu tempo, considere apoiar o projeto.",
                 "btn_kofi": "Pague-me um café no Ko-fi",
@@ -304,6 +340,19 @@
                 "sec_page": "Pagination Automatique",
                 "extimg_title": "Extraire les Images",
                 "extimg_desc": "Obtenez toutes les photos à l'intérieur du PDF dans un fichier ZIP.",
+                "faq_title": "Questions Fréquemment Posées",
+                "faq_q1": "Est-il sûr de traiter des documents ici ?",
+                "faq_a1": "Oui, les fichiers sont traités en RAM et ne sont pas stockés en permanence.",
+                "faq_q2": "Mes fichiers restent-ils sur le serveur ?",
+                "faq_a2": "Non, vos documents sont supprimés après le traitement.",
+                "faq_q3": "Ce service est-il gratuit ?",
+                "faq_a3": "Oui, l'outil est gratuit et prêt à l'utilisation immédiate.",
+                "faq_q1": "Est-il sûr de traiter des documents ici ?",
+                "faq_a1": "Oui, les fichiers sont traités en RAM et ne sont pas stockés en permanence.",
+                "faq_q2": "Mes fichiers restent-ils sur le serveur ?",
+                "faq_a2": "Non, vos documents sont supprimés après le traitement.",
+                "faq_q3": "Ce service est-il gratuit ?",
+                "faq_a3": "Oui, l'outil est gratuit et prêt à l'utilisation immédiate.",
                 "donate_title": "☕ Soutenir PDF QU⚡CK",
                 "donate_desc": "L'entretien des serveurs et de l'IA a un coût. Si cet outil vous a fait gagner du temps, pensez à soutenir le projet.",
                 "btn_kofi": "Offrez-moi un café sur Ko-fi",
@@ -521,6 +570,17 @@ document.getElementById('extimg-btn').onclick = () => {
     const fd = new FormData();
     fd.append('pdf', file);
     procesar('extimg-btn', 'extimg-msg', '/api/extract-images', fd, 'Imagenes_Extraidas.zip');
+};
+
+function toggleFaq() {
+    const overlay = document.getElementById('faq-overlay');
+    overlay.style.display = overlay.style.display === 'flex' ? 'none' : 'flex';
+}
+
+document.getElementById('faq-fab').onclick = toggleFaq;
+document.getElementById('faq-close').onclick = toggleFaq;
+document.getElementById('faq-overlay').onclick = (event) => {
+    if (event.target.id === 'faq-overlay') toggleFaq();
 };
     </script>
     
