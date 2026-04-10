@@ -172,24 +172,6 @@
         <p><a href="/privacy" style="color: var(--accent); text-decoration: none;" data-i18n="priv_link">Privacidad</a></p>
     </footer>
 
-    <div id="faq-wrapper" class="faq-wrapper">
-        <div id="faq-box" class="faq-box" aria-hidden="true">
-            <article class="faq-item">
-                <h4>¿Es seguro?</h4>
-                <p>Procesamiento en RAM, sin almacenamiento permanente.</p>
-            </article>
-            <article class="faq-item">
-                <h4>¿Límites?</h4>
-                <p>Archivos hasta 20MB por subida.</p>
-            </article>
-            <article class="faq-item">
-                <h4>¿Costo?</h4>
-                <p>100% Gratis.</p>
-            </article>
-        </div>
-        <button id="faq-btn" class="faq-btn" type="button" aria-label="Preguntas Frecuentes">?</button>
-    </div>
-
     <script>
       // 🟢 1. DICCIONARIO MULTILENGUAJE (i18n) ACTUALIZADO
         const translations = {
@@ -224,13 +206,6 @@
                 "sec_page": "Auto Pagination",
                 "extimg_title": "Extract Images",
                 "extimg_desc": "Get all photos inside the PDF in a ZIP file.",
-                "faq_title": "Frequently Asked Questions",
-                "faq_q1": "Is it safe to process documents here?",
-                "faq_a1": "Yes, files are processed in RAM and not stored permanently.",
-                "faq_q2": "Are my files kept on the server?",
-                "faq_a2": "No, your documents are discarded after processing.",
-                "faq_q3": "Is this service free to use?",
-                "faq_a3": "Yes, the tool is free and ready for immediate use.",
                 "donate_title": "☕ Support PDF QU⚡CK",
                 "donate_desc": "Maintaining servers and AI engines costs money. If this tool saved you time, consider supporting the project.",
                 "btn_kofi": "Buy me a coffee on Ko-fi",
@@ -280,13 +255,6 @@
                 "sec_page": "Paginação Automática",
                 "extimg_title": "Extrair Imagens",
                 "extimg_desc": "Obtenha todas as fotos dentro do PDF em um arquivo ZIP.",
-                "faq_title": "Perguntas Frequentes",
-                "faq_q1": "É seguro processar documentos aqui?",
-                "faq_a1": "Sim, os arquivos são processados apenas na memória e não são armazenados.",
-                "faq_q2": "Meus arquivos ficam no servidor?",
-                "faq_a2": "Não, seus documentos são descartados após o processamento.",
-                "faq_q3": "O serviço é gratuito?",
-                "faq_a3": "Sim, a ferramenta é gratuita e pronta para uso imediato.",
                 "donate_title": "☕ Apoie PDF QU⚡CK",
                 "donate_desc": "Manter os servidores e as IAs tem um custo. Se esta ferramenta economizou seu tempo, considere apoiar o projeto.",
                 "btn_kofi": "Pague-me um café no Ko-fi",
@@ -336,19 +304,6 @@
                 "sec_page": "Pagination Automatique",
                 "extimg_title": "Extraire les Images",
                 "extimg_desc": "Obtenez toutes les photos à l'intérieur du PDF dans un fichier ZIP.",
-                "faq_title": "Questions Fréquemment Posées",
-                "faq_q1": "Est-il sûr de traiter des documents ici ?",
-                "faq_a1": "Oui, les fichiers sont traités en RAM et ne sont pas stockés en permanence.",
-                "faq_q2": "Mes fichiers restent-ils sur le serveur ?",
-                "faq_a2": "Non, vos documents sont supprimés après le traitement.",
-                "faq_q3": "Ce service est-il gratuit ?",
-                "faq_a3": "Oui, l'outil est gratuit et prêt à l'utilisation immédiate.",
-                "faq_q1": "Est-il sûr de traiter des documents ici ?",
-                "faq_a1": "Oui, les fichiers sont traités en RAM et ne sont pas stockés en permanence.",
-                "faq_q2": "Mes fichiers restent-ils sur le serveur ?",
-                "faq_a2": "Non, vos documents sont supprimés après le traitement.",
-                "faq_q3": "Ce service est-il gratuit ?",
-                "faq_a3": "Oui, l'outil est gratuit et prêt à l'utilisation immédiate.",
                 "donate_title": "☕ Soutenir PDF QU⚡CK",
                 "donate_desc": "L'entretien des serveurs et de l'IA a un coût. Si cet outil vous a fait gagner du temps, pensez à soutenir le projet.",
                 "btn_kofi": "Offrez-moi un café sur Ko-fi",
@@ -567,33 +522,6 @@ document.getElementById('extimg-btn').onclick = () => {
     fd.append('pdf', file);
     procesar('extimg-btn', 'extimg-msg', '/api/extract-images', fd, 'PDFQUICK_Imagenes.zip');
 };
-
-function toggleFaq() {
-    const wrapper = document.getElementById('faq-wrapper');
-    wrapper.classList.toggle('active');
-}
-
-document.getElementById('faq-btn').onclick = (event) => {
-    event.stopPropagation();
-    toggleFaq();
-};
-
-document.addEventListener('click', (event) => {
-    const wrapper = document.getElementById('faq-wrapper');
-    if (!wrapper.classList.contains('active')) return;
-    if (!event.target.closest('#faq-wrapper')) {
-        wrapper.classList.remove('active');
-    }
-});
-
-document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') {
-        const wrapper = document.getElementById('faq-wrapper');
-        if (wrapper.classList.contains('active')) {
-            wrapper.classList.remove('active');
-        }
-    }
-});
     </script>
     
 </body>
