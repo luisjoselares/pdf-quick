@@ -289,7 +289,7 @@ html, body {
 
 #faq-btn:hover {
     background: var(--accent);
-    color: var(--bg-body);
+    color: var(--bg-app);
     transform: scale(1.1);
 }
 
