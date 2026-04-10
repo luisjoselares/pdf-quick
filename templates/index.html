@@ -22,7 +22,9 @@
 
     <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
     <meta name="theme-color" content="#ffcc00">
-
+    
+    <script src="https://cdn.jsdelivr.net/npm/@imgly/background-removal@latest/dist/index.js"></script>
+    
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
     
@@ -377,251 +379,278 @@
                 "priv_link": "Confidentialité"
             }
         };
+/* ==========================================================
+   PDF QU⚡CK - NÚCLEO LÓGICO Y EVENTOS
+   ========================================================== */
+
 let currentLang = 'es';
 
-        function setLanguage() {
-            const browserLang = (navigator.language || navigator.userLanguage).toLowerCase().substring(0, 2);
-            if (browserLang === 'es') return;
-            currentLang = translations[browserLang] ? browserLang : 'en';
-            const t = translations[currentLang];
+// 🟢 1. SISTEMA DE TRADUCCIÓN (i18n)
+function setLanguage() {
+    const browserLang = (navigator.language || navigator.userLanguage).toLowerCase().substring(0, 2);
+    if (browserLang === 'es') return;
+    
+    currentLang = translations[browserLang] ? browserLang : 'en';
+    const t = translations[currentLang];
 
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (t[key]) {
-                    if (el.tagName === 'OPTION') el.text = t[key];
-                    else el.innerHTML = t[key];
-                }
-            });
-
-            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-                const key = el.getAttribute('data-i18n-placeholder');
-                if (t[key]) el.placeholder = t[key];
-            });
+    // Traducir elementos con data-i18n
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (t[key]) {
+            if (el.tagName === 'OPTION') el.text = t[key];
+            else el.innerHTML = t[key];
         }
+    });
 
-        // 🟢 2. LÓGICA DE CARGA INTELIGENTE (SEO & UI)
-        document.addEventListener('DOMContentLoaded', () => {
-            setLanguage();
+    // Traducir placeholders
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (t[key]) el.placeholder = t[key];
+    });
+}
 
-            const activeTool = "{{ tool }}"; 
+// Helper para obtener mensajes traducidos en JS
+const t_msg = (key, defaultEs) => (currentLang !== 'es' && translations[currentLang][key]) ? translations[currentLang][key] : defaultEs;
 
-            if (activeTool && activeTool !== 'home') {
-                const tabBtns = document.querySelectorAll('.tab-btn');
-                
-                // Mapeo de rutas a botones específicos y su categoría
-                const routeMap = {
-                    'merge': { tab: 'principales', btnIdx: 0, targetId: 'merge-btn' },
-                    'split': { tab: 'principales', btnIdx: 0, targetId: 'split-btn' },
-                    'compress': { tab: 'principales', btnIdx: 0, targetId: 'comp-btn' },
-                    'ai': { tab: 'principales', btnIdx: 0, targetId: 'ai-btn' },
-                    'conv': { tab: 'extras', btnIdx: 1, targetId: 'conv-btn' },
-                    'sec': { tab: 'extras', btnIdx: 1, targetId: 'sec-btn' },
-                    // Nuevas rutas para la pestaña de Imágenes
-                    'extract_images': { tab: 'imagenes', btnIdx: 2, targetId: 'extimg-btn' },
-                    'rmbg': { tab: 'imagenes', btnIdx: 2, targetId: 'rmbg-btn' },
-                    'upscale': { tab: 'imagenes', btnIdx: 2, targetId: 'upscale-btn' }
-                };
+// 🟢 2. INICIALIZACIÓN Y ENRUTAMIENTO (SEO/UI)
+document.addEventListener('DOMContentLoaded', () => {
+    setLanguage();
 
-                const config = routeMap[activeTool];
-                if (config) {
-                    switchTab(config.tab, tabBtns[config.btnIdx]);
-                    
-                    const targetBtn = document.getElementById(config.targetId);
-                    if (targetBtn) {
-                        const card = targetBtn.closest('.st-card');
-                        setTimeout(() => {
-                            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            card.classList.add('highlight-tool');
-                        }, 600);
-                    }
-                }
-            }
-        });
+    const activeTool = "{{ tool }}"; 
 
-        // 🟢 3. FUNCIONES DE UI Y API
-        function switchTab(category, btnElement) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            btnElement.classList.add('active');
-            document.querySelectorAll('.st-card[data-category]').forEach(card => {
-                if (card.getAttribute('data-category') === category) card.classList.remove('hidden-card');
-                else card.classList.add('hidden-card');
-            });
-        }
+    if (activeTool && activeTool !== 'home') {
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        
+        // Mapeo de rutas a pestañas y herramientas
+        const routeMap = {
+            'merge': { tab: 'principales', btnIdx: 0, targetId: 'merge-btn' },
+            'split': { tab: 'principales', btnIdx: 0, targetId: 'split-btn' },
+            'compress': { tab: 'principales', btnIdx: 0, targetId: 'comp-btn' },
+            'ai': { tab: 'principales', btnIdx: 0, targetId: 'ai-btn' },
+            'conv': { tab: 'extras', btnIdx: 1, targetId: 'conv-btn' },
+            'sec': { tab: 'extras', btnIdx: 1, targetId: 'sec-btn' },
+            'extract_images': { tab: 'imagenes', btnIdx: 2, targetId: 'extimg-btn' },
+            'rmbg': { tab: 'imagenes', btnIdx: 2, targetId: 'rmbg-btn' },
+            'upscale': { tab: 'imagenes', btnIdx: 2, targetId: 'upscale-btn' }
+        };
 
-        function toggleSplitInputs() {
-            const mode = document.getElementById('split-mode').value;
-            document.getElementById('split-range-inputs').style.display = mode === 'range' ? 'flex' : 'none';
-        }
-
-        const t_msg = (key, defaultEs) => (currentLang !== 'es' && translations[currentLang][key]) ? translations[currentLang][key] : defaultEs;
-
-        async function procesar(btnId, msgId, url, formData, downloadName) {
-            const btn = document.getElementById(btnId);
-            const msg = document.getElementById(msgId);
-            const originalText = btn.textContent;
+        const config = routeMap[activeTool];
+        if (config) {
+            switchTab(config.tab, tabBtns[config.btnIdx]);
             
-            btn.disabled = true;
-            btn.textContent = t_msg("msg_processing", "Procesando...");
-            msg.className = "status-msg status-processing";
-            msg.textContent = t_msg("msg_sending", "⏳ Enviando al servidor...");
-            
-            try {
-                const response = await fetch(url, { method: 'POST', body: formData });
-                if (!response.ok) {
-                    const err = await response.json();
-                    throw new Error(err.error || "Error");
-                }
-                const blob = await response.blob();
-                const link = document.createElement('a');
-                link.href = window.URL.createObjectURL(blob);
-                link.download = downloadName;
-                link.click();
-                msg.className = "status-msg status-success";
-                msg.textContent = t_msg("msg_success", "✅ ¡Descarga completada!");
-            } catch (error) {
-                msg.className = "status-msg status-error";
-                msg.textContent = "❌ " + error.message;
-            } finally {
-                btn.disabled = false;
-                btn.textContent = originalText;
+            const targetBtn = document.getElementById(config.targetId);
+            if (targetBtn) {
+                const card = targetBtn.closest('.st-card');
+                setTimeout(() => {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    card.classList.add('highlight-tool');
+                }, 600);
             }
         }
+    }
+});
 
-        // --- EVENTOS DE BOTONES ---
+// 🟢 3. FUNCIONES DE INTERFAZ (UI)
+function switchTab(category, btnElement) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    btnElement.classList.add('active');
+    document.querySelectorAll('.st-card[data-category]').forEach(card => {
+        if (card.getAttribute('data-category') === category) card.classList.remove('hidden-card');
+        else card.classList.add('hidden-card');
+    });
+}
 
-        document.getElementById('merge-btn').onclick = () => {
-            const files = document.getElementById('merge-in').files;
-            if(!files.length) return alert(t_msg("alert_files", "Selecciona archivos"));
-            const fd = new FormData();
-            for(let file of files) fd.append('pdfs', file);
-            procesar('merge-btn', 'merge-msg', '/api/merge', fd, 'Unido_PDFQUICK.pdf');
-        };
+function toggleSplitInputs() {
+    const mode = document.getElementById('split-mode').value;
+    document.getElementById('split-range-inputs').style.display = mode === 'range' ? 'flex' : 'none';
+}
 
-        document.getElementById('split-btn').onclick = () => {
-            const file = document.getElementById('split-in').files[0];
-            if(!file) return alert(t_msg("alert_file", "Selecciona un archivo"));
-            const mode = document.getElementById('split-mode').value;
-            const fd = new FormData();
-            fd.append('pdf', file);
-            fd.append('mode', mode);
-            if(mode === 'range') {
-                fd.append('start_page', document.getElementById('split-start').value || 1);
-                if(document.getElementById('split-end').value) fd.append('end_page', document.getElementById('split-end').value);
-            }
-            const downloadName = mode === 'zip' ? 'PDF_Dividido.zip' : 'Paginas_Extraidas.pdf';
-            procesar('split-btn', 'split-msg', '/api/split', fd, downloadName);
-        };
-
-        document.getElementById('comp-btn').onclick = () => {
-            const file = document.getElementById('comp-in').files[0];
-            if(!file) return alert(t_msg("alert_file", "Selecciona un archivo"));
-            const fd = new FormData();
-            fd.append('pdf', file);
-            fd.append('level', document.getElementById('comp-lvl').value);
-            procesar('comp-btn', 'comp-msg', '/api/compress', fd, 'Comprimido_PDFQUICK.pdf');
-        };
-
-        document.getElementById('ai-btn').onclick = () => {
-            const file = document.getElementById('ai-in').files[0];
-            if(!file) return alert(t_msg("alert_file", "Selecciona un archivo"));
-            const fd = new FormData();
-            fd.append('pdf', file);
-            fd.append('action', document.getElementById('ai-action').value);
-            fd.append('pages', document.getElementById('ai-pages').value);
-            procesar('ai-btn', 'ai-msg', '/api/ai', fd, 'IA_Documento.pdf');
-        };
-
-        document.getElementById('conv-btn').onclick = () => {
-            const files = document.getElementById('conv-in').files;
-            const action = document.getElementById('conv-action').value;
-            if(!files.length) return alert(t_msg("alert_files", "Selecciona archivo(s)"));
-            const fd = new FormData();
-            fd.append('action', action);
-            if(action === 'img2pdf') {
-                for(let file of files) fd.append('files', file);
-            } else {
-                fd.append('file', files[0]);
-            }
-            procesar('conv-btn', 'conv-msg', '/api/convert', fd, 'Convertido_PDFQUICK');
-        };
-
-        document.getElementById('sec-btn').onclick = () => {
-            const file = document.getElementById('sec-in').files[0];
-            if(!file) return alert(t_msg("alert_file", "Selecciona un archivo"));
-            const action = document.getElementById('sec-action').value;
-            const fd = new FormData();
-            fd.append('file', file);
-            fd.append('action', action);
-            if(action === 'unlock') fd.append('password', document.getElementById('sec-text').value);
-            if(action === 'watermark') fd.append('text', document.getElementById('sec-text').value || 'CONFIDENCIAL');
-            if(action === 'pagination') fd.append('pos', 'Abajo Centro');
-            procesar('sec-btn', 'sec-msg', '/api/security', fd, 'Seguridad_PDFQUICK.pdf');
-        };
-
-        document.getElementById('extimg-btn').onclick = () => {
-            const file = document.getElementById('extimg-in').files[0];
-            if(!file) return alert(t_msg("alert_file", "Selecciona un archivo"));
-            const fd = new FormData();
-            fd.append('pdf', file);
-            procesar('extimg-btn', 'extimg-msg', '/api/extract-images', fd, 'Imagenes_PDFQUICK.zip');
-        };
-
-        document.getElementById('rmbg-btn').onclick = () => {
-            const file = document.getElementById('rmbg-in').files[0];
-            if(!file) return alert(t_msg("alert_file", "Selecciona una imagen"));
-            const fd = new FormData();
-            fd.append('image', file);
-            procesar('rmbg-btn', 'rmbg-msg', '/api/image/rmbg', fd, 'Sin_Fondo_PDFQUICK.png');
-        };
-
-        document.getElementById('upscale-btn').onclick = () => {
-            const file = document.getElementById('upscale-in').files[0];
-            if(!file) return alert(t_msg("alert_file", "Selecciona una imagen"));
-            const fd = new FormData();
-            fd.append('image', file);
-            procesar('upscale-btn', 'upscale-msg', '/api/image/upscale', fd, 'Escalado_HD_PDFQUICK.png');
-        };
-
-        // --- 5. LÓGICA ESPECÍFICA DE IMÁGENES ---
-
-        function previewUpscaleDimensions() {
-            const fileInput = document.getElementById('upscale-in');
-            const infoPanel = document.getElementById('upscale-info');
-            const currentLabel = document.getElementById('upscale-current');
-            const finalLabel = document.getElementById('upscale-final');
-            
-            const file = fileInput.files[0];
-
-            // Si no hay archivo o no es una imagen, ocultamos el panel
-            if (!file || !file.type.startsWith('image/')) {
-                infoPanel.classList.add('hidden-card');
-                return;
-            }
-
-            // Usamos FileReader para leer los metadatos de la imagen sin subirla
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    // Obtenemos dimensiones originales
-                    const width = this.width;
-                    const height = this.height;
-                    
-                    // Mostramos panel e información
-                    infoPanel.classList.remove('hidden-card');
-                    currentLabel.textContent = `${width} x ${height} px`;
-                    
-                    // Calculamos escala final (x2 por defecto en el backend)
-                    // Añadimos la unidad 'px' y formato en negrita para impacto visual
-                    finalLabel.textContent = `${width * 2} x ${height * 2} px`;
-                    
-                    // Limpieza de memoria del objeto de imagen de JS
-                    URL.revokeObjectURL(img.src);
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
+// 🟢 4. NÚCLEO DE PROCESAMIENTO (PETICIONES AL SERVIDOR)
+async function procesar(btnId, msgId, url, formData, downloadName) {
+    const btn = document.getElementById(btnId);
+    const msg = document.getElementById(msgId);
+    const originalText = btn.textContent;
+    
+    btn.disabled = true;
+    btn.textContent = t_msg("msg_processing", "Procesando...");
+    msg.className = "status-msg status-processing";
+    msg.textContent = t_msg("msg_sending", "⏳ Procesando archivo...");
+    
+    try {
+        const response = await fetch(url, { method: 'POST', body: formData });
+        if (!response.ok) {
+            const err = await response.json();
+            throw new Error(err.error || "Error en el servidor");
         }
+        
+        const blob = await response.blob();
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = downloadName;
+        link.click();
+        
+        msg.className = "status-msg status-success";
+        msg.textContent = t_msg("msg_success", "✅ ¡Descarga completada!");
+    } catch (error) {
+        msg.className = "status-msg status-error";
+        msg.textContent = "❌ " + error.message;
+    } finally {
+        btn.disabled = false;
+        btn.textContent = originalText;
+    }
+}
+
+// 🟢 5. MANEJADORES DE EVENTOS (TODAS LAS HERRAMIENTAS)
+
+/* --- HERRAMIENTAS DE PDF --- */
+document.getElementById('merge-btn').onclick = () => {
+    const files = document.getElementById('merge-in').files;
+    if(!files.length) return alert(t_msg("alert_files", "Selecciona archivos"));
+    const fd = new FormData();
+    for(let file of files) fd.append('pdfs', file);
+    procesar('merge-btn', 'merge-msg', '/api/merge', fd, 'Unido_PDFQUICK.pdf');
+};
+
+document.getElementById('split-btn').onclick = () => {
+    const file = document.getElementById('split-in').files[0];
+    if(!file) return alert(t_msg("alert_file", "Selecciona un archivo"));
+    const mode = document.getElementById('split-mode').value;
+    const fd = new FormData();
+    fd.append('pdf', file);
+    fd.append('mode', mode);
+    if(mode === 'range') {
+        fd.append('start_page', document.getElementById('split-start').value || 1);
+        if(document.getElementById('split-end').value) fd.append('end_page', document.getElementById('split-end').value);
+    }
+    const downloadName = mode === 'zip' ? 'PDF_Dividido.zip' : 'Paginas_Extraidas.pdf';
+    procesar('split-btn', 'split-msg', '/api/split', fd, downloadName);
+};
+
+document.getElementById('comp-btn').onclick = () => {
+    const file = document.getElementById('comp-in').files[0];
+    if(!file) return alert(t_msg("alert_file", "Selecciona un archivo"));
+    const fd = new FormData();
+    fd.append('pdf', file);
+    fd.append('level', document.getElementById('comp-lvl').value);
+    procesar('comp-btn', 'comp-msg', '/api/compress', fd, 'Comprimido_PDFQUICK.pdf');
+};
+
+/* --- INTELIGENCIA ARTIFICIAL & CONVERSIÓN --- */
+document.getElementById('ai-btn').onclick = () => {
+    const file = document.getElementById('ai-in').files[0];
+    if(!file) return alert(t_msg("alert_file", "Selecciona un archivo"));
+    const fd = new FormData();
+    fd.append('pdf', file);
+    fd.append('action', document.getElementById('ai-action').value);
+    fd.append('pages', document.getElementById('ai-pages').value);
+    procesar('ai-btn', 'ai-msg', '/api/ai', fd, 'IA_Analisis.pdf');
+};
+
+document.getElementById('conv-btn').onclick = () => {
+    const files = document.getElementById('conv-in').files;
+    const action = document.getElementById('conv-action').value;
+    if(!files.length) return alert(t_msg("alert_files", "Selecciona archivo(s)"));
+    const fd = new FormData();
+    fd.append('action', action);
+    if(action === 'img2pdf') {
+        for(let file of files) fd.append('files', file);
+    } else {
+        fd.append('file', files[0]);
+    }
+    procesar('conv-btn', 'conv-msg', '/api/convert', fd, 'Convertido_PDFQUICK');
+};
+
+/* --- SEGURIDAD Y EXTRACCIÓN --- */
+document.getElementById('sec-btn').onclick = () => {
+    const file = document.getElementById('sec-in').files[0];
+    if(!file) return alert(t_msg("alert_file", "Selecciona un archivo"));
+    const action = document.getElementById('sec-action').value;
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('action', action);
+    if(action === 'unlock') fd.append('password', document.getElementById('sec-text').value);
+    if(action === 'watermark') fd.append('text', document.getElementById('sec-text').value || 'CONFIDENCIAL');
+    procesar('sec-btn', 'sec-msg', '/api/security', fd, 'Seguro_PDFQUICK.pdf');
+};
+
+document.getElementById('extimg-btn').onclick = () => {
+    const file = document.getElementById('extimg-in').files[0];
+    if(!file) return alert(t_msg("alert_file", "Selecciona un archivo"));
+    const fd = new FormData();
+    fd.append('pdf', file);
+    procesar('extimg-btn', 'extimg-msg', '/api/extract-images', fd, 'Imagenes_Extraidas.zip');
+};
+
+/* --- ⚡ SECCIÓN: IMÁGENES (IA LOCAL Y ESCALADO) --- */
+
+// HERRAMIENTA: QUITAR FONDO (Lógica 100% Local con WASM)
+document.getElementById('rmbg-btn').onclick = async () => {
+    const file = document.getElementById('rmbg-in').files[0];
+    const msg = document.getElementById('rmbg-msg');
+    const btn = document.getElementById('rmbg-btn');
+
+    if(!file) return alert(t_msg("alert_file", "Selecciona una imagen"));
+
+    btn.disabled = true;
+    msg.className = "status-msg status-processing";
+    msg.innerText = t_msg("msg_processing", "Procesando en tu navegador...");
+
+    try {
+        // Ejecución de la IA en el cliente
+        const blob = await imglyRemoveBackground(file);
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = file.name.replace(/\.[^/.]+$/, "") + "_edit.png";
+        a.click();
+        
+        URL.revokeObjectURL(url);
+        msg.className = "status-msg status-success";
+        msg.innerText = t_msg("msg_success", "✅ ¡Listo!");
+    } catch (error) {
+        console.error(error);
+        msg.className = "status-msg status-error";
+        msg.innerText = "❌ Error en el motor local.";
+    } finally {
+        btn.disabled = false;
+    }
+};
+
+// HERRAMIENTA: ESCALADO HD (Pillow en el Servidor)
+document.getElementById('upscale-btn').onclick = () => {
+    const file = document.getElementById('upscale-in').files[0];
+    if(!file) return alert(t_msg("alert_file", "Selecciona una imagen"));
+    const fd = new FormData();
+    fd.append('image', file);
+    procesar('upscale-btn', 'upscale-msg', '/api/image/upscale', fd, 'Escalado_HD.png');
+};
+
+// PREVISUALIZACIÓN DE DIMENSIONES (Escala Actual vs Final)
+function previewUpscaleDimensions() {
+    const input = document.getElementById('upscale-in');
+    const info = document.getElementById('upscale-info');
+    const currentTxt = document.getElementById('upscale-current');
+    const finalTxt = document.getElementById('upscale-final');
+    
+    const file = input.files[0];
+    if (!file || !file.type.startsWith('image/')) {
+        info.classList.add('hidden-card');
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const img = new Image();
+        img.onload = function() {
+            info.classList.remove('hidden-card');
+            currentTxt.textContent = `${this.width} x ${this.height} px`;
+            finalTxt.textContent = `${this.width * 2} x ${this.height * 2} px`;
+            URL.revokeObjectURL(img.src);
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
     </script>
     
 </body>
