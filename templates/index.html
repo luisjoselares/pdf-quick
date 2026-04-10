@@ -103,31 +103,41 @@
         <section class="st-card" data-category="principales">
             <h2 data-i18n="ai_title">Analizar con IA</h2>
             <p class="tool-description" data-i18n="ai_desc">Resumen o traducción con Llama 3.</p>
-            <input type="file" id="ai-in" accept=".pdf" class="st-uploader">
-            <div class="ai-controls" style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center;">
-                <select id="source-lang" class="lang-select">
-                    <option value="auto" data-i18n="lang_auto">Detectar idioma</option>
-                    <option value="Spanish" data-i18n="lang_es">Español</option>
-                    <option value="English" data-i18n="lang_en">Inglés</option>
-                    <option value="Portuguese" data-i18n="lang_pt">Portugués</option>
-                    <option value="French" data-i18n="lang_fr">Francés</option>
-                    <option value="German" data-i18n="lang_de">Alemán</option>
-                    <option value="Italian" data-i18n="lang_it">Italiano</option>
-                </select>
-                
-                <span style="color: var(--accent);">→</span>
+            <form id="ai-form">
+                <input type="file" id="ai-in" name="file" accept=".pdf" class="st-uploader">
+                <div class="grid-2">
+                    <select id="ai-action" name="action" class="st-input">
+                        <option value="resumen" data-i18n="ai_sum">Resumen</option>
+                        <option value="puntos_clave" data-i18n="ai_key">Puntos Clave</option>
+                        <option value="traduccion" data-i18n="ai_trans">Traducir (ES-EN)</option>
+                    </select>
+                    <input type="text" id="ai-pages" name="pages" placeholder="Páginas (ej: 1,2)" value="1" class="st-input" data-i18n-placeholder="placeholder_pages">
+                </div>
+                <div class="ai-controls" style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center;">
+                    <select id="source-lang" name="source_lang" class="lang-select">
+                        <option value="auto" data-i18n="lang_auto">Detectar idioma</option>
+                        <option value="Spanish" data-i18n="lang_es">Español</option>
+                        <option value="English" data-i18n="lang_en">Inglés</option>
+                        <option value="Portuguese" data-i18n="lang_pt">Portugués</option>
+                        <option value="French" data-i18n="lang_fr">Francés</option>
+                        <option value="German" data-i18n="lang_de">Alemán</option>
+                        <option value="Italian" data-i18n="lang_it">Italiano</option>
+                    </select>
+                    
+                    <span style="color: var(--accent);">→</span>
 
-                <select id="target-lang" class="lang-select">
-                    <option value="English" data-i18n="lang_en">Inglés</option>
-                    <option value="Spanish" selected data-i18n="lang_es">Español</option>
-                    <option value="Portuguese" data-i18n="lang_pt">Portugués</option>
-                    <option value="French" data-i18n="lang_fr">Francés</option>
-                    <option value="German" data-i18n="lang_de">Alemán</option>
-                    <option value="Italian" data-i18n="lang_it">Italiano</option>
-                </select>
-            </div>
-            <button id="ai-btn" class="st-btn-primary" data-i18n="btn_ai">Generar con IA</button>
-            <div id="ai-msg" class="status-msg"></div>
+                    <select id="target-lang" name="target_lang" class="lang-select">
+                        <option value="English" data-i18n="lang_en">Inglés</option>
+                        <option value="Spanish" selected data-i18n="lang_es">Español</option>
+                        <option value="Portuguese" data-i18n="lang_pt">Portugués</option>
+                        <option value="French" data-i18n="lang_fr">Francés</option>
+                        <option value="German" data-i18n="lang_de">Alemán</option>
+                        <option value="Italian" data-i18n="lang_it">Italiano</option>
+                    </select>
+                </div>
+                <button type="button" id="ai-btn" class="st-btn-primary" data-i18n="btn_ai">Generar con IA</button>
+                <div id="ai-msg" class="status-msg"></div>
+            </form>
         </section>
 
         <section class="st-card hidden-card" data-category="extras">
@@ -550,12 +560,8 @@ document.getElementById('comp-btn').onclick = () => {
 document.getElementById('ai-btn').onclick = () => {
     const file = document.getElementById('ai-in').files[0];
     if(!file) return alert(t_msg("alert_file", "Selecciona un archivo"));
-    const fd = new FormData();
-    fd.append('pdf', file);
-    fd.append('action', document.getElementById('ai-action').value);
-    fd.append('pages', document.getElementById('ai-pages').value);
-    fd.append('source_lang', document.getElementById('source-lang').value);
-    fd.append('target_lang', document.getElementById('target-lang').value);
+    const form = document.getElementById('ai-form');
+    const fd = new FormData(form);
     procesar('ai-btn', 'ai-msg', '/api/ai-process', fd, 'IA_Analisis.pdf');
 };
 
