@@ -7,7 +7,7 @@ import base64
 
 class ImageController:
     # URL del modelo en Hugging Face
-    API_URL = "https://api-inference.huggingface.co/models/briaai/RMBG-1.4"
+    API_URL = "https://api-inference.huggingface.co/models/ZhengPeng7/BiRefNet"
     
     # El Token se obtiene de las variables de entorno de Render
     HF_TOKEN = os.environ.get("HF_TOKEN")
