@@ -263,70 +263,77 @@ html, body {
 }
 
 /* ─── FAQ FLOTANTE ─── */
-#faq-fab {
+#faq-wrapper {
     position: fixed;
     bottom: 30px;
     right: 30px;
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    border: 1px solid var(--accent);
-    background-color: transparent;
-    color: var(--accent);
-    font-size: 1.5rem;
-    font-weight: 800;
-    font-family: inherit;
-    cursor: pointer;
-    display: grid;
-    place-items: center;
     z-index: 9999;
-    transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
-}
-#faq-fab:hover {
-    transform: translateY(-2px);
-    background-color: var(--accent);
-    color: var(--bg-app);
-}
-
-#faq-overlay {
-    position: fixed;
-    inset: 0;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(11, 14, 22, 0.58);
-    backdrop-filter: blur(5px);
-    z-index: 9998;
-    padding: 1rem;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.75rem;
 }
 
-#faq-overlay.open {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-}
-
-.faq-card {
-    width: min(580px, 100%);
+#faq-box {
+    position: absolute;
+    bottom: 60px;
+    right: 0;
+    width: 280px;
     background: var(--bg-card);
-    border-radius: 20px;
     border: 1px solid var(--border);
-    padding: 28px;
-    max-height: min(90vh, 680px);
-    overflow-y: auto;
-    transform: translateY(16px);
+    border-radius: 18px;
+    padding: 16px;
     opacity: 0;
-    transition: transform 0.3s ease, opacity 0.3s ease;
+    pointer-events: none;
+    transform: translateY(12px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
     box-shadow: none;
 }
 
-#faq-overlay.open .faq-card {
-    transform: translateY(0);
+#faq-wrapper.active #faq-box {
     opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+#faq-box .faq-item + .faq-item {
+    margin-top: 1rem;
+}
+
+#faq-box h4 {
+    margin: 0 0 0.35rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+#faq-box p {
+    margin: 0;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+#faq-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 1px solid var(--accent);
+    background: transparent;
+    color: var(--accent);
+    font-size: 1.4rem;
+    font-weight: 700;
+    font-family: inherit;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+#faq-btn:hover {
+    background: var(--accent);
+    color: var(--bg-app);
+    transform: translateY(-2px);
 }
 
 .faq-header {

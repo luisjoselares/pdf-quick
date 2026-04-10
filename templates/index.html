@@ -172,26 +172,22 @@
         <p><a href="/privacy" style="color: var(--accent); text-decoration: none;" data-i18n="priv_link">Privacidad</a></p>
     </footer>
 
-    <button id="faq-fab" type="button" aria-label="Preguntas Frecuentes">?</button>
-    <div id="faq-overlay" class="faq-overlay">
-        <section class="faq-card" role="dialog" aria-modal="true" aria-labelledby="faq-title">
-            <div class="faq-header">
-                <h3 id="faq-title" data-i18n="faq_title">Preguntas Frecuentes</h3>
-                <button id="faq-close" class="st-btn-primary" type="button">Cerrar</button>
-            </div>
+    <div id="faq-wrapper" class="faq-wrapper">
+        <div id="faq-box" class="faq-box" aria-hidden="true">
             <article class="faq-item">
-                <h4 data-i18n="faq_q1">¿Es seguro procesar documentos aquí?</h4>
-                <p data-i18n="faq_a1">Sí, todos los archivos se procesan en memoria y no se guardan en el servidor.</p>
+                <h4>¿Es seguro?</h4>
+                <p>Procesamiento en RAM, sin almacenamiento permanente.</p>
             </article>
             <article class="faq-item">
-                <h4 data-i18n="faq_q2">¿Mis archivos se quedan almacenados?</h4>
-                <p data-i18n="faq_a2">No, no retenemos tus archivos después de completar la operación.</p>
+                <h4>¿Límites?</h4>
+                <p>Archivos hasta 20MB por subida.</p>
             </article>
             <article class="faq-item">
-                <h4 data-i18n="faq_q3">¿El servicio tiene costo?</h4>
-                <p data-i18n="faq_a3">No, la herramienta es gratuita y está pensada para uso inmediato.</p>
+                <h4>¿Costo?</h4>
+                <p>100% Gratis.</p>
             </article>
-        </section>
+        </div>
+        <button id="faq-btn" class="faq-btn" type="button" aria-label="Preguntas Frecuentes">?</button>
     </div>
 
     <script>
@@ -573,15 +569,31 @@ document.getElementById('extimg-btn').onclick = () => {
 };
 
 function toggleFaq() {
-    const overlay = document.getElementById('faq-overlay');
-    overlay.classList.toggle('open');
+    const wrapper = document.getElementById('faq-wrapper');
+    wrapper.classList.toggle('active');
 }
 
-document.getElementById('faq-fab').onclick = toggleFaq;
-document.getElementById('faq-close').onclick = toggleFaq;
-document.getElementById('faq-overlay').onclick = (event) => {
-    if (event.target.id === 'faq-overlay') toggleFaq();
+document.getElementById('faq-btn').onclick = (event) => {
+    event.stopPropagation();
+    toggleFaq();
 };
+
+document.addEventListener('click', (event) => {
+    const wrapper = document.getElementById('faq-wrapper');
+    if (!wrapper.classList.contains('active')) return;
+    if (!event.target.closest('#faq-wrapper')) {
+        wrapper.classList.remove('active');
+    }
+});
+
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        const wrapper = document.getElementById('faq-wrapper');
+        if (wrapper.classList.contains('active')) {
+            wrapper.classList.remove('active');
+        }
+    }
+});
     </script>
     
 </body>
