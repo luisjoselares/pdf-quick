@@ -8,8 +8,6 @@ pdfplumber
 pandas
 openpyxl
 Pillow
-requests
 python-pptx
 groq
 PyPDF2
-huggingface_hub

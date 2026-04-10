@@ -23,8 +23,6 @@
     <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
     <meta name="theme-color" content="#ffcc00">
     
-    <script src="https://cdn.jsdelivr.net/npm/@imgly/background-removal@latest/dist/index.js"></script>
-    
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
     
@@ -52,7 +50,6 @@
     <div class="st-tabs-container">
         <button class="tab-btn active" onclick="switchTab('principales', this)" data-i18n="tab_main">Principales</button>
         <button class="tab-btn" onclick="switchTab('extras', this)" data-i18n="tab_extras">Conversiones y Seguridad</button>
-        <button class="tab-btn" onclick="switchTab('imagenes', this)" data-i18n="tab_img">⚡ Imágenes e IA</button>
     </div>
 
     <main class="tools-grid">
@@ -141,44 +138,12 @@
             <div id="sec-msg" class="status-msg"></div>
         </section>
 
-        <section class="st-card hidden-card" data-category="imagenes">
+        <section class="st-card" data-category="principales">
             <h2 data-i18n="extimg_title">Extraer de PDF</h2>
             <p class="tool-description" data-i18n="extimg_desc">Obtén las fotos de un PDF sin que salgan cortadas.</p>
             <input type="file" id="extimg-in" accept=".pdf" class="st-uploader">
             <button id="extimg-btn" class="st-btn-primary" data-i18n="btn_process">Procesar Documento</button>
             <div id="extimg-msg" class="status-msg"></div>
-        </section>
-
-        <section class="st-card hidden-card" data-category="imagenes">
-            <h2 data-i18n="rmbg_title">Quitar Fondo (IA)</h2>
-            <p class="tool-description" data-i18n="rmbg_desc">Elimina el fondo de cualquier imagen automáticamente.</p>
-            <input type="file" id="rmbg-in" accept="image/*" class="st-uploader">
-            <button id="rmbg-btn" class="st-btn-primary" data-i18n="btn_process">Procesar Imagen</button>
-            <div id="rmbg-msg" class="status-msg"></div>
-        </section>
-
-        <section class="st-card hidden-card" data-category="imagenes">
-            <h2 data-i18n="upscale_title">Escalar HD (IA)</h2>
-            <p class="tool-description" data-i18n="upscale_desc">Aumenta el tamaño y nitidez de tus fotos localmente.</p>
-            
-            <input type="file" id="upscale-in" accept="image/*" class="st-uploader" onchange="previewUpscaleDimensions()">
-            
-            <div id="upscale-info" class="grid-img-tools hidden-card" style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.1);">
-                <div style="text-align: center;">
-                    <span style="opacity: 0.7; display: block; margin-bottom: 2px;">Escala Actual</span>
-                    <strong id="upscale-current" style="color: var(--accent);">-- x -- px</strong>
-                </div>
-                <div style="text-align: center; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; opacity: 0.5;">
-                    ➔
-                </div>
-                <div style="text-align: center;">
-                    <span style="opacity: 0.7; display: block; margin-bottom: 2px;">Escala Final (x2)</span>
-                    <strong id="upscale-final" style="color: #00ff88; font-weight: bold; text-shadow: 0 0 10px rgba(0,255,136,0.3);">-- x -- px</strong>
-                </div>
-            </div>
-
-            <button id="upscale-btn" class="st-btn-primary" data-i18n="btn_process">Mejorar Calidad</button>
-            <div id="upscale-msg" class="status-msg"></div>
         </section>
         
         <section class="st-card donation-banner">
@@ -215,7 +180,6 @@
                 "pills": "Fast • Secure • Limitless",
                 "tab_main": "Main Tools",
                 "tab_extras": "Conversions & Security",
-                "tab_img": "⚡ Images & AI",
                 "merge_title": "Merge PDFs",
                 "merge_desc": "Combine multiple files into a single one.",
                 "split_title": "Split PDF",
@@ -242,12 +206,6 @@
                 "sec_page": "Auto Pagination",
                 "extimg_title": "Extract Images",
                 "extimg_desc": "Get all photos inside the PDF in a ZIP file.",
-                "rmbg_title": "Remove Background (AI)",
-                "rmbg_desc": "Remove the background of any image automatically.",
-                "upscale_title": "HD Upscale (AI)",
-                "upscale_desc": "Increase image size and quality with AI.",
-                "upscale_label_current": "Current",
-                "upscale_label_final": "Final (x2)",
                 "donate_title": "☕ Support PDF QU⚡CK",
                 "donate_desc": "Maintaining servers and AI engines costs money. If this tool saved you time, consider supporting the project.",
                 "btn_kofi": "Buy me a coffee on Ko-fi",
@@ -271,7 +229,6 @@
                 "pills": "Rápido • Seguro • Sem Limites",
                 "tab_main": "Ferramentas Principais",
                 "tab_extras": "Conversões e Segurança",
-                "tab_img": "⚡ Imagens e IA",
                 "merge_title": "Juntar PDFs",
                 "merge_desc": "Combine vários arquivos em um só.",
                 "split_title": "Dividir PDF",
@@ -298,12 +255,6 @@
                 "sec_page": "Paginação Automática",
                 "extimg_title": "Extrair Imagens",
                 "extimg_desc": "Obtenha todas as fotos dentro do PDF em um arquivo ZIP.",
-                "rmbg_title": "Remover Fundo (IA)",
-                "rmbg_desc": "Remova o fundo de qualquer imagem automaticamente.",
-                "upscale_title": "Escalar HD (IA)",
-                "upscale_desc": "Aumente o tamanho e a qualidade da imagem com IA.",
-                "upscale_label_current": "Atual",
-                "upscale_label_final": "Final (x2)",
                 "donate_title": "☕ Apoie PDF QU⚡CK",
                 "donate_desc": "Manter os servidores e as IAs tem um custo. Se esta ferramenta economizou seu tempo, considere apoiar o projeto.",
                 "btn_kofi": "Pague-me um café no Ko-fi",
@@ -327,7 +278,6 @@
                 "pills": "Rapide • Sécurisé • Sans Limites",
                 "tab_main": "Outils Principaux",
                 "tab_extras": "Conversions & Sécurité",
-                "tab_img": "⚡ Images et IA",
                 "merge_title": "Fusionner des PDF",
                 "merge_desc": "Combinez plusieurs fichiers en un seul.",
                 "split_title": "Diviser un PDF",
@@ -354,12 +304,6 @@
                 "sec_page": "Pagination Automatique",
                 "extimg_title": "Extraire les Images",
                 "extimg_desc": "Obtenez toutes les photos à l'intérieur du PDF dans un fichier ZIP.",
-                "rmbg_title": "Supprimer Fond (IA)",
-                "rmbg_desc": "Supprimez automatiquement le fond de n'importe quelle image.",
-                "upscale_title": "Agrandir HD (IA)",
-                "upscale_desc": "Augmentez la taille et la qualité de l'image avec l'IA.",
-                "upscale_label_current": "Actuelle",
-                "upscale_label_final": "Finale (x2)",
                 "donate_title": "☕ Soutenir PDF QU⚡CK",
                 "donate_desc": "L'entretien des serveurs et de l'IA a un coût. Si cet outil vous a fait gagner du temps, pensez à soutenir le projet.",
                 "btn_kofi": "Offrez-moi un café sur Ko-fi",
@@ -429,9 +373,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'ai': { tab: 'principales', btnIdx: 0, targetId: 'ai-btn' },
             'conv': { tab: 'extras', btnIdx: 1, targetId: 'conv-btn' },
             'sec': { tab: 'extras', btnIdx: 1, targetId: 'sec-btn' },
-            'extract_images': { tab: 'imagenes', btnIdx: 2, targetId: 'extimg-btn' },
-            'rmbg': { tab: 'imagenes', btnIdx: 2, targetId: 'rmbg-btn' },
-            'upscale': { tab: 'imagenes', btnIdx: 2, targetId: 'upscale-btn' }
+            'extract_images': { tab: 'principales', btnIdx: 0, targetId: 'extimg-btn' }
         };
 
         const config = routeMap[activeTool];
@@ -580,77 +522,6 @@ document.getElementById('extimg-btn').onclick = () => {
     fd.append('pdf', file);
     procesar('extimg-btn', 'extimg-msg', '/api/extract-images', fd, 'Imagenes_Extraidas.zip');
 };
-
-/* --- ⚡ SECCIÓN: IMÁGENES (IA LOCAL Y ESCALADO) --- */
-
-// HERRAMIENTA: QUITAR FONDO (Lógica 100% Local con WASM)
-document.getElementById('rmbg-btn').onclick = async () => {
-    const file = document.getElementById('rmbg-in').files[0];
-    const msg = document.getElementById('rmbg-msg');
-    const btn = document.getElementById('rmbg-btn');
-
-    if(!file) return alert(t_msg("alert_file", "Selecciona una imagen"));
-
-    btn.disabled = true;
-    msg.className = "status-msg status-processing";
-    msg.innerText = t_msg("msg_processing", "Procesando en tu navegador...");
-
-    try {
-        // Ejecución de la IA en el cliente
-        const blob = await imglyRemoveBackground(file);
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = file.name.replace(/\.[^/.]+$/, "") + "_edit.png";
-        a.click();
-        
-        URL.revokeObjectURL(url);
-        msg.className = "status-msg status-success";
-        msg.innerText = t_msg("msg_success", "✅ ¡Listo!");
-    } catch (error) {
-        console.error(error);
-        msg.className = "status-msg status-error";
-        msg.innerText = "❌ Error en el motor local.";
-    } finally {
-        btn.disabled = false;
-    }
-};
-
-// HERRAMIENTA: ESCALADO HD (Pillow en el Servidor)
-document.getElementById('upscale-btn').onclick = () => {
-    const file = document.getElementById('upscale-in').files[0];
-    if(!file) return alert(t_msg("alert_file", "Selecciona una imagen"));
-    const fd = new FormData();
-    fd.append('image', file);
-    procesar('upscale-btn', 'upscale-msg', '/api/image/upscale', fd, 'Escalado_HD.png');
-};
-
-// PREVISUALIZACIÓN DE DIMENSIONES (Escala Actual vs Final)
-function previewUpscaleDimensions() {
-    const input = document.getElementById('upscale-in');
-    const info = document.getElementById('upscale-info');
-    const currentTxt = document.getElementById('upscale-current');
-    const finalTxt = document.getElementById('upscale-final');
-    
-    const file = input.files[0];
-    if (!file || !file.type.startsWith('image/')) {
-        info.classList.add('hidden-card');
-        return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        const img = new Image();
-        img.onload = function() {
-            info.classList.remove('hidden-card');
-            currentTxt.textContent = `${this.width} x ${this.height} px`;
-            finalTxt.textContent = `${this.width * 2} x ${this.height * 2} px`;
-            URL.revokeObjectURL(img.src);
-        };
-        img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-}
     </script>
     
 </body>

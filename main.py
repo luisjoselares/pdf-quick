@@ -80,15 +80,15 @@ def api_compress():
 @app.route('/api/extract-images', methods=['POST'])
 def api_extract_images():
     file = request.files.get("pdf")
-    if not file: 
+    if not file:
         return jsonify({"error": "No se recibió archivo"}), 400
-    
+
     base_name = os.path.splitext(file.filename)[0]
     try:
-        out, count = PDFController.extract_images(file)
-        return send_file(out, 
-                         mimetype='application/zip', 
-                         as_attachment=True, 
+        out, count = ImageController.extract_images_from_pdf(file)
+        return send_file(out,
+                         mimetype='application/zip',
+                         as_attachment=True,
                          download_name=f"{base_name}_imagenes.zip")
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -180,28 +180,6 @@ def api_security():
 
 # --- APIS PARA LA PESTAÑA DE IMÁGENES ---
 
-@app.route('/api/image/rmbg', methods=['POST'])
-def api_rmbg():
-    file = request.files.get("image")
-    if not file: return jsonify({"error": "No se recibió la imagen"}), 400
-    try:
-        out = ImageController.remove_background(file.read())
-        # Mantener nombre original + sufijo
-        name = f"{os.path.splitext(file.filename)[0]}_sin_fondo.png"
-        return send_file(out, mimetype='image/png', as_attachment=True, download_name=name)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/api/image/upscale', methods=['POST'])
-def api_upscale():
-    file = request.files.get("image")
-    if not file: return jsonify({"error": "No se recibió la imagen"}), 400
-    try:
-        out = ImageController.upscale_image(file.read())
-        name = f"{os.path.splitext(file.filename)[0]}_HD.png"
-        return send_file(out, mimetype='image/png', as_attachment=True, download_name=name)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
 # ─────────────────────────────────────────────────────────────
 # CONFIGURACIÓN PARA GOOGLE (SITEMAP Y ROBOTS)
 # ─────────────────────────────────────────────────────────────

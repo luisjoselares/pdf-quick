@@ -88,50 +88,6 @@ class PDFController:
         return out, original_size, compressed_size
 
     # ─────────────────────────────────────────────────────────────
-    # EXTRAER IMÁGENES (ALTA CALIDAD / NO CORTADAS)
-    # ─────────────────────────────────────────────────────────────
-    @staticmethod
-    def extract_images(file):
-        file.seek(0)
-        doc = fitz.open(stream=file.read(), filetype="pdf")
-        zip_buffer = io.BytesIO()
-        
-        with zipfile.ZipFile(zip_buffer, "w") as zip_file:
-            image_count = 0
-            for page in doc:
-                # 1. Obtener todas las imágenes con sus coordenadas
-                items = page.get_image_info(hashes=True)
-                if not items: continue
-
-                # 2. Lógica de agrupación: Unimos bboxes que se tocan o están muy cerca
-                # Esto evita que las imágenes salgan en "tiras"
-                clusters = []
-                for item in items:
-                    bbox = fitz.Rect(item["bbox"])
-                    if bbox.width < 5 or bbox.height < 5: continue # Ignorar ruido
-                    
-                    added = False
-                    for i, cluster in enumerate(clusters):
-                        # Si el nuevo bbox toca un cluster existente, lo expandimos
-                        if bbox.intersects(cluster) or cluster.distance_to(bbox) < 2:
-                            clusters[i] = cluster | bbox
-                            added = True
-                            break
-                    if not added:
-                        clusters.append(bbox)
-
-                # 3. Renderizar cada cluster (Imagen completa)
-                for i, rect in enumerate(clusters):
-                    image_count += 1
-                    # Renderizado de alta calidad
-                    pix = page.get_pixmap(clip=rect, matrix=fitz.Matrix(3, 3))
-                    img_data = pix.tobytes("png")
-                    zip_file.writestr(f"img_p{page.number+1}_{i+1}.png", img_data)
-        
-        doc.close()
-        zip_buffer.seek(0)
-        return zip_buffer, image_count
-    # ─────────────────────────────────────────────────────────────
     # EDITOR VISUAL
     # ─────────────────────────────────────────────────────────────
     @staticmethod
