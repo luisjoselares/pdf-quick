@@ -113,6 +113,24 @@ def api_ai():
     except Exception as e: 
         return jsonify({"error": str(e)}), 500
 
+@app.route('/api/ai-process', methods=['POST'])
+def ai_process():
+    file = request.files.get('file')
+    if not file or file.filename == '':
+        return jsonify({"error": "No se subió archivo"}), 400
+
+    source_lang = request.form.get('source_lang', 'auto')
+    target_lang = request.form.get('target_lang', 'Spanish')
+
+    try:
+        out, filename = AIController.process_pdf(file, source_lang, target_lang)
+        return send_file(out,
+                         mimetype='application/pdf',
+                         as_attachment=True,
+                         download_name=filename)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/api/convert', methods=['POST'])
 def api_convert():
     action = request.form.get("action")

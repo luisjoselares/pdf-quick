@@ -84,6 +84,56 @@ class AIController:
         pdf_bytes = AIController._build_pdf(title, subtitle, result_text, file.filename)
         return pdf_bytes, filename
 
+    @staticmethod
+    def process_pdf(file, source_lang='auto', target_lang='Spanish'):
+        """
+        Procesa un PDF completo para traducción con idioma origen/destino.
+        """
+        file_bytes = file.read()
+        doc = fitz.open(stream=file_bytes, filetype="pdf")
+
+        pages_text = []
+        for page in doc:
+            text = page.get_text()
+            if text.strip():
+                pages_text.append(text)
+        doc.close()
+
+        if not pages_text:
+            raise ValueError("No se detectó texto legible en el archivo.")
+
+        full_text = "\n\n".join(pages_text)
+        source_text = f"el idioma {source_lang}" if source_lang != 'auto' else "el idioma detectado"
+
+        client = AIController.get_client()
+        prompt = f"""
+        Actúa como un traductor experto.
+        Traduce el siguiente contenido de PDF desde {source_text} al idioma {target_lang}.
+        Es CRÍTICO que mantengas la estructura técnica, términos profesionales y el formato.
+        Si hay tablas o listas, mantenlas intactas en la traducción.
+
+        Contenido a traducir:
+        {full_text}
+        """
+
+        clean_text = AIController._clean(full_text, max_chars=12000)
+        response = client.chat.completions.create(
+            model=MODELS["translate"],
+            messages=[
+                {"role": "system", "content": prompt},
+                {"role": "user", "content": clean_text}
+            ],
+            temperature=0.3
+        )
+
+        translated_text = response.choices[0].message.content.strip()
+        title = f"Traducción {source_label} → {target_label}"
+        subtitle = f"PDF traducido: {file.filename}"
+        filename = f"traduccion_{file.filename}"
+
+        pdf_bytes = AIController._build_pdf(title, subtitle, translated_text, file.filename)
+        return pdf_bytes, filename
+
     # ─────────────────────────────────────────────────────────────
     # MOTORES IA INTERNOS
     # ─────────────────────────────────────────────────────────────

@@ -104,13 +104,27 @@
             <h2 data-i18n="ai_title">Analizar con IA</h2>
             <p class="tool-description" data-i18n="ai_desc">Resumen o traducción con Llama 3.</p>
             <input type="file" id="ai-in" accept=".pdf" class="st-uploader">
-            <div class="grid-2">
-                <select id="ai-action" class="st-input">
-                    <option value="resumen" data-i18n="ai_sum">Resumen</option>
-                    <option value="puntos_clave" data-i18n="ai_key">Puntos Clave</option>
-                    <option value="traduccion" data-i18n="ai_trans">Traducir (ES-EN)</option>
+            <div class="ai-controls" style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center;">
+                <select id="source-lang" class="lang-select">
+                    <option value="auto" data-i18n="lang_auto">Detectar idioma</option>
+                    <option value="Spanish" data-i18n="lang_es">Español</option>
+                    <option value="English" data-i18n="lang_en">Inglés</option>
+                    <option value="Portuguese" data-i18n="lang_pt">Portugués</option>
+                    <option value="French" data-i18n="lang_fr">Francés</option>
+                    <option value="German" data-i18n="lang_de">Alemán</option>
+                    <option value="Italian" data-i18n="lang_it">Italiano</option>
                 </select>
-                <input type="text" id="ai-pages" placeholder="Páginas (ej: 1,2)" value="1" class="st-input" data-i18n-placeholder="placeholder_pages">
+                
+                <span style="color: var(--accent);">→</span>
+
+                <select id="target-lang" class="lang-select">
+                    <option value="English" data-i18n="lang_en">Inglés</option>
+                    <option value="Spanish" selected data-i18n="lang_es">Español</option>
+                    <option value="Portuguese" data-i18n="lang_pt">Portugués</option>
+                    <option value="French" data-i18n="lang_fr">Francés</option>
+                    <option value="German" data-i18n="lang_de">Alemán</option>
+                    <option value="Italian" data-i18n="lang_it">Italiano</option>
+                </select>
             </div>
             <button id="ai-btn" class="st-btn-primary" data-i18n="btn_ai">Generar con IA</button>
             <div id="ai-msg" class="status-msg"></div>
@@ -217,6 +231,13 @@
                 "donate_desc": "Maintaining servers and AI engines costs money. If this tool saved you time, consider supporting the project.",
                 "btn_kofi": "Buy me a coffee on Ko-fi",
                 "donate_qr": "Or scan the QR code to donate via <strong>Binance Pay</strong>.",
+                "lang_auto": "Detect language",
+                "lang_es": "Spanish",
+                "lang_en": "English",
+                "lang_pt": "Portuguese",
+                "lang_fr": "French",
+                "lang_de": "German",
+                "lang_it": "Italian",
                 "faq_title": "Frequently Asked Questions",
                 "faq_q1": "Is it safe to use PDF QU⚡CK?",
                 "faq_a1": "Yes. Processing is ephemeral: your files are handled in RAM and deleted automatically after download.",
@@ -275,6 +296,13 @@
                 "donate_desc": "Manter os servidores e as IAs tem um custo. Se esta ferramenta economizou seu tempo, considere apoiar o projeto.",
                 "btn_kofi": "Pague-me um café no Ko-fi",
                 "donate_qr": "Ou escaneie o código QR para doar via <strong>Binance Pay</strong>.",
+                "lang_auto": "Detectar idioma",
+                "lang_es": "Espanhol",
+                "lang_en": "Inglês",
+                "lang_pt": "Português",
+                "lang_fr": "Francês",
+                "lang_de": "Alemão",
+                "lang_it": "Italiano",
                 "faq_title": "Perguntas Frequentes",
                 "faq_q1": "É seguro usar o PDF QU⚡CK?",
                 "faq_a1": "Sim. O processamento é efêmero: seus arquivos são manipulados na RAM e excluídos automaticamente após o download.",
@@ -333,6 +361,13 @@
                 "donate_desc": "L'entretien des serveurs et de l'IA a un coût. Si cet outil vous a fait gagner du temps, pensez à soutenir le projet.",
                 "btn_kofi": "Offrez-moi un café sur Ko-fi",
                 "donate_qr": "Ou scannez le code QR pour faire un don via Binance Pay.",
+                "lang_auto": "Détecter la langue",
+                "lang_es": "Espagnol",
+                "lang_en": "Anglais",
+                "lang_pt": "Portugais",
+                "lang_fr": "Français",
+                "lang_de": "Allemand",
+                "lang_it": "Italien",
                 "faq_title": "Questions Fréquentes",
                 "faq_q1": "Est-il sûr d'utiliser PDF QU⚡CK ?",
                 "faq_a1": "Oui. Le traitement est éphémère : vos fichiers sont traités en RAM et supprimés automatiquement après le téléchargement.",
@@ -519,7 +554,9 @@ document.getElementById('ai-btn').onclick = () => {
     fd.append('pdf', file);
     fd.append('action', document.getElementById('ai-action').value);
     fd.append('pages', document.getElementById('ai-pages').value);
-    procesar('ai-btn', 'ai-msg', '/api/ai', fd, 'IA_Analisis.pdf');
+    fd.append('source_lang', document.getElementById('source-lang').value);
+    fd.append('target_lang', document.getElementById('target-lang').value);
+    procesar('ai-btn', 'ai-msg', '/api/ai-process', fd, 'IA_Analisis.pdf');
 };
 
 document.getElementById('conv-btn').onclick = () => {
