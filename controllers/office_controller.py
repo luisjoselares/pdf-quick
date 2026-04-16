@@ -185,27 +185,66 @@ def process_pdf_to_image(file, ext, t):
 
 def process_pdf_to_word(file, t):
     loader = show_loader("Convirtiendo a Word", "📝")
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        pdf_p = os.path.join(tmp_dir, "in.pdf")
-        docx_p = os.path.join(tmp_dir, "out.docx")
-        with open(pdf_p, "wb") as f:
-            f.write(file.getvalue())
-        try:
-            cv = Converter(pdf_p)
-            cv.convert(docx_p)
+    cv = None
+    try:
+        pdf_bytes = file.getvalue()
+        _raise_if_scanned_pdf(pdf_bytes)
+
+        out = io.BytesIO()
+        cv = Converter(stream=pdf_bytes)
+        cv.convert(
+            out,
+            parse_lattice_table=True,
+            parse_stream_table=True,
+            extract_stream_table=True,
+            lines_left_aligned_threshold=1.0,
+            lines_right_aligned_threshold=1.0,
+            lines_center_aligned_threshold=2.0
+        )
+        cv.close()
+        cv = None
+
+        if out.getbuffer().nbytes == 0:
+            raise ValueError("No se pudo reconstruir el archivo DOCX desde el PDF.")
+
+        loader.empty()
+        st.success(t.get("success", "Listo"))
+        output_name = f"{os.path.splitext(file.name)[0]}.docx"
+        st.download_button(
+            t.get("download", "Descargar"),
+            out.getvalue(),
+            output_name,
+            use_container_width=True
+        )
+    except Exception as e:
+        loader.empty()
+        st.error(f"Error: {e}")
+    finally:
+        if cv:
             cv.close()
-            loader.empty()
-            st.success(t.get("success", "Listo"))
-            with open(docx_p, "rb") as f:
-                st.download_button(
-                    t.get("download", "Descargar"),
-                    f.read(),
-                    f"{file.name}.docx",
-                    use_container_width=True
-                )
-        except Exception as e:
-            loader.empty()
-            st.error(f"Error: {e}")
+
+
+def _raise_if_scanned_pdf(pdf_bytes):
+    try:
+        doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+        pages_to_check = min(len(doc), 5)
+        text_found = False
+        for i in range(pages_to_check):
+            page_text = doc.load_page(i).get_text("text").strip()
+            if page_text:
+                text_found = True
+                break
+        doc.close()
+        if pages_to_check > 0 and not text_found:
+            raise ValueError(
+                "El PDF parece ser escaneado (solo imagen). "
+                "Convierte primero con OCR e inténtalo de nuevo."
+            )
+    except ValueError:
+        raise
+    except Exception:
+        # Si no se puede inspeccionar el PDF, se continúa y la conversión gestionará el error real.
+        return
 
 
 def process_pdf_to_excel(file, t):
