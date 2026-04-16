@@ -3,13 +3,12 @@ import io
 import zipfile
 import tempfile
 import subprocess
-import pandas as pd
 from pdf2docx import Converter
-import pdfplumber
 from PIL import Image
 import fitz
 from pptx import Presentation
 from pptx.util import Inches
+from controllers.excel_controller import ExcelController
 
 class OfficeController:
 
@@ -110,21 +109,7 @@ class OfficeController:
 
     @staticmethod
     def pdf_to_excel(file):
-        tables = []
-        with pdfplumber.open(io.BytesIO(file.read())) as pdf:
-            for page in pdf.pages:
-                tbl = page.extract_table()
-                if tbl and len(tbl) > 1:
-                    headers = tbl[0]
-                    headers = [h if h else f"Col_{i}" for i, h in enumerate(headers)]
-                    tables.append(pd.DataFrame(tbl[1:], columns=headers))
-        if tables:
-            out = io.BytesIO()
-            pd.concat(tables, ignore_index=True).to_excel(out, index=False, engine='openpyxl')
-            out.seek(0)
-            return out, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "tablas.xlsx"
-        else:
-            raise ValueError("No se encontraron tablas estructuradas en el PDF.")
+        return ExcelController.pdf_to_excel(file)
 
     @staticmethod
     def multiple_img_to_pdf(files):

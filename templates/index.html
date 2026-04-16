@@ -250,6 +250,20 @@
                 "conv_img_format": "Format",
                 "conv_img_quality": "Quality",
                 "conv_img_thumbnail": "Generate first page thumbnail",
+                "suffix_merged": "_merged",
+                "suffix_split": "_split",
+                "suffix_chapters": "_chapters",
+                "suffix_extracted": "_extracted",
+                "suffix_compressed": "_compressed",
+                "suffix_protected": "_protected",
+                "suffix_unlocked": "_unlocked",
+                "suffix_paginated": "_paginated",
+                "suffix_gallery": "_gallery",
+                "suffix_thumbnail": "_thumbnail",
+                "suffix_images": "_images",
+                "suffix_docx": "_converted",
+                "suffix_xlsx": "_converted",
+                "suffix_pptx": "_converted",
                 "sec_title": "Security",
                 "sec_desc": "Unlock, protect, or watermark your PDF.",
                 "sec_unlock": "Unlock PDF",
@@ -323,6 +337,20 @@
                 "conv_img_format": "Formato",
                 "conv_img_quality": "Qualidade",
                 "conv_img_thumbnail": "Gerar miniatura da primeira página",
+                "suffix_merged": "_unido",
+                "suffix_split": "_dividido",
+                "suffix_chapters": "_capitulos",
+                "suffix_extracted": "_extraido",
+                "suffix_compressed": "_comprimido",
+                "suffix_protected": "_protegido",
+                "suffix_unlocked": "_desbloqueado",
+                "suffix_paginated": "_paginado",
+                "suffix_gallery": "_galeria",
+                "suffix_thumbnail": "_thumbnail",
+                "suffix_images": "_imagenes",
+                "suffix_docx": "_convertido",
+                "suffix_xlsx": "_convertido",
+                "suffix_pptx": "_convertido",
                 "sec_title": "Segurança",
                 "sec_desc": "Desbloqueie, proteja ou adicione marcas d'água ao seu PDF.",
                 "sec_unlock": "Desbloquear PDF",
@@ -410,6 +438,17 @@
                 "sec_opacity": "Opacité",
                 "sec_angle": "Angle",
                 "sec_behind": "Derrière le contenu",
+                "suffix_merged": "_fusionne",
+                "suffix_split": "_divise",
+                "suffix_chapters": "_chapitres",
+                "suffix_extracted": "_extrait",
+                "suffix_compressed": "_compressé",
+                "suffix_protected": "_protégé",
+                "suffix_unlocked": "_déverrouillé",
+                "suffix_paginated": "_paginé",
+                "suffix_gallery": "_galerie",
+                "suffix_thumbnail": "_miniature",
+                "suffix_images": "_images",
                 "extimg_title": "Extraire les Images",
                 "extimg_desc": "Obtenez toutes les photos à l'intérieur du PDF dans un fichier ZIP.",
                 "donate_title": "☕ Soutenir PDF QU⚡CK",
@@ -538,6 +577,19 @@ function toggleSecurityOptions() {
 }
 
 // 🟢 4. NÚCLEO DE PROCESAMIENTO (PETICIONES AL SERVIDOR)
+function getFileBaseName(filename) {
+    const idx = filename.lastIndexOf('.');
+    return idx > 0 ? filename.substring(0, idx) : filename;
+}
+
+function getFilenameFromDisposition(disposition) {
+    if (!disposition) return null;
+    const regex = /filename\*?=(?:UTF-8''|"?)([^;\"\n]+)\??/i;
+    const match = regex.exec(disposition);
+    if (!match) return null;
+    return decodeURIComponent(match[1].replace(/"/g, ''));
+}
+
 async function procesar(btnId, msgId, url, formData, downloadName) {
     const btn = document.getElementById(btnId);
     const msg = document.getElementById(msgId);
@@ -582,7 +634,9 @@ document.getElementById('merge-btn').onclick = () => {
     for(let file of files) fd.append('pdfs', file);
     const normalize = document.getElementById('merge-normalize').checked ? '1' : '0';
     fd.append('normalize_size', normalize);
-    procesar('merge-btn', 'merge-msg', '/api/merge', fd, 'Unido_PDFQUICK.pdf');
+    const baseName = getFileBaseName(files[0].name);
+    const mergedSuffix = t_msg('suffix_merged', '_unido');
+    procesar('merge-btn', 'merge-msg', '/api/merge', fd, `${baseName}${mergedSuffix}.pdf`);
 };
 
 document.getElementById('split-btn').onclick = () => {
@@ -596,9 +650,12 @@ document.getElementById('split-btn').onclick = () => {
         fd.append('start_page', document.getElementById('split-start').value || 1);
         if(document.getElementById('split-end').value) fd.append('end_page', document.getElementById('split-end').value);
     }
-    const downloadName = mode === 'zip' || mode === 'bookmarks'
-        ? (mode === 'bookmarks' ? 'PDF_Por_Capitulos.zip' : 'PDF_Dividido.zip')
-        : 'Paginas_Extraidas.pdf';
+    const baseName = getFileBaseName(file.name);
+    const downloadName = mode === 'zip'
+        ? `${baseName}${t_msg('suffix_split', '_dividido')}.zip`
+        : mode === 'bookmarks'
+            ? `${baseName}${t_msg('suffix_chapters', '_capitulos')}.zip`
+            : `${baseName}${t_msg('suffix_extracted', '_extraido')}.pdf`;
     procesar('split-btn', 'split-msg', '/api/split', fd, downloadName);
 };
 
@@ -608,7 +665,8 @@ document.getElementById('comp-btn').onclick = () => {
     const fd = new FormData();
     fd.append('pdf', file);
     fd.append('level', document.getElementById('comp-lvl').value);
-    procesar('comp-btn', 'comp-msg', '/api/compress', fd, 'Comprimido_PDFQUICK.pdf');
+    const baseName = getFileBaseName(file.name);
+    procesar('comp-btn', 'comp-msg', '/api/compress', fd, `${baseName}${t_msg('suffix_compressed', '_comprimido')}.pdf`);
 };
 
 /* --- INTELIGENCIA ARTIFICIAL & CONVERSIÓN --- */
@@ -637,7 +695,11 @@ document.getElementById('sec-btn').onclick = () => {
         fd.append('angle', document.getElementById('sec-angle').value || '45');
         fd.append('behind', document.getElementById('sec-behind').checked ? '1' : '0');
     }
-    procesar('sec-btn', 'sec-msg', '/api/security', fd, 'Seguro_PDFQUICK.pdf');
+    const baseName = getFileBaseName(file.name);
+    let downloadName = `${baseName}${t_msg('suffix_protected', '_protegido')}.pdf`;
+    if(action === 'unlock') downloadName = `${baseName}${t_msg('suffix_unlocked', '_desbloqueado')}.pdf`;
+    else if(action === 'pagination') downloadName = `${baseName}${t_msg('suffix_paginated', '_paginado')}.pdf`;
+    procesar('sec-btn', 'sec-msg', '/api/security', fd, downloadName);
 };
 
 document.getElementById('conv-btn').onclick = () => {
@@ -645,19 +707,36 @@ document.getElementById('conv-btn').onclick = () => {
     if(!files.length) return alert(t_msg("alert_files", "Selecciona archivos"));
     const action = document.getElementById('conv-action').value;
     const fd = new FormData();
+    let downloadName = 'Convertido_PDFQUICK';
     if(action === 'img2pdf') {
         for(let file of files) fd.append('files', file);
         fd.append('action', action);
+        const baseName = getFileBaseName(files[0].name);
+        downloadName = `${baseName}${t_msg('suffix_gallery', '_galeria')}.pdf`;
     } else {
         fd.append('file', files[0]);
         fd.append('action', action);
+        const baseName = getFileBaseName(files[0].name);
         if(action === 'pdf2img') {
+            const format = document.getElementById('conv-img-format').value.toLowerCase();
+            const thumb = document.getElementById('conv-img-thumbnail').checked;
             fd.append('img_format', document.getElementById('conv-img-format').value);
             fd.append('img_quality', document.getElementById('conv-img-quality').value);
-            fd.append('img_thumbnail', document.getElementById('conv-img-thumbnail').checked ? '1' : '0');
+            fd.append('img_thumbnail', thumb ? '1' : '0');
+            downloadName = thumb
+                ? `${baseName}${t_msg('suffix_thumbnail', '_thumbnail')}.${format === 'jpg' ? 'jpg' : format}`
+                : `${baseName}${t_msg('suffix_images', '_imagenes')}.${format === 'jpg' ? 'jpg' : format}`;
+        } else if(action === 'pdf2word') {
+            downloadName = `${baseName}${t_msg('suffix_docx', '_convertido')}.docx`;
+        } else if(action === 'pdf2excel') {
+            downloadName = `${baseName}${t_msg('suffix_xlsx', '_convertido')}.xlsx`;
+        } else if(action === 'pdf2pptx') {
+            downloadName = `${baseName}${t_msg('suffix_pptx', '_convertido')}.pptx`;
+        } else if(action === 'office2pdf') {
+            downloadName = `${baseName}.pdf`;
         }
     }
-    procesar('conv-btn', 'conv-msg', '/api/convert', fd, 'Convertido_PDFQUICK');
+    procesar('conv-btn', 'conv-msg', '/api/convert', fd, downloadName);
 };
 
 document.getElementById('extimg-btn').onclick = () => {
@@ -665,7 +744,8 @@ document.getElementById('extimg-btn').onclick = () => {
     if(!file) return alert(t_msg("alert_file", "Selecciona un archivo"));
     const fd = new FormData();
     fd.append('pdf', file);
-    procesar('extimg-btn', 'extimg-msg', '/api/extract-images', fd, 'PDFQUICK_Imagenes.zip');
+    const baseName = getFileBaseName(file.name);
+    procesar('extimg-btn', 'extimg-msg', '/api/extract-images', fd, `${baseName}${t_msg('suffix_images', '_imagenes')}.zip`);
 };
 
 function toggleFaq() {
