@@ -108,9 +108,15 @@ def process_pdf_to_pptx(file, t):
         loader.empty()
         st.success(t.get("success", "Listo"))
         st.download_button(t.get("download", "Descargar"), out.getvalue(), f"{file.name}.pptx", use_container_width=True)
+    except ValueError as e:
+        loader.empty()
+        st.error(str(e))
     except Exception as e:
         loader.empty()
-        st.error(f"Error: {e}")
+        st.error(
+            "No se pudo convertir el PDF a Word. "
+            "Verifica que el archivo no esté dañado y que contenga texto seleccionable."
+        )
 
 
 def process_pdf_to_html(file, t):
