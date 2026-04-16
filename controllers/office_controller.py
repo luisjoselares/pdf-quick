@@ -13,6 +13,13 @@ from pptx import Presentation
 from pptx.util import Inches
 from utils.helpers import show_loader
 
+MAX_SCAN_PAGES = 5
+ALIGNMENT_THRESHOLDS = {
+    "left": 1.0,
+    "right": 1.0,
+    "center": 2.0
+}
+
 
 def run_libreoffice(input_path, output_dir):
     try:
@@ -203,9 +210,9 @@ def process_pdf_to_word(file, t):
             parse_lattice_table=True,
             parse_stream_table=True,
             extract_stream_table=True,
-            lines_left_aligned_threshold=1.0,
-            lines_right_aligned_threshold=1.0,
-            lines_center_aligned_threshold=2.0
+            lines_left_aligned_threshold=ALIGNMENT_THRESHOLDS["left"],
+            lines_right_aligned_threshold=ALIGNMENT_THRESHOLDS["right"],
+            lines_center_aligned_threshold=ALIGNMENT_THRESHOLDS["center"]
         )
         cv.close()
         cv = None
@@ -238,7 +245,7 @@ def process_pdf_to_word(file, t):
 def _raise_if_scanned_pdf(pdf_bytes):
     try:
         doc = fitz.open(stream=pdf_bytes, filetype="pdf")
-        pages_to_check = min(len(doc), 5)
+        pages_to_check = min(len(doc), MAX_SCAN_PAGES)
         text_found = False
         for i in range(pages_to_check):
             page_text = doc.load_page(i).get_text("text").strip()
