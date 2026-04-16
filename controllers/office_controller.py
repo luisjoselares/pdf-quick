@@ -209,11 +209,10 @@ def process_pdf_to_word(file, t):
 
         loader.empty()
         st.success(t.get("success", "Listo"))
-        output_name = f"{os.path.splitext(file.name)[0]}.docx"
         st.download_button(
             t.get("download", "Descargar"),
             out.getvalue(),
-            output_name,
+            f"{file.name}.docx",
             use_container_width=True
         )
     except Exception as e:
