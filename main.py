@@ -24,7 +24,8 @@ def api_merge():
         return jsonify({"error": "No se subieron archivos"}), 400
     try:
         base_name = os.path.splitext(files[0].filename)[0]
-        out = PDFController.merge(files)
+        normalize = request.form.get("normalize_size", "0") == "1"
+        out = PDFController.merge(files, normalize=normalize)
         return send_file(out, 
                          mimetype='application/pdf', 
                          as_attachment=True, 
@@ -46,13 +47,15 @@ def api_split():
         
         out, mime, _ = PDFController.split(file, mode, start, end)
         
-        ext = ".zip" if mode == "zip" else ".pdf"
-        suffix = "_dividido" if mode == "zip" else "_extraido"
+        ext = ".zip" if mode in ["zip", "bookmarks"] else ".pdf"
+        suffix = "_dividido" if mode == "zip" else ("_capitulos" if mode == "bookmarks" else "_extraido")
         
         return send_file(out, 
                          mimetype=mime, 
                          as_attachment=True, 
                          download_name=f"{base_name}{suffix}{ext}")
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -156,7 +159,15 @@ def api_convert():
         if action == "pdf2word": out, mime, _ = OfficeController.pdf_to_word(file); suffix = "_convertido.docx"
         elif action == "pdf2excel": out, mime, _ = OfficeController.pdf_to_excel(file); suffix = "_convertido.xlsx"
         elif action == "pdf2pptx": out, mime, _ = OfficeController.pdf_to_pptx(file); suffix = "_convertido.pptx"
-        elif action == "pdf2img": out, mime, _ = OfficeController.pdf_to_image(file, "PNG"); suffix = "_imagenes.zip"
+        elif action == "pdf2img":
+            img_format = request.form.get("img_format", "PNG")
+            quality = int(request.form.get("img_quality", 75))
+            thumbnail = request.form.get("img_thumbnail", "0") == "1"
+            out, mime, filename = OfficeController.pdf_to_image(file, img_format, quality, thumbnail)
+            return send_file(out,
+                             mimetype=mime,
+                             as_attachment=True,
+                             download_name=f"{base_name}_{filename}")
         elif action == "office2pdf":
             out = OfficeController.office_to_pdf(file, file.filename)
             mime, suffix = "application/pdf", ".pdf"
@@ -180,7 +191,17 @@ def api_security():
     try:
         if action == "watermark":
             text = request.form.get("text", "CONFIDENCIAL")
-            out = SecurityController.process_watermark(file, text, request.form.get("opacity", "0.3"), request.form.get("color", "#FF0000"))
+            opacity = float(request.form.get("opacity", "0.3"))
+            angle = float(request.form.get("angle", "45"))
+            behind = request.form.get("behind", "0") == "1"
+            out = SecurityController.process_watermark(
+                file,
+                text,
+                opacity,
+                request.form.get("color", "#FF0000"),
+                angle=angle,
+                behind=behind,
+            )
             suffix = "_protegido.pdf"
         elif action == "pagination":
             out = SecurityController.process_pagination(file, request.form.get("pos", "Abajo Centro"))
@@ -188,12 +209,27 @@ def api_security():
         elif action == "unlock":
             out = SecurityController.process_unlock(file, request.form.get("password", ""))
             suffix = "_desbloqueado.pdf"
-        else: return jsonify({"error": "Acción inválida"}), 400
+        elif action == "protect":
+            disable_print = request.form.get("disable_print", "0") == "1"
+            disable_copy = request.form.get("disable_copy", "0") == "1"
+            read_only = request.form.get("read_only", "0") == "1"
+            out = SecurityController.process_protect(
+                file,
+                request.form.get("password", ""),
+                disable_print=disable_print,
+                disable_copy=disable_copy,
+                read_only=read_only,
+            )
+            suffix = "_protegido.pdf"
+        else:
+            return jsonify({"error": "Acción inválida"}), 400
         
         return send_file(out, 
                          mimetype='application/pdf', 
                          as_attachment=True, 
                          download_name=f"{base_name}{suffix}")
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
     except Exception as e: 
         return jsonify({"error": str(e)}), 500
 

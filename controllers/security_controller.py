@@ -1,5 +1,6 @@
 import io
 from pypdf import PdfWriter, PdfReader
+from pypdf.constants import UserAccessPermissions
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.colors import HexColor
@@ -8,28 +9,35 @@ class SecurityController:
     """Controlador puro para encriptación, marcas de agua y numeración."""
 
     @staticmethod
-    def process_watermark(file, text, opacity, color):
-        packet = io.BytesIO()
-        can = canvas.Canvas(packet, pagesize=letter)
-        can.setFont("Helvetica-Bold", 60)
-        can.setFillColor(HexColor(color))
-        can.setFillAlpha(float(opacity))
-        can.saveState()
-        can.translate(300, 450)
-        can.rotate(45)
-        can.drawCentredString(0, 0, text)
-        can.restoreState()
-        can.save()
-        packet.seek(0)
-
-        watermark = PdfReader(packet).pages[0]
-        # file.read() si viene de Flask
+    def process_watermark(file, text, opacity, color, angle=45, behind=False):
         reader = PdfReader(io.BytesIO(file.read()))
         writer = PdfWriter()
+
         for page in reader.pages:
-            page.merge_page(watermark)
-            writer.add_page(page)
-            
+            width = float(page.mediabox.width)
+            height = float(page.mediabox.height)
+
+            packet = io.BytesIO()
+            can = canvas.Canvas(packet, pagesize=(width, height))
+            can.setFont("Helvetica-Bold", 60)
+            can.setFillColor(HexColor(color))
+            can.setFillAlpha(max(0.0, min(1.0, float(opacity))))
+            can.saveState()
+            can.translate(width / 2, height / 2)
+            can.rotate(float(angle))
+            can.drawCentredString(0, 0, text)
+            can.restoreState()
+            can.save()
+            packet.seek(0)
+
+            watermark = PdfReader(packet).pages[0]
+            if behind:
+                watermark.merge_page(page)
+                writer.add_page(watermark)
+            else:
+                page.merge_page(watermark)
+                writer.add_page(page)
+
         out = io.BytesIO()
         writer.write(out)
         out.seek(0)
@@ -77,6 +85,38 @@ class SecurityController:
         for page in reader.pages:
             writer.add_page(page)
             
+        out = io.BytesIO()
+        writer.write(out)
+        out.seek(0)
+        return out
+
+    @staticmethod
+    def process_protect(file, password, disable_print=False, disable_copy=False, read_only=False):
+        if not password:
+            raise ValueError("Se requiere contraseña para proteger el PDF.")
+
+        reader = PdfReader(io.BytesIO(file.read()))
+        writer = PdfWriter()
+        for page in reader.pages:
+            writer.add_page(page)
+
+        permissions = UserAccessPermissions.all()
+        if disable_print:
+            permissions &= ~UserAccessPermissions.PRINT
+            permissions &= ~UserAccessPermissions.PRINT_TO_REPRESENTATION
+        if disable_copy:
+            permissions &= ~UserAccessPermissions.EXTRACT_TEXT_AND_GRAPHICS
+            permissions &= ~UserAccessPermissions.EXTRACT
+        if read_only:
+            permissions &= ~UserAccessPermissions.MODIFY
+            permissions &= ~UserAccessPermissions.ADD_OR_MODIFY
+            permissions &= ~UserAccessPermissions.FILL_FORM_FIELDS
+            permissions &= ~UserAccessPermissions.ASSEMBLE_DOC
+            permissions &= ~UserAccessPermissions.EXTRACT_TEXT_AND_GRAPHICS
+            permissions &= ~UserAccessPermissions.EXTRACT
+
+        writer.encrypt(user_password=password, owner_password=password, permissions_flag=permissions)
+
         out = io.BytesIO()
         writer.write(out)
         out.seek(0)

@@ -65,6 +65,10 @@
             <h2 data-i18n="merge_title">Unir PDFs</h2>
             <p class="tool-description" data-i18n="merge_desc">Combina múltiples archivos en uno solo.</p>
             <input type="file" id="merge-in" multiple accept=".pdf" class="st-uploader">
+            <label class="st-checkbox">
+                <input type="checkbox" id="merge-normalize">
+                <span data-i18n="merge_normalize_label">Ajustar todas las páginas al mismo tamaño</span>
+            </label>
             <button id="merge-btn" class="st-btn-primary" data-i18n="btn_process">Procesar Documento</button>
             <div id="merge-msg" class="status-msg"></div>
         </section>
@@ -77,6 +81,7 @@
                 <select id="split-mode" class="st-input" onchange="toggleSplitInputs()">
                     <option value="range" data-i18n="split_mode_range">Extraer Rango</option>
                     <option value="zip" data-i18n="split_mode_zip">Dividir todas las páginas (ZIP)</option>
+                    <option value="bookmarks" data-i18n="split_mode_bookmarks">Dividir por capítulos (bookmarks)</option>
                 </select>
                 <div id="split-range-inputs" class="grid-2" style="display: flex; gap: 5px;">
                     <input type="number" id="split-start" placeholder="Inicio" class="st-input" value="1">
@@ -105,26 +110,75 @@
             <h2 data-i18n="conv_title">Conversor Universal</h2>
             <p class="tool-description" data-i18n="conv_desc">Transforma entre PDF, Word, Excel e Imágenes.</p>
             <input type="file" id="conv-in" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.png,.jpg,.jpeg" class="st-uploader">
-            <select id="conv-action" class="st-input">
+            <select id="conv-action" class="st-input" onchange="toggleConvertOptions()">
                 <option value="pdf2word">PDF ➔ Word</option>
                 <option value="pdf2excel">PDF ➔ Excel</option>
                 <option value="pdf2img">PDF ➔ Imágenes</option>
                 <option value="office2pdf">Word/Excel/PPT ➔ PDF</option>
                 <option value="img2pdf" data-i18n="conv_img">Imágenes ➔ PDF</option>
             </select>
+            <div id="conv-image-options" style="display:none; margin-bottom:0.75rem;">
+                <label class="st-label">
+                    <span data-i18n="conv_img_format">Formato</span>
+                    <select id="conv-img-format" class="st-input">
+                        <option value="PNG">PNG</option>
+                        <option value="JPG">JPG</option>
+                        <option value="WEBP">WebP</option>
+                    </select>
+                </label>
+                <label class="st-label">
+                    <span data-i18n="conv_img_quality">Calidad</span>
+                    <input type="number" id="conv-img-quality" class="st-input" min="10" max="95" step="5" value="75">
+                </label>
+                <label class="st-checkbox">
+                    <input type="checkbox" id="conv-img-thumbnail">
+                    <span data-i18n="conv_img_thumbnail">Generar miniatura de la primera página</span>
+                </label>
+            </div>
             <button id="conv-btn" class="st-btn-primary" data-i18n="btn_conv">Convertir Archivo</button>
             <div id="conv-msg" class="status-msg"></div>
         </section>
 
         <section class="st-card hidden-card" data-category="extras">
             <h2 data-i18n="sec_title">Seguridad</h2>
-            <p class="tool-description" data-i18n="sec_desc">Desbloquea o pon marcas de agua a tu PDF.</p>
+            <p class="tool-description" data-i18n="sec_desc">Desbloquea, protege o pon marcas de agua a tu PDF.</p>
             <input type="file" id="sec-in" accept=".pdf" class="st-uploader">
-            <select id="sec-action" class="st-input">
+            <select id="sec-action" class="st-input" onchange="toggleSecurityOptions()">
                 <option value="unlock" data-i18n="sec_unlock">Desbloquear PDF</option>
+                <option value="protect" data-i18n="sec_protect">Proteger PDF</option>
                 <option value="watermark" data-i18n="sec_water">Marca de Agua</option>
                 <option value="pagination" data-i18n="sec_page">Paginación Automática</option>
             </select>
+            <div id="sec-protect-options" style="display:none; margin-bottom: 0.75rem;">
+                <p class="tool-description hint-text" data-i18n="sec_protect_hint">Selecciona permisos específicos para el PDF protegido.</p>
+                <label class="st-checkbox">
+                    <input type="checkbox" id="sec-disable-print">
+                    <span data-i18n="sec_disable_print">Prohibir impresión</span>
+                </label>
+                <label class="st-checkbox">
+                    <input type="checkbox" id="sec-disable-copy">
+                    <span data-i18n="sec_disable_copy">Prohibir copiar texto</span>
+                </label>
+                <label class="st-checkbox">
+                    <input type="checkbox" id="sec-read-only">
+                    <span data-i18n="sec_read_only">Permitir solo lectura (modo presentación)</span>
+                </label>
+            </div>
+            <div id="sec-watermark-options" style="display:none; margin-bottom: 0.75rem;">
+                <p class="tool-description hint-text" data-i18n="sec_watermark_hint">Ajusta opacidad y ángulo, o coloca la marca detrás del contenido.</p>
+                <label class="st-label">
+                    <span data-i18n="sec_opacity">Opacidad</span>
+                    <input type="number" id="sec-opacity" class="st-input" min="0.05" max="1" step="0.05" value="0.3">
+                </label>
+                <label class="st-label">
+                    <span data-i18n="sec_angle">Ángulo</span>
+                    <input type="number" id="sec-angle" class="st-input" min="0" max="360" step="5" value="45">
+                </label>
+                <label class="st-checkbox">
+                    <input type="checkbox" id="sec-behind">
+                    <span data-i18n="sec_behind">Detrás del contenido</span>
+                </label>
+            </div>
             <input type="text" id="sec-text" placeholder="Contraseña o Texto..." class="st-input" data-i18n-placeholder="placeholder_sec">
             <button id="sec-btn" class="st-btn-primary" data-i18n="btn_sec">Aplicar Seguridad</button>
             <div id="sec-msg" class="status-msg"></div>
@@ -174,10 +228,12 @@
                 "tab_extras": "Conversions & Security",
                 "merge_title": "Merge PDFs",
                 "merge_desc": "Combine multiple files into a single one.",
+                "merge_normalize_label": "Match every page to the first page size",
                 "split_title": "Split PDF",
                 "split_desc": "Extract a range of pages or separate everything into a ZIP file.",
                 "split_mode_range": "Extract Range",
                 "split_mode_zip": "Split all pages (ZIP)",
+                "split_mode_bookmarks": "Split by chapters (bookmarks)",
                 "comp_title": "Compress PDF",
                 "comp_desc": "Reduce your file size without losing quality.",
                 "comp_low": "Low Compression",
@@ -191,11 +247,23 @@
                 "conv_title": "Universal Converter",
                 "conv_desc": "Transform between PDF, Word, Excel, and Images.",
                 "conv_img": "Images ➔ PDF",
+                "conv_img_format": "Format",
+                "conv_img_quality": "Quality",
+                "conv_img_thumbnail": "Generate first page thumbnail",
                 "sec_title": "Security",
-                "sec_desc": "Unlock or add watermarks to your PDF.",
+                "sec_desc": "Unlock, protect, or watermark your PDF.",
                 "sec_unlock": "Unlock PDF",
+                "sec_protect": "Protect PDF",
                 "sec_water": "Add Watermark",
                 "sec_page": "Auto Pagination",
+                "sec_disable_print": "Disable printing",
+                "sec_disable_copy": "Disable text copy",
+                "sec_read_only": "Read-only mode (presentation)",
+                "sec_protect_hint": "Choose protection options for the secured PDF.",
+                "sec_watermark_hint": "Adjust opacity and angle, or place the watermark behind content.",
+                "sec_opacity": "Opacity",
+                "sec_angle": "Angle",
+                "sec_behind": "Behind content",
                 "extimg_title": "Extract Images",
                 "extimg_desc": "Get all photos inside the PDF in a ZIP file.",
                 "donate_title": "☕ Support PDF QU⚡CK",
@@ -223,6 +291,7 @@
                 "msg_success": "✅ Download complete!",
                 "alert_files": "Select files",
                 "alert_file": "Select a file",
+                "alert_password": "Enter a password",
                 "priv_link": "Privacy Policy"
             },
             "pt": {
@@ -232,10 +301,12 @@
                 "tab_extras": "Conversões e Segurança",
                 "merge_title": "Juntar PDFs",
                 "merge_desc": "Combine vários arquivos em um só.",
+                "merge_normalize_label": "Ajustar todas as páginas ao mesmo tamanho da primeira",
                 "split_title": "Dividir PDF",
                 "split_desc": "Extraia um intervalo de páginas ou separe tudo em um arquivo ZIP.",
                 "split_mode_range": "Extrair Intervalo",
                 "split_mode_zip": "Dividir todas as páginas (ZIP)",
+                "split_mode_bookmarks": "Dividir por capítulos (bookmarks)",
                 "comp_title": "Comprimir PDF",
                 "comp_desc": "Reduza o tamanho do seu arquivo sem perder a qualidade.",
                 "comp_low": "Compressão Baixa",
@@ -249,11 +320,23 @@
                 "conv_title": "Conversor Universal",
                 "conv_desc": "Transforme entre PDF, Word, Excel e Imagens.",
                 "conv_img": "Imagens ➔ PDF",
+                "conv_img_format": "Formato",
+                "conv_img_quality": "Qualidade",
+                "conv_img_thumbnail": "Gerar miniatura da primeira página",
                 "sec_title": "Segurança",
-                "sec_desc": "Desbloqueie ou adicione marcas d'água ao seu PDF.",
+                "sec_desc": "Desbloqueie, proteja ou adicione marcas d'água ao seu PDF.",
                 "sec_unlock": "Desbloquear PDF",
+                "sec_protect": "Proteger PDF",
                 "sec_water": "Adicionar Marca d'água",
                 "sec_page": "Paginação Automática",
+                "sec_disable_print": "Proibir impressão",
+                "sec_disable_copy": "Proibir copiar texto",
+                "sec_read_only": "Somente leitura (modo apresentação)",
+                "sec_protect_hint": "Escolha as opções de proteção para o PDF protegido.",
+                "sec_watermark_hint": "Ajuste opacidade e ângulo, ou coloque a marca d'água atrás do conteúdo.",
+                "sec_opacity": "Opacidade",
+                "sec_angle": "Ângulo",
+                "sec_behind": "Atrás do conteúdo",
                 "extimg_title": "Extrair Imagens",
                 "extimg_desc": "Obtenha todas as fotos dentro do PDF em um arquivo ZIP.",
                 "donate_title": "☕ Apoie PDF QU⚡CK",
@@ -281,6 +364,7 @@
                 "msg_success": "✅ Download concluído!",
                 "alert_files": "Selecione os arquivos",
                 "alert_file": "Selecione um arquivo",
+                "alert_password": "Digite uma senha",
                 "priv_link": "Política de Privacidade"
             },
             "fr": {
@@ -290,10 +374,12 @@
                 "tab_extras": "Conversions & Sécurité",
                 "merge_title": "Fusionner des PDF",
                 "merge_desc": "Combinez plusieurs fichiers en un seul.",
+                "merge_normalize_label": "Ajuster toutes les pages à la même taille que la première",
                 "split_title": "Diviser un PDF",
                 "split_desc": "Extrayez une plage de pages ou séparez tout dans un fichier ZIP.",
                 "split_mode_range": "Extraire une plage",
                 "split_mode_zip": "Diviser toutes les pages (ZIP)",
+                "split_mode_bookmarks": "Diviser par chapitres (bookmarks)",
                 "comp_title": "Compresser un PDF",
                 "comp_desc": "Réduisez la taille de votre fichier sans perdre en qualité.",
                 "comp_low": "Compression Faible",
@@ -307,11 +393,23 @@
                 "conv_title": "Convertisseur Universel",
                 "conv_desc": "Transformez entre PDF, Word, Excel et Images.",
                 "conv_img": "Images ➔ PDF",
+                "conv_img_format": "Format",
+                "conv_img_quality": "Qualité",
+                "conv_img_thumbnail": "Générer une miniature de la première page",
                 "sec_title": "Sécurité",
-                "sec_desc": "Déverrouillez ou ajoutez des filigranes à votre PDF.",
+                "sec_desc": "Déverrouillez, protégez ou ajoutez des filigranes à votre PDF.",
                 "sec_unlock": "Déverrouiller le PDF",
+                "sec_protect": "Protéger le PDF",
                 "sec_water": "Ajouter un Filigrane",
                 "sec_page": "Pagination Automatique",
+                "sec_disable_print": "Interdire l'impression",
+                "sec_disable_copy": "Interdire la copie de texte",
+                "sec_read_only": "Lecture seule (mode présentation)",
+                "sec_protect_hint": "Choisissez les options de protection pour le PDF sécurisé.",
+                "sec_watermark_hint": "Ajustez l'opacité et l'angle, ou placez le filigrane derrière le contenu.",
+                "sec_opacity": "Opacité",
+                "sec_angle": "Angle",
+                "sec_behind": "Derrière le contenu",
                 "extimg_title": "Extraire les Images",
                 "extimg_desc": "Obtenez toutes les photos à l'intérieur du PDF dans un fichier ZIP.",
                 "donate_title": "☕ Soutenir PDF QU⚡CK",
@@ -339,6 +437,7 @@
                 "msg_success": "✅ Téléchargement terminé !",
                 "alert_files": "Sélectionnez des fichiers",
                 "alert_file": "Sélectionnez un fichier",
+                "alert_password": "Entrez un mot de passe",
                 "priv_link": "Confidentialité"
             }
         };
@@ -408,6 +507,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
+    toggleSecurityOptions();
+    toggleConvertOptions();
 });
 
 // 🟢 3. FUNCIONES DE INTERFAZ (UI)
@@ -423,6 +524,17 @@ function switchTab(category, btnElement) {
 function toggleSplitInputs() {
     const mode = document.getElementById('split-mode').value;
     document.getElementById('split-range-inputs').style.display = mode === 'range' ? 'flex' : 'none';
+}
+
+function toggleConvertOptions() {
+    const action = document.getElementById('conv-action').value;
+    document.getElementById('conv-image-options').style.display = action === 'pdf2img' ? 'block' : 'none';
+}
+
+function toggleSecurityOptions() {
+    const action = document.getElementById('sec-action').value;
+    document.getElementById('sec-protect-options').style.display = action === 'protect' ? 'block' : 'none';
+    document.getElementById('sec-watermark-options').style.display = action === 'watermark' ? 'block' : 'none';
 }
 
 // 🟢 4. NÚCLEO DE PROCESAMIENTO (PETICIONES AL SERVIDOR)
@@ -468,6 +580,8 @@ document.getElementById('merge-btn').onclick = () => {
     if(!files.length) return alert(t_msg("alert_files", "Selecciona archivos"));
     const fd = new FormData();
     for(let file of files) fd.append('pdfs', file);
+    const normalize = document.getElementById('merge-normalize').checked ? '1' : '0';
+    fd.append('normalize_size', normalize);
     procesar('merge-btn', 'merge-msg', '/api/merge', fd, 'Unido_PDFQUICK.pdf');
 };
 
@@ -482,7 +596,9 @@ document.getElementById('split-btn').onclick = () => {
         fd.append('start_page', document.getElementById('split-start').value || 1);
         if(document.getElementById('split-end').value) fd.append('end_page', document.getElementById('split-end').value);
     }
-    const downloadName = mode === 'zip' ? 'PDF_Dividido.zip' : 'Paginas_Extraidas.pdf';
+    const downloadName = mode === 'zip' || mode === 'bookmarks'
+        ? (mode === 'bookmarks' ? 'PDF_Por_Capitulos.zip' : 'PDF_Dividido.zip')
+        : 'Paginas_Extraidas.pdf';
     procesar('split-btn', 'split-msg', '/api/split', fd, downloadName);
 };
 
@@ -496,19 +612,6 @@ document.getElementById('comp-btn').onclick = () => {
 };
 
 /* --- INTELIGENCIA ARTIFICIAL & CONVERSIÓN --- */
-document.getElementById('conv-btn').onclick = () => {
-    const files = document.getElementById('conv-in').files;
-    const action = document.getElementById('conv-action').value;
-    if(!files.length) return alert(t_msg("alert_files", "Selecciona archivo(s)"));
-    const fd = new FormData();
-    fd.append('action', action);
-    if(action === 'img2pdf') {
-        for(let file of files) fd.append('files', file);
-    } else {
-        fd.append('file', files[0]);
-    }
-    procesar('conv-btn', 'conv-msg', '/api/convert', fd, 'Convertido_PDFQUICK');
-};
 
 /* --- SEGURIDAD Y EXTRACCIÓN --- */
 document.getElementById('sec-btn').onclick = () => {
@@ -518,9 +621,43 @@ document.getElementById('sec-btn').onclick = () => {
     const fd = new FormData();
     fd.append('file', file);
     fd.append('action', action);
-    if(action === 'unlock') fd.append('password', document.getElementById('sec-text').value);
-    if(action === 'watermark') fd.append('text', document.getElementById('sec-text').value || 'CONFIDENCIAL');
+    if(action === 'unlock' || action === 'protect') {
+        const password = document.getElementById('sec-text').value;
+        if(!password) return alert(t_msg('alert_password', 'Ingresa una contraseña'));
+        fd.append('password', password);
+    }
+    if(action === 'protect') {
+        fd.append('disable_print', document.getElementById('sec-disable-print').checked ? '1' : '0');
+        fd.append('disable_copy', document.getElementById('sec-disable-copy').checked ? '1' : '0');
+        fd.append('read_only', document.getElementById('sec-read-only').checked ? '1' : '0');
+    }
+    if(action === 'watermark') {
+        fd.append('text', document.getElementById('sec-text').value || 'CONFIDENCIAL');
+        fd.append('opacity', document.getElementById('sec-opacity').value || '0.3');
+        fd.append('angle', document.getElementById('sec-angle').value || '45');
+        fd.append('behind', document.getElementById('sec-behind').checked ? '1' : '0');
+    }
     procesar('sec-btn', 'sec-msg', '/api/security', fd, 'Seguro_PDFQUICK.pdf');
+};
+
+document.getElementById('conv-btn').onclick = () => {
+    const files = document.getElementById('conv-in').files;
+    if(!files.length) return alert(t_msg("alert_files", "Selecciona archivos"));
+    const action = document.getElementById('conv-action').value;
+    const fd = new FormData();
+    if(action === 'img2pdf') {
+        for(let file of files) fd.append('files', file);
+        fd.append('action', action);
+    } else {
+        fd.append('file', files[0]);
+        fd.append('action', action);
+        if(action === 'pdf2img') {
+            fd.append('img_format', document.getElementById('conv-img-format').value);
+            fd.append('img_quality', document.getElementById('conv-img-quality').value);
+            fd.append('img_thumbnail', document.getElementById('conv-img-thumbnail').checked ? '1' : '0');
+        }
+    }
+    procesar('conv-btn', 'conv-msg', '/api/convert', fd, 'Convertido_PDFQUICK');
 };
 
 document.getElementById('extimg-btn').onclick = () => {

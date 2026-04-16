@@ -52,18 +52,45 @@ class OfficeController:
         return out, "text/plain", "convertido.txt"
 
     @staticmethod
-    def pdf_to_image(file, ext):
+    def pdf_to_image(file, ext="PNG", quality=75, thumbnail=False):
         doc = fitz.open(stream=file.read(), filetype="pdf")
+        ext_name = ext.upper()
+        if ext_name == "JPEG":
+            ext_name = "JPG"
+        if ext_name not in {"PNG", "JPG", "WEBP"}:
+            ext_name = "PNG"
+
+        if thumbnail:
+            page = doc.load_page(0)
+            target_width = min(400, float(page.rect.width))
+            scale = target_width / float(page.rect.width) if page.rect.width > 0 else 1.0
+            pix = page.get_pixmap(matrix=fitz.Matrix(scale, scale))
+            image = Image.open(io.BytesIO(pix.tobytes("png")))
+            if ext_name == "JPG":
+                image = image.convert("RGB")
+            out = io.BytesIO()
+            save_args = {"quality": int(quality)} if ext_name in {"JPG", "WEBP"} else {}
+            image.save(out, format=("JPEG" if ext_name == "JPG" else ext_name), **save_args)
+            doc.close()
+            out.seek(0)
+            mime = f"image/{'jpeg' if ext_name == 'JPG' else ext_name.lower()}"
+            return out, mime, f"thumbnail.{ext_name.lower()}"
+
         zip_buffer = io.BytesIO()
-        fmt = "jpeg" if ext.upper() == "JPG" else "png"
         with zipfile.ZipFile(zip_buffer, "w") as zf:
             for i in range(len(doc)):
                 page = doc.load_page(i)
                 pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))
-                zf.writestr(f"pagina_{i + 1}.{ext.lower()}", pix.tobytes(fmt))
+                image = Image.open(io.BytesIO(pix.tobytes("png")))
+                if ext_name == "JPG":
+                    image = image.convert("RGB")
+                out_img = io.BytesIO()
+                save_args = {"quality": int(quality)} if ext_name in {"JPG", "WEBP"} else {}
+                image.save(out_img, format=("JPEG" if ext_name == "JPG" else ext_name), **save_args)
+                zf.writestr(f"pagina_{i + 1}.{ext_name.lower()}", out_img.getvalue())
         doc.close()
         zip_buffer.seek(0)
-        return zip_buffer, "application/zip", f"imagenes.{ext.lower()}.zip"
+        return zip_buffer, "application/zip", f"imagenes_{ext_name.lower()}.zip"
 
     @staticmethod
     def pdf_to_word(file):
