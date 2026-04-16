@@ -137,9 +137,15 @@ def process_pdf_to_html(file, t):
             "text/html",
             use_container_width=True
         )
-    except Exception as e:
+    except ValueError as e:
         loader.empty()
-        st.error(f"Error: {e}")
+        st.error(str(e))
+    except Exception:
+        loader.empty()
+        st.error(
+            "No se pudo convertir el PDF a Word. "
+            "Verifica que el archivo no esté dañado y que contenga texto seleccionable."
+        )
 
 
 def process_pdf_to_txt(file, t):
